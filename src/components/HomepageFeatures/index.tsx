@@ -26,7 +26,7 @@ const features: FeatureItem[] = [
   {
     number: '03',
     title: '任务与长期召回',
-    description: '把多步骤任务进度和验证证据持久化，并通过 RecallDock 复用可靠经验。',
+    description: '把多步骤任务进度和验证证据持久化，并通过 NexusDock Recall 复用可靠经验。',
     to: '/docs/concepts/tasks',
   },
 ];

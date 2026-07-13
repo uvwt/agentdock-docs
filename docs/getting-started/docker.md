@@ -1,36 +1,12 @@
 # Docker 部署
 
-Docker 适合文件、Git、原生 Skill、浏览器自动化等能力。macOS 桌面自动化需要裸机部署，不能在容器里控制宿主机桌面。
+Docker 是本机体验和受控服务器部署的推荐方式，适合文件、命令、Git、Skill、动态 MCP 和浏览器自动化。容器不能直接控制 macOS 宿主桌面。
 
-AgentDock 使用单一 Host 路径模型：
+## 前置条件
 
-```text
-~/.agentdock   内部状态目录：tasks、skills、nexus、env、browser artifacts、private notes
-~/AgentDock    默认工作目录：文件、命令、Git 工具的默认起点
-```
-
-在 Docker 内部默认对应 `/root/.agentdock` 和 `/root/AgentDock`。容器内可见文件范围由 Docker volume 决定；AgentDock 不把默认工作目录当强安全边界。
-
-## Compose 示例
-
-```yaml
-services:
-  agentdock:
-    image: agentdock:local
-    ports:
-      - "127.0.0.1:18766:8765"
-    volumes:
-      - ./AgentDockHome:/root/.agentdock
-      - ./AgentDock:/root/AgentDock
-    environment:
-      AGENTDOCK_AUTH_TOKEN: "${AGENTDOCK_AUTH_TOKEN:?set AGENTDOCK_AUTH_TOKEN before docker compose up}"
-    command:
-      - agentdock
-      - --host
-      - 0.0.0.0
-      - --port
-      - "8765"
-```
+- Docker Engine 或 Docker Desktop
+- Docker Compose v2
+- 已克隆的 AgentDock 源码仓库
 
 ## 快速启动
 
@@ -41,18 +17,54 @@ make docker-up
 make smoke-docker
 ```
 
-容器内 AgentDock 监听 `0.0.0.0`，因此启动前必须设置 `AGENTDOCK_AUTH_TOKEN`。即使宿主端口只发布到 `127.0.0.1`，也不允许容器进程以非回环、无认证配置启动。
-
-默认 MCP 入口：
+默认入口：
 
 ```text
-http://127.0.0.1:18766/mcp
+MCP     http://127.0.0.1:18766/mcp
+Health  http://127.0.0.1:18766/healthz
 ```
+
+容器内 AgentDock 监听 `0.0.0.0:8765`，因此 Compose 强制要求 `AGENTDOCK_AUTH_TOKEN`。宿主端口只发布到 `127.0.0.1`，不会默认暴露到局域网或公网。
+
+## 数据目录
+
+仓库中的 Compose 配置挂载：
+
+```text
+./AgentDockHome  -> /root/.agentdock
+./AgentDock      -> /root/AgentDock
+```
+
+前者保存 AgentDock 状态，后者是默认工作目录。AgentDock 不把工作目录当成安全沙箱；容器能访问哪些文件，取决于实际 volume 挂载。
 
 ## 浏览器镜像
 
-`make docker-browser-build` 使用 `Dockerfile.browser` 构建 `agentdock:browser`。浏览器增强镜像包含 `/opt/agentdock/browser-runner`；启动时，如果 `~/.agentdock/browser-runner/` 还不存在，entrypoint 会自动复制 runner 到内部状态目录。
+构建带浏览器 runner 的镜像：
 
-## 数据清理
+```bash
+make docker-browser-build
+```
 
-如果需要删除运行数据，手动删除 compose 目录里的 `AgentDockHome/` 和 `AgentDock/`，并确认里面没有需要保留的项目、Skill 数据或 artifacts。
+使用 browser overlay 启动：
+
+```bash
+docker compose \
+  -f docker-compose.yml \
+  -f docker-compose.browser.yml \
+  up -d
+```
+
+该配置会启用 `AGENTDOCK_BROWSER_ENABLED=true`。浏览器会话仍应使用独立 profile，不要挂载日常浏览器的完整用户目录。
+
+## 日志与停止
+
+```bash
+make logs
+make docker-down
+```
+
+## 清理数据
+
+`docker compose down` 不会删除挂载目录。只有确认不再需要其中的任务、Skill 环境、MCP 配置和项目文件后，才手动删除 `AgentDockHome/` 或 `AgentDock/`。
+
+长期或公网部署还应阅读 [安全模型](../operations/security.md)。

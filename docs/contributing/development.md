@@ -1,16 +1,21 @@
 # 开发与质量门禁
 
-本文档定义 AgentDock 默认本地开发和产品化检查方式。
+AgentDock 源码和公开文档分别维护：
 
-## 质量门禁
+- 代码仓库：[`uvwt/agentdock`](https://github.com/uvwt/agentdock)
+- 文档仓库：[`uvwt/agentdock-docs`](https://github.com/uvwt/agentdock-docs)
 
-完成改动前运行完整门禁：
+修改用户可见行为时，应在同一任务中同步更新文档仓库，避免代码和说明长期分叉。
+
+## 源码质量门禁
+
+在 AgentDock 仓库运行：
 
 ```bash
 make check
 ```
 
-`make check` 会格式化、测试、vet 并构建项目：
+该命令会执行：
 
 ```bash
 gofmt -w ./cmd ./internal
@@ -19,61 +24,50 @@ go vet ./...
 go build -trimpath -o ./bin/agentdock ./cmd/agentdock
 ```
 
-局部快速迭代时，可以先运行包级测试，最后用 `make check` 收尾。
+局部迭代可以先运行包级测试，提交前仍应执行完整门禁。
 
-## 本地产物
+## 文档质量门禁
 
-macOS 裸机部署时，仓库根目录可能包含本地运行产物：
-
-- `agentdock`
-- `agentdock.new`
-- `agentdock.prev.*`
-- `agentdock.bak*`
-- `agentdock.killed*`
-- `bin/`
-- `coverage.out`
-
-这些文件会被 git 忽略。根目录的 `agentdock` 二进制可能是 Mac mini 上由 launchd 管理的当前宿主机二进制，因此普通仓库清理时不要删除它。
-
-清理历史本地产物时使用：
+在 `agentdock-docs` 仓库运行：
 
 ```bash
-make clean-local-artifacts
+pnpm install --frozen-lockfile
+pnpm check
 ```
 
-该目标只删除被 `.gitignore` 明确覆盖的历史产物和构建目录，不删除当前运行用的根目录 `agentdock` 二进制。
+`pnpm check` 会执行 TypeScript 检查和 Docusaurus 生产构建，并验证内部链接。
 
-发布产物应在 git 跟踪的源码之外生成，例如放在 `dist/` 或由发布流水线处理。
+文档职责：
 
-## 文档边界
-
-- `README.md` 保持简洁：产品摘要、快速验证、常用部署入口和链接。
-- 运维 runbook 放在 `docs/`。
-- AI/开发者代码规则放在 `.trellis/spec/`。
-- 不在文档中记录真实 token、cookie、OAuth code、私有端点或本地 secret 值。
+- 源码仓库 README 只保留产品摘要、最短启动方式、开发门禁和在线文档入口。
+- 安装、配置、概念、运维和排障统一写入文档仓库。
+- 代码内部设计规则保留在源码仓库的开发规范中，不复制成面向普通用户的长篇实现说明。
+- 文档不得出现真实 Token、Cookie、OAuth Code、私有端点、个人目录或设备专用凭据。
 
 ## 改动要求
 
-- 改动范围限制在被修改的包和行为内。
-- 新增抽象前优先复用已有 helper 和包模式。
-- 保持高风险工具的权限门禁、路径策略、认证和日志脱敏边界。
-- 修改工具描述、Schema、路径策略、权限、命令执行、HTTP 认证或桌面/浏览器自动化时，必须同步更新测试。
+- 先检查现有目录、接口、错误处理和测试方式。
+- 让主流程保持可读，不为了形式化分层制造抽象。
+- 修改工具描述、Schema、路径策略、认证、命令执行、浏览器或桌面自动化时，同步更新测试。
+- 修改安装脚本时，至少验证帮助文本、默认值、生成文件和代表性安装路径。
+- 修改文档导航时更新 `sidebars.ts`，不要依赖目录自动排序。
 
-## Skill 开发规范
+## Skill 开发
 
-Skill 是给模型读取的工作方法，不是可执行工具。第一方 Skill 必须遵循“可移植核心 + 可选宿主适配”分层：核心流程只使用包内相对路径、当前进程环境和通用协议；AgentDock 专属的 `skill://`、`exec_command skill=<name>` 和 `skill_package` 只负责发现、宿主绑定与生命周期。
+第一方 Skill 遵循“可移植核心 + 可选宿主适配”：
 
-完整设计、执行语义和禁止项见 [Skill 设计与运行模型](../concepts/skills.md)。开发时至少满足：
+- 包内使用相对路径。
+- 脚本只读取当前进程环境。
+- 不硬编码安装版本、用户绝对路径或 AgentDock 私有状态文件。
+- 不把环境文件、缓存、登录态和设备私有数据打进包。
+- 修改正文、引用或脚本后递增语义化版本。
+- 先用 `skill-authoring` 检查可移植性和创作质量，再用 `skill_package validate` 检查安装合法性。
 
-- 包根目录包含合法 `SKILL.md`，Frontmatter 只声明 `name`、`description`、`version`；
-- 不支持额外运行清单、统一执行入口或动作 Schema；
-- 包内脚本从 Skill 根目录使用相对路径运行，只从当前进程环境读取配置和凭据；
-- 不手工读取 Skill state、拼接已安装版本目录或 `source` AgentDock 私有环境文件；
-- 安装包不包含 `.env`、符号链接、缓存、编译产物或设备私有状态；
-- 修改正文、引用或脚本后递增语义化版本；同名同版本内容不可变；
-- 先运行 `skill-authoring lint` 检查创作质量与可移植性，再运行 `skill_package validate` 检查包能否合法安装；
-- 安装后通过 `agentdock_context`、`skill://` 和 `exec_command skill=<name>` 验证当前激活版本。
+完整模型见 [Skill 设计与运行模型](../concepts/skills.md)。
 
-`skill-authoring lint` 与 `skill_package validate` 不能互相替代。前者判断第一方 Skill 是否把宿主耦合写进核心契约，后者只负责包结构、安全边界和安装合法性。
+## 提交约定
 
-平台相关辅助脚本应自行声明和检查依赖。公共 Go 文件不能直接引用 Unix `syscall` 或 Windows API；AgentDock 自身命令和交互终端的进程树统一通过 `internal/processcontrol` 管理。
+- `main` 是稳定分支。
+- 提交信息使用 `type(scope): 中文说明`。
+- 提交前确认工作区只包含本次任务改动。
+- 推送后检查 GitHub Actions；文档改动还应实际访问线上页面。

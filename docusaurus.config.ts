@@ -18,7 +18,7 @@ const algolia =
 
 const config: Config = {
   title: 'AgentDock',
-  tagline: '让 Agent 安全、可恢复地操作本地与远程环境',
+  tagline: '让 Agent 可控、可恢复地操作本地与远程环境',
   favicon: 'img/favicon.svg',
   url: 'https://uvwt.github.io',
   baseUrl: '/agentdock-docs/',

@@ -1,94 +1,83 @@
 # 排障
 
-## 工具已经更新，但 ChatGPT 侧看不到
+## 服务运行，但客户端看不到工具
 
-1. 确认实际运行二进制来自 `$HOME/agentdock/agentdock`。
-2. 执行：
-
-```bash
-cd ~/agentdock
-make install-macos
-make restart-macos
-```
-
-3. 检查：
+先确认实际进程和健康状态：
 
 ```bash
-curl -fsS http://127.0.0.1:18766/healthz
-tail -n 100 ~/agentdock-runtime/agentdock.err.log
+curl -fsS http://127.0.0.1:8765/healthz
 ```
 
-## 桌面操作返回 ok=true 但 UI 没变
+然后检查：
 
-`ok=true` 只代表命令发出。请使用：
+1. 客户端 MCP URL 是否指向 `/mcp`。
+2. Bearer Token 或 OAuth 是否与服务端一致。
+3. 客户端是否仍缓存旧连接；重新连接或新建会话。
+4. 实际运行二进制是否是刚构建或刚安装的版本。
 
-```json
-{"verify": true, "wait_ms": 300}
-```
+`/healthz` 正常只代表进程存活，不能替代一次真实 MCP 初始化和工具调用。
 
-并检查 `effect_verified`、`effect_changed`、`error_layer`。
+## 返回 401 Unauthorized
 
-## Git push 权限失败
+- 确认服务是否配置 `AGENTDOCK_AUTH_TOKEN`。
+- 确认客户端发送 `Authorization: Bearer <token>`。
+- 检查反代是否保留 Authorization Header。
+- 不要把 Token 粘贴到公开日志或 Issue。
 
-检查 remote、credential helper 和 GitHub token，不要在 README 或日志中记录私有 token。
-
-## Docker 构建后仍是旧代码
-
-确认 Compose 使用的是新镜像，必要时：
+## Docker 仍运行旧代码
 
 ```bash
+docker compose down
 docker compose build --no-cache
 docker compose up -d
-```
-
-然后运行：
-
-```bash
 make smoke-docker
 ```
 
-## Docker smoke 失败
+同时检查 `docker compose ps` 和容器日志，确认使用的是预期镜像。
 
-先确认服务和端口：
+## 动态 MCP 无法调用
+
+依次检查：
+
+1. `mcp_manage list` 中 Server 是否启用。
+2. `mcp_manage env_list` 中所需变量是否已配置。
+3. 更新环境后是否执行了 `refresh`。
+4. HTTP URL、stdio 命令、工作目录和上游服务是否可达。
+5. `mcp_tool_search` 能否列出工具，再用 `mcp_tool_inspect` 检查参数。
+
+不要在错误信息中回显完整 Token、Cookie 或 Header。
+
+## 浏览器会话启动失败
+
+- macOS 优先选择系统 `browser=chrome`。
+- Windows 可选择 Chrome 或 Edge。
+- 确认 browser runner 和 `playwright-core` 已安装。
+- Docker 使用 browser 镜像和 overlay 配置。
+- CDP 模式确认调试端口只监听回环地址且浏览器已按调试模式启动。
+
+## 桌面操作没有效果
+
+- 确认 AgentDock 在当前 macOS 登录会话中运行。
+- 检查屏幕录制和辅助功能权限。
+- 重新读取当前激活的 `desktop` Skill 文档。
+- 操作前后分别观察应用状态或截图，不要只依赖命令返回成功。
+- 坐标可能因窗口位置、缩放或多显示器变化而失效，应优先使用辅助功能元素。
+
+## Git push 失败
 
 ```bash
-docker compose ps
-docker compose logs --tail=100 agentdock
-curl -fsS http://127.0.0.1:18766/healthz
+git remote -v
+git status --short --branch
+git config --show-origin --get credential.helper
 ```
 
-常见失败层级：
+确认远端地址、当前分支、凭据和仓库权限。不要把访问 Token 写进 remote URL、README 或终端截图。
 
-- `GET /healthz failed`：容器未启动、端口映射不一致，或 `AGENTDOCK_SMOKE_URL` 指错。
-- `HTTP 401`：服务启用了 bearer token，但 smoke 没有带同一个 `AGENTDOCK_AUTH_TOKEN`。
-- `MCP initialize returned non-JSON response`：反代或端口指向的不是 AgentDock `/mcp`。
-- `server_info not exposed`：当前服务不是预期的 AgentDock 版本，或工具 profile 配置异常。
-
-带 token 验证：
+## Linux 服务启动失败
 
 ```bash
-AGENTDOCK_AUTH_TOKEN="<token>" make smoke-docker
+sudo systemctl status agentdock --no-pager
+sudo journalctl -u agentdock -n 100 --no-pager
 ```
 
-指定非默认端口：
-
-```bash
-AGENTDOCK_SMOKE_URL=http://127.0.0.1:8765 make smoke-docker
-```
-
-## VPS healthz 正常但 MCP 不可用
-
-`/healthz` 不需要鉴权，只能证明进程活着；还必须验证 `/mcp`：
-
-```bash
-AGENTDOCK_SMOKE_URL=http://127.0.0.1:8765 \
-AGENTDOCK_AUTH_TOKEN="<token>" \
-make smoke-docker
-```
-
-如果本机 smoke 通过但公网失败，检查：
-
-- 反代是否把 `/mcp` 转发到 `127.0.0.1:8765`。
-- HTTPS 证书和域名是否生效。
-- 反代是否丢弃或覆盖了 Authorization header。
-- 客户端配置的 bearer token 是否和 `/etc/agentdock/agentdock.env` 一致。
+常见原因包括环境文件权限、二进制路径错误、端口占用、运行用户无权访问工作目录，以及非回环监听但未配置认证。

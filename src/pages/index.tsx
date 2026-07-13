@@ -14,7 +14,7 @@ function HomepageHeader(): ReactNode {
           AgentDock
         </Heading>
         <p className={styles.heroSubtitle}>
-          让 Agent 安全、可恢复地操作本地与远程环境。
+          让 Agent 可控、可恢复地操作本地与远程环境。
         </p>
         <div className={styles.buttons}>
           <Link className="button button--primary button--lg" to="/docs/intro">
@@ -35,7 +35,7 @@ export default function Home(): ReactNode {
   return (
     <Layout
       title="AgentDock 文档"
-      description="AgentDock 官方文档：安装、Skill、动态 MCP、可恢复任务、RecallDock 与自动化。">
+      description="AgentDock 官方文档：安装、Skill、动态 MCP、可恢复任务、NexusDock Recall 与自动化。">
       <HomepageHeader />
       <main>
         <HomepageFeatures />

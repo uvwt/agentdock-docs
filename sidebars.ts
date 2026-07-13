@@ -14,9 +14,9 @@ const sidebars: SidebarsConfig = {
       items: [
         'getting-started/docker',
         'getting-started/linux',
+        {type: 'doc', id: 'getting-started/vps', label: 'Linux 手动部署'},
         'getting-started/windows',
         'getting-started/macos',
-        'getting-started/vps',
       ],
     },
     {
@@ -25,7 +25,7 @@ const sidebars: SidebarsConfig = {
       link: {
         type: 'generated-index',
         title: '核心概念',
-        description: '理解 AgentDock 的 Skill、任务、动态 MCP 与长期召回模型。',
+        description: '理解 AgentDock 的 Skill、任务、动态 MCP 与 NexusDock Recall。',
       },
       items: [
         'concepts/skills',

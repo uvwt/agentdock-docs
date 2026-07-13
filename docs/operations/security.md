@@ -1,41 +1,59 @@
 # 安全模型
 
-AgentDock 通过路径策略、认证、运行用户隔离和日志脱敏降低风险。
+AgentDock 是工具运行层，不是完整操作系统沙箱。安全性来自监听地址与认证、运行用户权限、Docker volume、systemd 服务用户、网络策略和每个工具自身的输入校验。
 
 ## 认证
 
-- `/healthz` 用于本地健康检查。
-- `/mcp` 在配置认证时会拒绝无授权请求。
-- HTTP 监听地址只要不是回环地址，就必须配置 `AGENTDOCK_AUTH_TOKEN` 或启用 OAuth；无认证只允许本机回环和 stdio。
-- OAuth 注册与密码限流默认只使用 TCP 直接对端地址。只有显式配置 `AGENTDOCK_TRUSTED_PROXY_CIDRS` 后才解析可信代理提供的 `X-Forwarded-For`。
-- 日志只记录请求元数据，不记录 Authorization header、OAuth code、工具参数正文或 secret 值。
+- 只监听回环地址时，可以在受信本机环境中无认证运行。
+- 监听非回环地址时，必须配置 `AGENTDOCK_AUTH_TOKEN` 或启用 OAuth。
+- 公网入口必须使用 HTTPS，不要直接暴露明文 HTTP `/mcp`。
+- `/healthz` 只表示进程存活，不能证明 MCP 鉴权和工具调用正常。
+- 日志不应记录 Authorization Header、OAuth Code、工具参数正文或秘密值。
 
-## 工具边界
+Bearer Token：
 
-AgentDock 不提供工具级权限治理，也不通过工具 profile 裁剪工具集。安全边界来自监听地址、认证、当前 OS 用户权限、Docker volume、systemd 用户和网络策略。
-
-命令会话最多同时运行 32 个，完成结果最多保留 128 个；进程退出时会终止仍在运行的命令树。HTML、SVG、XML 等主动 Artifact 始终作为附件下载，所有公开 Artifact 响应都带有 sandbox CSP 和 `nosniff`。
-
-## Host 模式
-
-macOS 裸机桌面自动化需要本机运行；这是可信本机高权限部署，不建议作为公网无保护入口暴露。
-
-## 验证建议
-
-```bash
-go test ./internal/mcp ./internal/tools ./internal/httpx
-go vet ./...
-curl -i http://127.0.0.1:18766/mcp
+```text
+AGENTDOCK_AUTH_TOKEN=<random-secret>
 ```
 
-无授权访问 `/mcp` 应返回 unauthorized。
+OAuth：
 
+```text
+AGENTDOCK_OAUTH_ENABLED=true
+AGENTDOCK_SERVER_URL=https://agentdock.example.com
+AGENTDOCK_OAUTH_PASSWORD=<login-password>
+AGENTDOCK_OAUTH_TOKEN_SECRET=<random-signing-secret>
+```
 
-## Windows 本地保护
+## 文件与命令边界
 
-Windows 原生运行时不把 POSIX `chmod` 当成安全边界：
+相对路径从 `~/AgentDock` 解析，但默认工作目录不是强安全边界：
 
-- AgentDock 状态目录和 0600 语义的原子文件使用受保护 DACL，只授权当前用户、SYSTEM 和本机管理员。
-- Skill 包不得包含凭据；环境变量放在当前用户的 `~/.agentdock/env/skill/<name>.env`，其他状态、缓存和会话数据仍放在 `~/.agentdock/skill-data/<name>/`，由操作系统用户权限和部署边界保护。Windows 上保存长期敏感值时应优先使用凭据管理器或当前用户作用域 DPAPI。
-- 登录自启动脚本保存的 Bearer token同样使用当前用户 DPAPI，任务计划程序以当前登录用户运行。
-- Windows Job Object 负责约束 AgentDock 启动的命令进程树；这不是 Codex 等级的 Restricted Token 沙箱。AgentDock Windows Core 仍采用可信 Host 用户权限模型。
+- 裸机部署受当前操作系统用户权限约束。
+- Docker 部署受 volume 和容器用户约束。
+- systemd 部署应使用专用低权限用户，并只授予必要项目目录权限。
+- Windows 使用受保护 DACL；WSL 运行时受所选发行版默认 Linux 用户权限约束。
+
+不要以管理员或 root 身份运行 AgentDock，除非任务确实需要且环境已隔离。
+
+## Skill 与动态 MCP
+
+- Skill 包不得包含 Token、Cookie、Session、私钥或设备登录态。
+- Skill 和 MCP 的秘密应使用各自独立环境管理入口保存。
+- `env_list` 只用于检查变量是否已配置，不应返回秘密值。
+- 外部 MCP Server 是独立信任边界；注册前应审查来源、传输方式和工具能力。
+
+## 浏览器与桌面
+
+- 浏览器使用独立 Profile，不复用日常主 Profile。
+- CDP 调试端口只监听 `127.0.0.1`。
+- macOS Desktop Skill 运行在高权限登录会话中，只授予必要的屏幕录制和辅助功能权限。
+- 上传、发送、删除和授权等动作需要明确确认和操作后验证。
+
+## 反向代理
+
+只有反代确实位于可信网段并会重写 `X-Forwarded-For` 时，才设置 `AGENTDOCK_TRUSTED_PROXY_CIDRS`。不要信任来自公网客户端自行提供的代理 Header。
+
+## Artifact
+
+截图和发布文件可能包含敏感信息。签名 URL 具有有效期，但在有效期内拿到链接的人仍可访问内容。发布前应检查文件内容，并避免公开浏览器登录态、桌面截图、环境文件和私有日志。

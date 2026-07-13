@@ -1,27 +1,29 @@
-# Browser Control
+# 浏览器自动化
 
-AgentDock 的 `browser_*` 工具是通用网页控制能力，前端截图检查只是其中一个使用场景。
+AgentDock 的 `browser_*` 工具用于打开页面、点击、输入、滚动、等待、截图，并返回页面文本、控制台错误、网络失败和页面运行错误。
 
-## Mac mini / Chrome 推荐方式
+## 启动会话
 
-Mac mini 裸机运行时，优先让 Playwright 使用系统 Google Chrome，避免依赖 Playwright bundled Chromium 缓存：
+使用系统 Chrome：
 
 ```json
 {
   "action": "start",
   "browser": "chrome",
-  "headless": false,
-  "url": "http://localhost:5173"
+  "headless": true,
+  "url": "https://example.com"
 }
 ```
 
-`browser=chrome` 使用系统 Google Chrome。这样 AI 可以拿到页面文本、截图、console error 和网络失败信息，比纯桌面坐标点击稳定。
+macOS 推荐使用已安装的 Google Chrome；Windows 也可以使用 Chrome 或 Edge。默认 runner 使用 `playwright-core`，不会自动下载完整浏览器。
 
-不要默认接管用户正在使用的主 Chrome profile。后续如果需要持久登录态，应使用 AgentDock 专用 profile 目录，避免污染用户日常浏览器数据。
+## 使用独立 Profile
 
-## CDP attach
+需要持久登录态时，为 AgentDock 使用单独的 `profile_id`。不要直接复用日常浏览器主 Profile，以免污染用户数据或让自动化访问不必要的账号。
 
-如果确实需要接管一个已经按调试端口启动的 Edge，可以使用 CDP 后端：
+## CDP 连接
+
+需要连接已开启调试端口的浏览器时：
 
 ```json
 {
@@ -31,25 +33,24 @@ Mac mini 裸机运行时，优先让 Playwright 使用系统 Google Chrome，避
 }
 ```
 
-普通方式启动的 Edge 不能被随意接管 DOM 和网络日志。CDP 端口必须只监听 `127.0.0.1`，不要暴露到公网。
+CDP 端口必须只监听回环地址。公开 CDP 端口等同于向外部开放浏览器控制权限。
 
-## 运行依赖
+## 截图与诊断
 
-默认 browser runner 使用 `playwright-core`，不自动下载浏览器二进制。macOS / Mac mini 上推荐使用已安装的 Google Chrome；如果 bundled Chromium 缺失，不要提示用户运行 Playwright 浏览器安装命令，应改用 `browser=chrome` 或让 runner 自动 fallback：
+`browser_act` 和 `browser_snapshot` 返回截图 Artifact 引用，而不是在工具结果中嵌入 Base64。需要查看截图时，再用 `view_image` 加载 `artifact_id`。
 
-```json
-{
-  "action": "start",
-  "browser": "chrome",
-  "headless": false,
-  "url": "http://localhost:5173"
-}
-```
+诊断网页问题时同时检查：
 
-部署 runner 时只需要安装或提供 `playwright-core` 依赖；`browser=chrome` 使用系统 Google Chrome，因此要求系统中已安装 Google Chrome。
+- `console_errors`
+- `network_errors`
+- `page_errors`
+- 页面文本和最终 URL
 
-## 安全默认值
+截图只能证明视觉状态，不能替代控制台和网络错误检查。
 
-默认 runner 禁用页面脚本执行动作。AI 做网页操作时应优先使用打开、点击、输入、滚动、等待和截图等可观察动作。
+## 安全建议
 
-`browser_act` / `browser_snapshot` 把截图发布为轻量 Artifact 引用：始终返回 `screenshot.artifact_id`，存在可访问服务地址时额外返回带过期时间的签名 `screenshot.url`，不直接返回 Base64。模型需要查看截图时，再调用 `view_image(artifact_id=...)`。页面文本、console error、网络失败和页面运行错误会继续作为工具结果返回，方便开发和排障闭环。
+- 优先使用点击、输入、滚动和等待等可观察动作。
+- 不在自动化脚本中记录密码、Cookie 或 Authorization Header。
+- 上传文件和提交表单前确认目标页面与副作用。
+- 使用完持久会话后按需要保存或清理 storage state。

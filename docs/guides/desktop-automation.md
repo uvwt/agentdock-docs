@@ -1,43 +1,37 @@
-# macOS Desktop Skill 自动化
+# macOS Desktop Skill
 
-`desktop` 是纯文档 Skill。它的核心流程使用包根目录相对命令；AgentDock 只通过 `exec_command skill=desktop` 绑定当前激活包和本次子进程环境，不提供统一 Skill 执行入口。
+`desktop` 是用于 macOS 登录会话的纯文档 Skill。它指导模型观察应用状态、读取辅助功能元素，并在必要时执行点击、输入、剪贴板和拖拽等桌面操作。
 
-通用设计见 [Skill 设计与运行模型](../concepts/skills.md)。
+Docker、VPS 和未登录的后台会话不能控制真实 macOS 桌面。
 
-## 读取说明
+## 前置条件
+
+- AgentDock 在当前 macOS 登录用户下裸机运行。
+- 运行 AgentDock 的应用或终端已获得屏幕录制权限。
+- 需要交互时已获得辅助功能权限。
+- 已安装并激活 `desktop` Skill。
+
+## 使用流程
 
 ```text
 agentdock_context
-→ 匹配 desktop
-→ read_file path=skill://desktop/SKILL.md
+→ 找到 desktop Skill
+→ read_file skill://desktop/SKILL.md
+→ 按当前 Skill 文档执行预检、观察和操作
+→ 截图或重新观察验证结果
 ```
 
-## 调用方式
+不要手工读取 Skill 状态文件或拼接安装版本路径。AgentDock 会通过 `exec_command skill=desktop` 绑定当前激活包目录和独立环境。
 
-模型先读取当前激活版本的 `SKILL.md`，再按说明调用包内辅助脚本。无需读取 state 文件、手工拼接安装版本或 `source` 私有环境文件。
+## 操作原则
 
-预检示例：
+- 优先使用辅助功能元素和可读状态，坐标点击只作为兜底。
+- 先观察再操作，操作后再次验证。
+- 输入文本、写剪贴板、发送快捷键、拖拽和确认对话框都属于有副作用操作。
+- 涉及删除、发送、上传、支付或权限变更时，应在 Skill 规定的确认边界内执行。
 
-```text
-exec_command
-  skill: desktop
-  cmd: python3 run.py
-  stdin: {"skill_action":"status","check_screenshot":true,"check_applescript":true}
-```
+## 数据与隐私
 
-观察应用状态：
+截图和运行产物保存在该 Skill 的私有数据目录中。不要自动提交、同步或公开这些文件；其中可能包含窗口内容、通知和账号信息。
 
-```text
-exec_command
-  skill: desktop
-  cmd: python3 run.py
-  stdin: {"skill_action":"observe","action":"app_state","app":"Finder"}
-```
-
-`skill=desktop` 会在未显式传入 `workdir` 时把目录设为当前激活包根目录，并只向本次命令或 session 注入 `desktop` 独立环境。显式 `workdir` 和 `env` 优先；命令结束后环境不会保留在 AgentDock 主进程或系统环境中。
-
-桌面动作优先使用 Accessibility 元素索引，坐标操作只作为兜底。写入剪贴板、点击、输入和拖拽等产生副作用的动作，必须遵循 `SKILL.md` 中的确认和验证规则。
-
-## 权限和数据
-
-macOS 桌面自动化只能在裸机登录会话中工作，需要当前调用链具备屏幕录制和辅助功能权限。截图和运行产物存放在 `~/.agentdock/skill-data/desktop/artifacts`；不得自动复制、提交或公开其中内容。
+Skill 的通用设计见 [Skill 设计与运行模型](../concepts/skills.md)。
