@@ -5,6 +5,16 @@ const sidebars: SidebarsConfig = {
     'intro',
     {
       type: 'category',
+      label: '配置与工具',
+      link: {
+        type: 'generated-index',
+        title: '配置与工具',
+        description: '查看 AgentDock 的运行配置、认证方式和内置工具能力。',
+      },
+      items: ['reference/configuration', 'reference/tools'],
+    },
+    {
+      type: 'category',
       label: '快速开始',
       link: {
         type: 'generated-index',

@@ -80,6 +80,16 @@ const config: Config = {
           position: 'left',
         },
         {
+          to: '/docs/reference/configuration',
+          label: '配置',
+          position: 'left',
+        },
+        {
+          to: '/docs/reference/tools',
+          label: '工具',
+          position: 'left',
+        },
+        {
           href: 'https://github.com/uvwt/agentdock',
           label: 'AgentDock',
           position: 'right',
@@ -98,6 +108,8 @@ const config: Config = {
           title: '文档',
           items: [
             {label: '快速开始', to: '/docs/getting-started/docker'},
+            {label: '配置', to: '/docs/reference/configuration'},
+            {label: '工具介绍', to: '/docs/reference/tools'},
             {label: 'Skill', to: '/docs/concepts/skills'},
             {label: '可恢复任务', to: '/docs/concepts/tasks'},
           ],

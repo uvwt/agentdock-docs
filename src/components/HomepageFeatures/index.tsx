@@ -13,21 +13,21 @@ type FeatureItem = {
 const features: FeatureItem[] = [
   {
     number: '01',
-    title: '统一工具边界',
-    description: '文件、命令、Git、浏览器和桌面能力采用明确接口，便于审计、验证和长期维护。',
-    to: '/docs/intro',
+    title: '工具能力',
+    description: '按文件、命令、Git、任务、Skill、动态 MCP、浏览器和 Recall 浏览全部内置工具。',
+    to: '/docs/reference/tools',
   },
   {
     number: '02',
-    title: 'Skill 与动态 MCP',
-    description: 'Skill 描述可移植流程，动态 MCP 承载外部服务能力，两者职责清晰且互不混杂。',
-    to: '/docs/concepts/skills',
+    title: '配置参考',
+    description: '查看环境变量、CLI 参数、认证、NexusDock、浏览器和独立环境配置。',
+    to: '/docs/reference/configuration',
   },
   {
     number: '03',
-    title: '任务与长期召回',
-    description: '把多步骤任务进度和验证证据持久化，并通过 NexusDock Recall 复用可靠经验。',
-    to: '/docs/concepts/tasks',
+    title: '扩展与恢复',
+    description: '通过 Skill、动态 MCP、可恢复任务和 NexusDock Recall 组织长期工作流。',
+    to: '/docs/concepts/skills',
   },
 ];
 

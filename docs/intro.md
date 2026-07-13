@@ -38,6 +38,8 @@ AgentDock 使用当前运行用户的 Host 路径：
 
 ## 下一步
 
+- [查看完整配置](./reference/configuration.md)
+- [浏览内置工具](./reference/tools.md)
 - [理解 Skill](./concepts/skills.md)
 - [理解可恢复任务](./concepts/tasks.md)
 - [接入动态 MCP](./concepts/dynamic-mcp.md)

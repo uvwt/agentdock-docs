@@ -32,6 +32,7 @@ pnpm check
 
 ```text
 docs/
+├── reference/        # 配置与内置工具
 ├── getting-started/  # 安装与部署
 ├── concepts/         # Skill、任务、动态 MCP、NexusDock Recall
 ├── guides/           # 浏览器和桌面自动化

@@ -1,0 +1,177 @@
+# 工具介绍
+
+AgentDock 通过 MCP 向上层 Agent 暴露一组稳定的内置工具。工具负责执行真实动作，Skill 负责描述工作方法，动态 MCP 负责接入外部服务，这三者职责不同。
+
+实际可见工具由当前配置决定：
+
+- 基础工具始终可用。
+- 配置 `AGENTDOCK_NEXUS_ENDPOINT` 后，额外暴露 `recall_*` 工具。
+- 启用 `AGENTDOCK_BROWSER_ENABLED` 或 `--browser-enabled` 后，额外暴露 `browser_*` 工具。
+- 动态 MCP 的上游工具不会直接混入 AgentDock 的 `tools/list`，而是通过固定的发现和调用入口访问。
+
+调用 `server_info` 可以查看当前实例真正暴露的工具清单。
+
+## 系统与上下文
+
+| 工具 | 用途 |
+| --- | --- |
+| `server_info` | 返回版本、操作系统、路径模型、认证状态、可选能力和当前工具列表，是部署与排障的首要入口 |
+| `agentdock_context` | 返回轻量能力索引，包括内置工具、已安装 Skill、动态 MCP、Workflow 模板和高优先级上下文 |
+
+`agentdock_context` 只返回适合模型快速判断的索引。需要 Skill 正文、动态 MCP Schema 或 Recall 正文时，再调用对应读取工具。
+
+## 文件与文本
+
+AgentDock 使用 Host 路径模型。相对路径默认从 `~/AgentDock` 解析，绝对路径按运行 AgentDock 的操作系统用户权限访问。
+
+| 工具 | 用途 | 常用参数或 action |
+| --- | --- | --- |
+| `read_file` | 分段读取 UTF-8 文本，也支持 `skill://<name>/<path>` | `path`、`start_line`、`end_line` |
+| `list_dir` | 列出目录项，可限制递归深度和数量 | `recursive`、`max_depth`、`include_hidden` |
+| `list_files` | 使用 glob 批量查找文件 | `patterns`、`glob`、`exclude_patterns` |
+| `search_text` | 使用文本或正则搜索文件内容 | `query`、`regex`、`include_globs`、`context_lines` |
+| `file_edit` | 统一执行文本文件修改 | `replace`、`patch`、`add`、`delete`、`move` |
+
+`file_edit` 支持 `dry_run` 和 diff 预览。涉及替换时可以使用 `expected_matches` 约束命中数量，避免内容漂移后误改其他位置。
+
+Windows 版 AgentDock 的文件工具可以通过 `runtime=wsl` 使用 WSL 原生文件语义；这不是一组额外工具。
+
+## 命令与会话
+
+| 工具 | 用途 | 常用参数或 action |
+| --- | --- | --- |
+| `exec_command` | 执行有超时、输出上限和脱敏能力的命令 | `cmd`、`workdir`、`timeout_ms`、`tty`、`skill` |
+| `session_observe` | 只读查看长时间命令会话 | `list`、`status` |
+| `session_act` | 向会话写入输入或终止会话 | `write`、`kill`、`kill_all` |
+
+`exec_command` 在命令未快速结束时返回 `session_id`，后续使用 `session_observe` 读取状态。需要交互输入时使用 `session_act action=write`。
+
+通过 `skill=<name>` 运行命令时，AgentDock 会把当前激活 Skill 根目录设为默认工作目录，并只向该子进程注入 Skill 独立环境。
+
+Windows 版 `exec_command` 可以显式选择 `runtime=windows` 或 `runtime=wsl`。
+
+## 可恢复任务与 Workflow
+
+| 工具 | 用途 | action |
+| --- | --- | --- |
+| `task_manage` | 持久化多步骤任务、进度、阻塞和最终验证证据 | `create`、`list`、`get`、`checkpoint`、`block`、`resume`、`final_review`、`complete` |
+| `workflow_template_manage` | 管理和匹配可复用 Workflow 模板 | `save`、`validate`、`publish`、`retire`、`list`、`get`、`get_many`、`match`、`vector_index` |
+
+`task_manage` 保存的是状态，不会替代命令、测试、部署或浏览器验证。普通任务可以完全在本机使用；Workflow 模板存放在 NexusDock Registry，需要配置 NexusDock。
+
+多个模板同时适用时，`get_many` 返回模板正文，但不会自动拼接。模型需要删除无关步骤、合并重复项，再把组合结果传给 `task_manage create`。
+
+## Skill 包与独立环境
+
+| 工具 | 用途 | action |
+| --- | --- | --- |
+| `skill_package` | 校验、安装、回滚 Skill，并管理每个 Skill 的独立环境 | `validate`、`install`、`rollback`、`env_set`、`env_unset`、`env_list` |
+
+Skill 是模型读取的文档型工作方法，不是隐藏执行器。常见调用顺序：
+
+```text
+agentdock_context
+→ read_file skill://<name>/SKILL.md
+→ 使用真实文件、命令、浏览器或 MCP 工具执行
+```
+
+`skill_package env_list` 不返回秘密值，只返回变量名和是否已配置。完整设计见 [Skill 设计与运行模型](../concepts/skills.md)。
+
+## 动态 MCP
+
+动态 MCP 使用四个固定入口，避免上层客户端因远端工具频繁变化而缓存过期。
+
+| 工具 | 用途 | 常用 action |
+| --- | --- | --- |
+| `mcp_manage` | 注册、启停、刷新、删除 MCP Server，并管理独立环境 | `list`、`inspect`、`add`、`enable`、`disable`、`refresh`、`remove`、`env_set`、`env_unset`、`env_list` |
+| `mcp_tool_search` | 按 Server 和能力关键词搜索轻量工具摘要 | `server`、`query`、`limit` |
+| `mcp_tool_inspect` | 读取一个上游工具的完整输入输出 Schema | `name=<server>:<tool>` |
+| `mcp_tool_call` | 按检查过的 Schema 调用上游工具 | `name`、`arguments` |
+
+推荐调用链：
+
+```text
+agentdock_context
+→ mcp_tool_search
+→ mcp_tool_inspect
+→ mcp_tool_call
+```
+
+注册信息只保存环境变量名，不保存明文 Token。更完整的注册示例见 [动态 MCP](../concepts/dynamic-mcp.md)。
+
+## Git 与 GitHub
+
+AgentDock 把只读操作和会修改仓库的操作分开。
+
+| 工具 | 用途 | action |
+| --- | --- | --- |
+| `git_read` | 查看仓库、状态、差异、历史和 GitHub 访问能力 | `repos`、`status`、`diff`、`log`、`show`、`blame`、`github_repo_access` |
+| `git_write` | 执行会改变本地或远端仓库状态的操作 | `clone`、`commit`、`fetch`、`pull`、`push` |
+
+`git_write commit` 可以只暂存指定 `paths`，也可以使用 `all=true` 暂存全部变更。提交前仍应先调用 `git_read status` 和 `git_read diff` 审查真实内容。
+
+`github_repo_access` 只检查当前 GitHub 凭据和目标仓库可见性，不会修改仓库。
+
+## 图片与 Artifact
+
+| 工具 | 用途 |
+| --- | --- |
+| `view_image` | 从 AgentDock Artifact、Host 图片路径或 HTTP(S) URL 加载图片，并按模型限制自动缩放或转码 |
+| `file_publish` | 把文件或目录发布为不可变 Artifact 快照；目录自动打包为 `tar.gz` |
+
+`file_publish` 始终返回 `artifact_id`、哈希和大小。当前请求存在可访问服务地址时，还会返回有过期时间的签名 URL。
+
+浏览器截图等图片型工具通常先返回轻量 Artifact 引用，再通过 `view_image` 加载，避免在普通工具结果中传递大段 Base64。
+
+## NexusDock Recall
+
+以下工具只在配置 `AGENTDOCK_NEXUS_ENDPOINT` 后暴露：
+
+| 工具 | 用途 | 常用参数或 action |
+| --- | --- | --- |
+| `recall_bootstrap` | 在重要任务开始时加载紧凑的长期上下文和 Runbook 索引 | `max_bytes`、`include_body` |
+| `recall_search` | 搜索 Markdown、经验卡片和笔记 | `query`、`kind`、`note_scope` |
+| `recall_read` | 按路径读取一个 Recall 条目 | `path` |
+| `recall_write` | 计划、创建、更新或删除 Recall 内容 | `target`、`action`、`confirmed` |
+| `recall_maintain` | 检查同步、列表、lint、Embedding 和索引 | `sync_status`、`list`、`lint`、`embedding_status`、`reindex`、`reindex_cards` |
+
+`recall_write` 要求明确选择内容类型：
+
+- `card`：原子、可复用的经验和决策。
+- `note`：问题讨论、学习记录和未定结论。
+- `markdown`：稳定项目文档、Runbook 和结构化长期事实。
+
+真实写入和删除需要 `confirmed=true`。详细边界见 [NexusDock Recall](../concepts/recalldock.md)。
+
+## 私密笔记
+
+| 工具 | 用途 | action |
+| --- | --- | --- |
+| `private_note_manage` | 管理本机低频、私密且不应同步到 Recall 的笔记 | `search`、`read`、`write`、`status`、`maintain` |
+
+这个工具不是普通记忆入口。只有用户明确要求本地私密记录，或内容明显包含敏感凭据时才应使用。写入必须显式确认；敏感值会在搜索和输出中脱敏。
+
+## 浏览器自动化
+
+以下工具只在启用浏览器能力后暴露：
+
+| 工具 | 用途 | action 或典型输入 |
+| --- | --- | --- |
+| `browser_session` | 创建、关闭和清理浏览器会话 | `start`、`close`、`cleanup_stale` |
+| `browser_act` | 在现有会话中打开页面、点击、输入、滚动和等待 | `goto`、`click`、`fill`、`press`、`scroll`、`wait` |
+| `browser_snapshot` | 获取页面文本、可交互元素、截图、控制台错误和网络错误 | `session_id`、`full_page` |
+
+`browser_session` 支持 Playwright 和 CDP 后端、无头模式、独立 Profile、Cookie、localStorage 和 storage state。默认不要接管用户日常浏览器 Profile。
+
+AgentDock 默认不开放任意页面脚本执行动作。优先使用可观察的点击、输入、滚动和截图完成操作。详细说明见 [浏览器自动化](../guides/browser-control.md)。
+
+## 工具选择原则
+
+- 先用只读工具检查现状，再调用会产生副作用的工具。
+- 修改前查看真实文件、仓库、服务或页面状态，修改后做真实验证。
+- 简单读取不创建任务；多步骤开发、部署、迁移和排障使用 `task_manage`。
+- Skill 用来指导流程，不替代真实工具。
+- 动态 MCP 工具先搜索、再检查 Schema、最后调用。
+- 不把 AgentDock 当成操作系统级沙箱。真实权限仍由运行用户、容器 volume、systemd、DACL 和网络策略决定。
+
+配置启用方式见 [配置](./configuration.md)，安全边界见 [安全模型](../operations/security.md)。
