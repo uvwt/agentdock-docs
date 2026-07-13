@@ -13,7 +13,7 @@ curl -fsS http://127.0.0.1:8765/healthz
 1. 客户端 MCP URL 是否指向 `/mcp`。
 2. Bearer Token 或 OAuth 是否与服务端一致。
 3. 客户端是否仍缓存旧连接；重新连接或新建会话。
-4. 实际运行二进制是否是刚构建或刚安装的版本。
+4. 实际运行二进制是否是刚安装或刚更新的版本。
 
 `/healthz` 正常只代表进程存活，不能替代一次真实 MCP 初始化和工具调用。
 
@@ -24,16 +24,14 @@ curl -fsS http://127.0.0.1:8765/healthz
 - 检查反代是否保留 Authorization Header。
 - 不要把 Token 粘贴到公开日志或 Issue。
 
-## Docker 仍运行旧代码
+## Docker 仍运行旧镜像
 
 ```bash
-docker compose down
-docker compose build --no-cache
-docker compose up -d
-make smoke-docker
+docker compose pull
+docker compose up -d --force-recreate
 ```
 
-同时检查 `docker compose ps` 和容器日志，确认使用的是预期镜像。
+同时检查 `docker compose ps`、`docker compose images` 和容器日志，确认使用的是预期镜像标签与摘要。
 
 ## 动态 MCP 无法调用
 

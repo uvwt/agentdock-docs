@@ -1,30 +1,24 @@
 # Linux 自动安装
 
-`scripts/install-linux.sh` 用于在 Linux 上交互式安装 AgentDock，支持 systemd、OpenRC，也可以只安装二进制而不注册系统服务。
+AgentDock 为 Linux x64 和 ARM64 发布预编译二进制。普通安装只需要运行 Release 中的安装脚本，不需要 Go、Git 或源码。
 
-默认模式会下载 GitHub Release 预编译二进制；只有显式选择 `source` 或 `auto` 回退时才安装 Go 和编译依赖。
+安装脚本支持 systemd、OpenRC，也可以只安装二进制而不注册系统服务。
 
 ## 快速使用
 
-已克隆仓库：
-
 ```bash
-bash scripts/install-linux.sh
-```
-
-远程安装：
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/uvwt/agentdock/main/scripts/install-linux.sh \
+curl -fsSL https://github.com/uvwt/agentdock/releases/latest/download/install-linux.sh \
   -o /tmp/agentdock-install.sh
 bash /tmp/agentdock-install.sh
 ```
+
+安装方式保持默认的 `binary` 即可。脚本会下载与当前架构匹配的 Release 压缩包并校验 SHA-256。
 
 Alpine 或极简系统缺少 Bash、curl 时：
 
 ```sh
 wget -O /tmp/agentdock-bootstrap.sh \
-  https://raw.githubusercontent.com/uvwt/agentdock/main/scripts/install-linux-bootstrap.sh
+  https://github.com/uvwt/agentdock/releases/latest/download/install-linux-bootstrap.sh
 sh /tmp/agentdock-bootstrap.sh
 ```
 
@@ -32,9 +26,8 @@ sh /tmp/agentdock-bootstrap.sh
 
 脚本会询问：
 
-- 仓库、分支和安装目录
-- 安装方式：`binary`、`source` 或 `auto`
 - Release 版本：`latest` 或指定版本
+- 安装目录和运行数据目录
 - 服务管理器：`auto`、`systemd`、`openrc` 或 `none`
 - 运行用户、监听地址和端口
 - Bearer Token
@@ -56,14 +49,12 @@ sh /tmp/agentdock-bootstrap.sh
 AGENTDOCK_INSTALL_MODE=binary \
 AGENTDOCK_RELEASE_VERSION=latest \
 AGENTDOCK_PORT=8765 \
-bash scripts/install-linux.sh
+bash /tmp/agentdock-install.sh
 ```
 
-完整可配置项包括：
+面向部署的常用变量包括：
 
 ```text
-AGENTDOCK_REPO_URL
-AGENTDOCK_BRANCH
 AGENTDOCK_SOURCE_DIR
 AGENTDOCK_DATA_DIR
 AGENTDOCK_ENV_FILE
@@ -113,6 +104,8 @@ tail -n 100 /var/log/agentdock.log /var/log/agentdock.err
 curl -fsS http://127.0.0.1:8765/healthz
 ```
 
-重新运行安装脚本即可升级。源码模式遇到未提交改动时不会自动覆盖本地工作区。
+## 更新
 
-需要自己审查 systemd、环境文件和反代配置时，使用 [Linux 手动 systemd 部署](./vps.md)。
+重新下载并运行最新安装脚本，继续选择 `binary`。脚本会替换已安装二进制并保留运行数据和环境配置。
+
+需要自己审查运行用户、环境文件、systemd 和反代配置时，使用 [Linux 手动 systemd 部署](./vps.md)。源码构建只面向贡献者，见 [开发与质量门禁](../contributing/development.md)。

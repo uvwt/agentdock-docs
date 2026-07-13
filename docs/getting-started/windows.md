@@ -1,16 +1,23 @@
 # Windows 原生安装
 
-AgentDock 支持 Windows 11 x64 和 ARM64，可原生使用 PowerShell、ConPTY、Windows Job Object、受保护 DACL 和当前用户 DPAPI，不要求安装 WSL2。
+AgentDock 支持 Windows 11 x64 和 ARM64，可原生使用 PowerShell、ConPTY、Windows Job Object、受保护 DACL 和当前用户 DPAPI，不要求安装 WSL2，也不需要在本机编译源码。
 
 ## 安装
 
-远程下载安装脚本：
+从最新 GitHub Release 下载并校验安装脚本：
 
 ```powershell
+$base = 'https://github.com/uvwt/agentdock/releases/latest/download'
 $script = Join-Path $env:TEMP 'install-agentdock.ps1'
-Invoke-WebRequest `
-  https://raw.githubusercontent.com/uvwt/agentdock/main/scripts/install-windows.ps1 `
-  -OutFile $script
+$checksum = "$script.sha256"
+
+Invoke-WebRequest "$base/install-windows.ps1" -OutFile $script
+Invoke-WebRequest "$base/install-windows.ps1.sha256" -OutFile $checksum
+
+$expected = ((Get-Content -LiteralPath $checksum -Raw) -split '\s+')[0].ToLowerInvariant()
+$actual = (Get-FileHash -LiteralPath $script -Algorithm SHA256).Hash.ToLowerInvariant()
+if ($actual -ne $expected) { throw 'AgentDock installer checksum mismatch.' }
+
 powershell -ExecutionPolicy Bypass -File $script
 ```
 
@@ -38,6 +45,16 @@ powershell -ExecutionPolicy Bypass `
 ```powershell
 Invoke-WebRequest -UseBasicParsing http://127.0.0.1:8765/healthz
 ```
+
+## 安装指定版本
+
+```powershell
+powershell -ExecutionPolicy Bypass `
+  -File $script `
+  -Version vX.Y.Z
+```
+
+重新下载最新安装脚本并再次运行即可升级，运行数据和启动配置会保留。
 
 ## 命令与 Skill
 
@@ -67,18 +84,29 @@ WSL 写入拒绝软链接、设备文件和 `/proc`、`/sys`、`/dev`、`/run` �
 
 ## 卸载
 
-在已克隆的 AgentDock 源码仓库中运行卸载脚本。保留状态：
+从 Release 下载卸载脚本，不需要克隆源码仓库：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts/uninstall-windows.ps1
+$base = 'https://github.com/uvwt/agentdock/releases/latest/download'
+$uninstaller = Join-Path $env:TEMP 'uninstall-agentdock.ps1'
+$uninstallerChecksum = "$uninstaller.sha256"
+
+Invoke-WebRequest "$base/uninstall-windows.ps1" -OutFile $uninstaller
+Invoke-WebRequest "$base/uninstall-windows.ps1.sha256" -OutFile $uninstallerChecksum
+
+$expected = ((Get-Content -LiteralPath $uninstallerChecksum -Raw) -split '\s+')[0].ToLowerInvariant()
+$actual = (Get-FileHash -LiteralPath $uninstaller -Algorithm SHA256).Hash.ToLowerInvariant()
+if ($actual -ne $expected) { throw 'AgentDock uninstaller checksum mismatch.' }
+
+powershell -ExecutionPolicy Bypass -File $uninstaller
 ```
 
 同时删除 `%USERPROFILE%\.agentdock` 和 `%USERPROFILE%\AgentDock`：
 
 ```powershell
 powershell -ExecutionPolicy Bypass `
-  -File scripts/uninstall-windows.ps1 `
+  -File $uninstaller `
   -PurgeState
 ```
 
-执行 `-PurgeState` 前应备份需要保留的项目、Skill 配置和运行数据。
+执行 `-PurgeState` 前应备份需要保留的项目、Skill 配置和运行数据。源码构建只面向贡献者，见 [开发与质量门禁](../contributing/development.md)。

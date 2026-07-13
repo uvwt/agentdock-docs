@@ -1,6 +1,8 @@
 # Linux 手动 systemd 部署
 
-本页适合希望自己审查构建、运行用户、环境文件、systemd 和 HTTPS 反代的部署者。更省事的方式见 [Linux 自动安装](./linux.md)。
+本页适合希望自己审查运行用户、Release 二进制、环境文件、systemd 和 HTTPS 反代的部署者。普通部署优先使用 [Linux 自动安装](./linux.md)。
+
+手动部署同样使用预编译 Release，不需要在服务器上安装 Go 或构建源码。
 
 ## 推荐拓扑
 
@@ -19,13 +21,35 @@ sudo install -d -m 0755 /opt/agentdock/bin
 sudo install -d -m 0750 /etc/agentdock
 ```
 
-## 构建并安装
+## 下载并安装 Release 二进制
 
 ```bash
-git clone https://github.com/uvwt/agentdock.git
-cd agentdock
-make check
-sudo install -m 0755 ./bin/agentdock /opt/agentdock/bin/agentdock
+case "$(uname -m)" in
+  x86_64|amd64) ARCH=amd64 ;;
+  aarch64|arm64) ARCH=arm64 ;;
+  *) echo "unsupported architecture: $(uname -m)" >&2; exit 1 ;;
+esac
+
+ASSET="agentdock_linux_${ARCH}.tar.gz"
+BASE_URL="https://github.com/uvwt/agentdock/releases/latest/download"
+TMP_DIR="$(mktemp -d)"
+
+curl -fL "$BASE_URL/$ASSET" -o "$TMP_DIR/$ASSET"
+curl -fL "$BASE_URL/$ASSET.sha256" -o "$TMP_DIR/$ASSET.sha256"
+(
+  cd "$TMP_DIR"
+  sha256sum -c "$ASSET.sha256"
+  tar -xzf "$ASSET"
+)
+
+sudo install -m 0755 "$TMP_DIR/bin/agentdock" /opt/agentdock/bin/agentdock
+rm -rf "$TMP_DIR"
+```
+
+生产环境可以把 `BASE_URL` 改为指定版本：
+
+```bash
+BASE_URL="https://github.com/uvwt/agentdock/releases/download/vX.Y.Z"
 ```
 
 ## 环境文件
@@ -118,6 +142,17 @@ AGENTDOCK_OAUTH_TOKEN_SECRET=<random-signing-secret>
 
 公网 `AGENTDOCK_SERVER_URL` 必须使用 HTTPS。OAuth 与 Bearer Token 可以按客户端需求选择，不要把密码或签名密钥提交到仓库。
 
+## 更新
+
+重新下载并校验目标 Release，覆盖 `/opt/agentdock/bin/agentdock`，然后重启：
+
+```bash
+sudo systemctl restart agentdock
+sudo systemctl status agentdock --no-pager
+```
+
+运行数据和环境文件位于独立目录，不会随二进制替换而删除。
+
 ## 验证
 
 ```bash
@@ -126,4 +161,4 @@ sudo journalctl -u agentdock -n 100 --no-pager
 curl -fsS http://127.0.0.1:8765/healthz
 ```
 
-验证 MCP 时应携带环境文件中的 Bearer Token，并确认公网反代不会丢弃 Authorization Header。
+验证 MCP 时应携带环境文件中的 Bearer Token，并确认公网反代不会丢弃 Authorization Header。源码构建只面向贡献者，见 [开发与质量门禁](../contributing/development.md)。
