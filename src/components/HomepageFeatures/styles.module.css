@@ -1,0 +1,53 @@
+.features {
+  padding: 1rem 0 6rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+
+.card {
+  display: flex;
+  min-height: 280px;
+  flex-direction: column;
+  padding: 2rem;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 20px;
+  background: var(--ifm-background-surface-color);
+  box-shadow: 0 18px 50px rgba(15, 23, 42, 0.06);
+}
+
+.number {
+  margin-bottom: 2.5rem;
+  color: var(--ifm-color-primary);
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.title {
+  margin-bottom: 0.8rem;
+  font-size: 1.4rem;
+}
+
+.description {
+  flex: 1;
+  color: var(--ifm-color-emphasis-700);
+  line-height: 1.75;
+}
+
+.link {
+  font-weight: 700;
+}
+
+@media screen and (max-width: 996px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card {
+    min-height: 220px;
+  }
+}
