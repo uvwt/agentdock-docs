@@ -65,19 +65,14 @@ const config: Config = {
       respectPrefersColorScheme: true,
     },
     navbar: {
-      title: 'AgentDock Docs',
-      hideOnScroll: true,
+      title: 'AgentDock',
+      hideOnScroll: false,
       items: [
         {
           type: 'docSidebar',
           sidebarId: 'docsSidebar',
           position: 'left',
           label: '文档',
-        },
-        {
-          to: '/docs/getting-started/docker',
-          label: '快速开始',
-          position: 'left',
         },
         {
           to: '/docs/reference/configuration',
@@ -91,41 +86,39 @@ const config: Config = {
         },
         {
           href: 'https://github.com/uvwt/agentdock',
-          label: 'AgentDock',
-          position: 'right',
-        },
-        {
-          href: 'https://github.com/uvwt/agentdock-docs',
           label: 'GitHub',
           position: 'right',
         },
       ],
     },
     footer: {
-      style: 'dark',
+      style: 'light',
       links: [
         {
           title: '文档',
           items: [
             {label: '快速开始', to: '/docs/getting-started/docker'},
-            {label: '配置', to: '/docs/reference/configuration'},
-            {label: '工具介绍', to: '/docs/reference/tools'},
+            {label: '配置参考', to: '/docs/reference/configuration'},
+            {label: '工具目录', to: '/docs/reference/tools'},
+          ],
+        },
+        {
+          title: '能力',
+          items: [
             {label: 'Skill', to: '/docs/concepts/skills'},
+            {label: '动态 MCP', to: '/docs/concepts/dynamic-mcp'},
             {label: '可恢复任务', to: '/docs/concepts/tasks'},
           ],
         },
         {
           title: '项目',
           items: [
-            {label: 'AgentDock', href: 'https://github.com/uvwt/agentdock'},
-            {
-              label: '文档仓库',
-              href: 'https://github.com/uvwt/agentdock-docs',
-            },
+            {label: 'AgentDock 源码', href: 'https://github.com/uvwt/agentdock'},
+            {label: '文档源码', href: 'https://github.com/uvwt/agentdock-docs'},
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} AgentDock. Built with Docusaurus.`,
+      copyright: `© ${new Date().getFullYear()} AgentDock. Built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,

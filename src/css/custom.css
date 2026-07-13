@@ -1,39 +1,581 @@
 :root {
-  --ifm-color-primary: #4f46e5;
-  --ifm-color-primary-dark: #4338ca;
-  --ifm-color-primary-darker: #3730a3;
-  --ifm-color-primary-darkest: #312e81;
-  --ifm-color-primary-light: #6366f1;
-  --ifm-color-primary-lighter: #818cf8;
-  --ifm-color-primary-lightest: #c7d2fe;
-  --ifm-code-font-size: 95%;
+  --ifm-color-primary: #635bff;
+  --ifm-color-primary-dark: #554cf2;
+  --ifm-color-primary-darker: #4e45e5;
+  --ifm-color-primary-darkest: #4038c7;
+  --ifm-color-primary-light: #766fff;
+  --ifm-color-primary-lighter: #8882ff;
+  --ifm-color-primary-lightest: #c8c5ff;
+  --ifm-background-color: #ffffff;
+  --ifm-background-surface-color: #ffffff;
+  --ifm-navbar-background-color: rgba(255, 255, 255, 0.86);
+  --ifm-font-color-base: #343842;
+  --ifm-heading-color: #111318;
+  --ifm-code-font-size: 91%;
   --ifm-font-family-base: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --ifm-heading-font-weight: 720;
-  --docusaurus-highlighted-code-line-bg: rgba(79, 70, 229, 0.1);
+  --ifm-font-family-monospace: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  --ifm-heading-font-weight: 690;
+  --ifm-navbar-height: 4rem;
+  --ifm-global-radius: 8px;
+  --ifm-container-width-xl: 1320px;
+  --ifm-link-color: #554cf2;
+  --ifm-link-hover-color: #4038c7;
+  --ifm-toc-border-color: #eceef2;
+  --ifm-menu-color-background-active: #f2f1ff;
+  --docusaurus-highlighted-code-line-bg: rgba(99, 91, 255, 0.08);
+  --site-background: #ffffff;
+  --site-surface: #ffffff;
+  --site-surface-muted: #f8f9fb;
+  --site-surface-hover: #fbfbfd;
+  --site-heading: #111318;
+  --site-muted: #6c7280;
+  --site-muted-strong: #4a4f5a;
+  --site-border: #eceef2;
+  --site-border-strong: #dfe2e8;
+  --site-grid: rgba(17, 19, 24, 0.045);
+  --site-shadow-sm: 0 1px 2px rgba(17, 19, 24, 0.04), 0 4px 14px rgba(17, 19, 24, 0.035);
+  --site-shadow-lg: 0 28px 70px rgba(25, 28, 38, 0.12), 0 2px 10px rgba(25, 28, 38, 0.05);
 }
 
 [data-theme='dark'] {
-  --ifm-color-primary: #a5b4fc;
-  --ifm-color-primary-dark: #818cf8;
-  --ifm-color-primary-darker: #6366f1;
-  --ifm-color-primary-darkest: #4f46e5;
-  --ifm-color-primary-light: #c7d2fe;
-  --ifm-color-primary-lighter: #e0e7ff;
-  --ifm-color-primary-lightest: #eef2ff;
-  --docusaurus-highlighted-code-line-bg: rgba(165, 180, 252, 0.16);
+  --ifm-color-primary: #9b96ff;
+  --ifm-color-primary-dark: #8781ff;
+  --ifm-color-primary-darker: #766fff;
+  --ifm-color-primary-darkest: #635bff;
+  --ifm-color-primary-light: #aaa6ff;
+  --ifm-color-primary-lighter: #bbb8ff;
+  --ifm-color-primary-lightest: #dcdaff;
+  --ifm-background-color: #0c0e13;
+  --ifm-background-surface-color: #11141a;
+  --ifm-navbar-background-color: rgba(12, 14, 19, 0.86);
+  --ifm-font-color-base: #c9cdd6;
+  --ifm-heading-color: #f4f5f7;
+  --ifm-link-color: #aaa6ff;
+  --ifm-link-hover-color: #c3c0ff;
+  --ifm-toc-border-color: #252934;
+  --ifm-menu-color-background-active: rgba(155, 150, 255, 0.1);
+  --docusaurus-highlighted-code-line-bg: rgba(155, 150, 255, 0.1);
+  --site-background: #0c0e13;
+  --site-surface: #11141a;
+  --site-surface-muted: #151820;
+  --site-surface-hover: #171a22;
+  --site-heading: #f4f5f7;
+  --site-muted: #9198a6;
+  --site-muted-strong: #bec3cd;
+  --site-border: #252934;
+  --site-border-strong: #343946;
+  --site-grid: rgba(255, 255, 255, 0.035);
+  --site-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.24), 0 5px 16px rgba(0, 0, 0, 0.18);
+  --site-shadow-lg: 0 30px 80px rgba(0, 0, 0, 0.42), 0 2px 12px rgba(0, 0, 0, 0.24);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  color: var(--ifm-font-color-base);
+  background: var(--site-background);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  color: var(--site-heading);
+  background: rgba(99, 91, 255, 0.18);
+}
+
+.container {
+  padding-right: clamp(1rem, 3vw, 2rem);
+  padding-left: clamp(1rem, 3vw, 2rem);
+}
+
+/* 顶部导航只承担全局入口，不与文档侧边栏争夺层级。 */
+.navbar {
+  border-bottom: 1px solid var(--site-border);
+  box-shadow: none;
+  backdrop-filter: saturate(180%) blur(18px);
+}
+
+.navbar__inner {
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.navbar__brand {
+  margin-right: 2rem;
 }
 
 .navbar__title {
-  letter-spacing: -0.02em;
+  color: var(--site-heading);
+  font-size: 0.98rem;
+  font-weight: 720;
+  letter-spacing: -0.025em;
 }
 
-.markdown h1:first-child {
+.navbar__items {
+  gap: 0.15rem;
+}
+
+.navbar__link {
+  padding: 0.45rem 0.7rem;
+  border-radius: 7px;
+  color: var(--site-muted-strong);
+  font-size: 0.86rem;
+  font-weight: 560;
+}
+
+.navbar__link:hover,
+.navbar__link--active {
+  color: var(--site-heading);
+  background: var(--site-surface-muted);
+  text-decoration: none;
+}
+
+.navbar__link--active {
+  color: var(--ifm-color-primary);
+}
+
+.navbar__items--right .navbar__link {
+  font-weight: 600;
+}
+
+.navbar__items--right .clean-btn {
+  margin-left: 0.4rem;
+  border: 1px solid var(--site-border);
+  border-radius: 8px;
+  background: var(--site-surface-muted);
+}
+
+.navbar-sidebar {
+  background: var(--site-background);
+}
+
+.navbar-sidebar__brand {
+  border-bottom: 1px solid var(--site-border);
+  box-shadow: none;
+}
+
+.navbar-sidebar__item.menu {
+  padding: 1rem;
+}
+
+/* 文档布局 */
+.theme-doc-sidebar-container {
+  border-right: 1px solid var(--site-border) !important;
+  background: var(--site-surface-muted);
+}
+
+.theme-doc-sidebar-menu {
+  padding: 1rem 0.75rem 2rem;
+}
+
+.menu__list-item-collapsible {
+  border-radius: 7px;
+}
+
+.menu__link {
+  min-height: 34px;
+  align-items: center;
+  padding: 0.42rem 0.58rem;
+  border-radius: 7px;
+  color: var(--site-muted-strong);
+  font-size: 0.86rem;
+  line-height: 1.35;
+}
+
+.menu__link:hover {
+  color: var(--site-heading);
+  background: color-mix(in srgb, var(--site-border) 50%, transparent);
+}
+
+.menu__link--active,
+.menu__list-item-collapsible--active > .menu__link {
+  color: var(--ifm-color-primary);
+  font-weight: 620;
+  background: var(--ifm-menu-color-background-active);
+}
+
+.menu__caret::before,
+.menu__link--sublist-caret::after {
+  background-size: 1.25rem 1.25rem;
+  opacity: 0.6;
+}
+
+.breadcrumbs {
+  margin-bottom: 1.6rem;
+}
+
+.breadcrumbs__link {
+  padding: 0.28rem 0.48rem;
+  border-radius: 6px;
+  color: var(--site-muted);
+  font-size: 0.78rem;
+}
+
+.breadcrumbs__item--active .breadcrumbs__link {
+  color: var(--site-muted-strong);
+  background: var(--site-surface-muted);
+}
+
+.theme-doc-markdown {
+  max-width: 800px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.theme-doc-markdown > h1:first-child {
+  margin-bottom: 1.5rem;
+  color: var(--site-heading);
+  font-size: clamp(2.5rem, 5vw, 3.65rem);
+  font-weight: 720;
+  line-height: 1.08;
+  letter-spacing: -0.052em;
+}
+
+.markdown {
+  color: var(--ifm-font-color-base);
+  font-size: 1rem;
+}
+
+.markdown > p,
+.markdown > ul,
+.markdown > ol {
+  line-height: 1.82;
+}
+
+.markdown h2 {
+  margin-top: 3.4rem;
+  margin-bottom: 1rem;
+  padding-top: 0.25rem;
+  color: var(--site-heading);
+  font-size: 1.72rem;
+  line-height: 1.25;
   letter-spacing: -0.035em;
 }
 
+.markdown h3 {
+  margin-top: 2.35rem;
+  margin-bottom: 0.8rem;
+  color: var(--site-heading);
+  font-size: 1.25rem;
+  letter-spacing: -0.025em;
+}
+
+.markdown h4 {
+  color: var(--site-heading);
+  font-size: 1.02rem;
+}
+
+.markdown strong {
+  color: var(--site-heading);
+  font-weight: 650;
+}
+
+.markdown a:not(.hash-link) {
+  font-weight: 520;
+  text-decoration-color: color-mix(in srgb, var(--ifm-color-primary) 40%, transparent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.markdown a:not(.hash-link):hover {
+  text-decoration-color: currentColor;
+}
+
+.markdown hr {
+  margin: 3rem 0;
+  border-color: var(--site-border);
+}
+
+.markdown blockquote {
+  margin: 1.5rem 0;
+  padding: 0.25rem 0 0.25rem 1rem;
+  border-left: 2px solid var(--ifm-color-primary);
+  color: var(--site-muted-strong);
+  background: transparent;
+}
+
+.markdown code {
+  padding: 0.16rem 0.38rem;
+  border: 1px solid var(--site-border);
+  border-radius: 5px;
+  color: var(--site-heading);
+  background: var(--site-surface-muted);
+  font-size: 0.88em;
+  font-weight: 520;
+}
+
+.theme-code-block {
+  margin: 1.5rem 0;
+  border: 1px solid var(--site-border-strong);
+  border-radius: 10px;
+  background: var(--site-surface-muted) !important;
+  box-shadow: var(--site-shadow-sm);
+}
+
+.theme-code-block pre {
+  background: transparent !important;
+}
+
+.theme-code-block code {
+  border: 0;
+  color: inherit;
+  background: transparent;
+  font-size: 0.84rem;
+  line-height: 1.72;
+}
+
+.theme-code-block button {
+  border: 1px solid var(--site-border) !important;
+  border-radius: 6px !important;
+  background: var(--site-surface) !important;
+}
+
+/* 表格保持语义结构，窄屏只滚动表格自身。 */
 .markdown table {
   display: block;
   width: 100%;
   max-width: 100%;
+  margin: 1.5rem 0 2rem;
   overflow-x: auto;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid var(--site-border-strong);
+  border-radius: 10px;
+  background: var(--site-surface);
+  box-shadow: var(--site-shadow-sm);
+}
+
+.markdown table thead {
+  background: var(--site-surface-muted);
+}
+
+.markdown table tr {
+  border: 0;
+  background: transparent;
+}
+
+.markdown table tr:nth-child(2n) {
+  background: color-mix(in srgb, var(--site-surface-muted) 65%, transparent);
+}
+
+.markdown table th,
+.markdown table td {
+  min-width: 120px;
+  padding: 0.78rem 0.9rem;
+  border: 0;
+  border-right: 1px solid var(--site-border);
+  border-bottom: 1px solid var(--site-border);
+  text-align: left;
+  vertical-align: top;
+  line-height: 1.6;
+}
+
+.markdown table th {
+  color: var(--site-heading);
+  font-size: 0.82rem;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.markdown table td {
+  color: var(--site-muted-strong);
+  font-size: 0.88rem;
+}
+
+.markdown table th:last-child,
+.markdown table td:last-child {
+  border-right: 0;
+}
+
+.markdown table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.alert {
+  margin: 1.6rem 0;
+  padding: 1rem 1.1rem;
+  border-width: 1px;
+  border-radius: 9px;
+  box-shadow: none;
+}
+
+.alert--info {
+  --ifm-alert-background-color: rgba(59, 130, 246, 0.06);
+  --ifm-alert-border-color: rgba(59, 130, 246, 0.25);
+}
+
+.alert--success {
+  --ifm-alert-background-color: rgba(34, 197, 94, 0.06);
+  --ifm-alert-border-color: rgba(34, 197, 94, 0.25);
+}
+
+.alert--warning {
+  --ifm-alert-background-color: rgba(245, 158, 11, 0.07);
+  --ifm-alert-border-color: rgba(245, 158, 11, 0.28);
+}
+
+.alert--danger {
+  --ifm-alert-background-color: rgba(239, 68, 68, 0.06);
+  --ifm-alert-border-color: rgba(239, 68, 68, 0.25);
+}
+
+.table-of-contents {
+  padding-left: 1rem;
+  font-size: 0.78rem;
+}
+
+.table-of-contents__link {
+  color: var(--site-muted);
+  line-height: 1.5;
+}
+
+.table-of-contents__link:hover,
+.table-of-contents__link--active {
+  color: var(--ifm-color-primary);
+  text-decoration: none;
+}
+
+.theme-doc-toc-desktop {
+  top: calc(var(--ifm-navbar-height) + 2rem);
+}
+
+.pagination-nav {
+  gap: 0.75rem;
+  margin-top: 3rem;
+}
+
+.pagination-nav__link {
+  border: 1px solid var(--site-border);
+  border-radius: 10px;
+  background: var(--site-surface);
+  box-shadow: none;
+  transition: border-color 150ms ease, background 150ms ease;
+}
+
+.pagination-nav__link:hover {
+  border-color: var(--site-border-strong);
+  background: var(--site-surface-muted);
+}
+
+.pagination-nav__sublabel {
+  color: var(--site-muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.pagination-nav__label {
+  color: var(--site-heading);
+  font-size: 0.92rem;
+}
+
+.theme-edit-this-page {
+  color: var(--site-muted);
+  font-size: 0.82rem;
+}
+
+.theme-doc-footer {
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--site-border);
+}
+
+/* 首页和文档共用的轻量页脚。 */
+.footer {
+  padding: 3.5rem 0 2rem;
+  border-top: 1px solid var(--site-border);
+  color: var(--site-muted);
+  background: var(--site-surface-muted);
+}
+
+.footer__title {
+  color: var(--site-heading);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.footer__link-item {
+  color: var(--site-muted-strong);
+  font-size: 0.86rem;
+}
+
+.footer__link-item:hover {
+  color: var(--ifm-color-primary);
+  text-decoration: none;
+}
+
+.footer__copyright {
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--site-border);
+  color: var(--site-muted);
+  font-size: 0.76rem;
+}
+
+.theme-doc-markdown .card {
+  border-color: var(--site-border);
+  border-radius: 10px;
+  background: var(--site-surface);
+  box-shadow: none;
+}
+
+.theme-doc-markdown .card:hover {
+  border-color: var(--site-border-strong);
+  background: var(--site-surface-muted);
+}
+
+@media screen and (max-width: 996px) {
+  .navbar__brand {
+    margin-right: 0;
+  }
+
+  .theme-doc-markdown {
+    max-width: none;
+  }
+
+  .theme-doc-sidebar-container {
+    background: var(--site-background);
+  }
+}
+
+@media screen and (max-width: 640px) {
+  :root {
+    --ifm-navbar-height: 3.75rem;
+  }
+
+  .navbar__title {
+    font-size: 0.92rem;
+  }
+
+  .theme-doc-markdown > h1:first-child {
+    font-size: 2.35rem;
+  }
+
+  .markdown {
+    font-size: 0.97rem;
+  }
+
+  .markdown h2 {
+    margin-top: 2.7rem;
+    font-size: 1.5rem;
+  }
+
+  .markdown table th,
+  .markdown table td {
+    min-width: 138px;
+    padding: 0.7rem 0.78rem;
+  }
+
+  .pagination-nav {
+    grid-template-columns: 1fr;
+  }
+
+  .footer {
+    padding-top: 2.5rem;
+  }
 }
