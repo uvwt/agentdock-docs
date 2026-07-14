@@ -26,12 +26,16 @@ curl -fsS http://127.0.0.1:8765/healthz
 
 ## Docker 仍运行旧镜像
 
+Release Compose 默认固定版本。先重新下载最新 Compose 文件，再拉取和重建容器：
+
 ```bash
+curl -fL https://github.com/uvwt/agentdock/releases/latest/download/docker-compose.yml \
+  -o docker-compose.yml
 docker compose pull
 docker compose up -d --force-recreate
 ```
 
-同时检查 `docker compose ps`、`docker compose images` 和容器日志，确认使用的是预期镜像标签与摘要。
+浏览器部署同时更新 `docker-compose.browser.yml`。再检查 `docker compose ps`、`docker compose images` 和容器日志，确认镜像标签、摘要和健康状态符合预期。
 
 ## 动态 MCP 无法调用
 

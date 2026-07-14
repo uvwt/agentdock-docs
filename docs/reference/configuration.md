@@ -59,6 +59,7 @@ agentdock \
 | `AGENTDOCK_LOG_LEVEL` | `info` | 日志级别 |
 | `AGENTDOCK_STDIO` | `false` | 是否使用 stdio 模式 |
 | `AGENTDOCK_BROWSER_ENABLED` | `false` | 是否暴露 `browser_*` 工具 |
+| `AGENTDOCK_BROWSER_RUNNER_DIR` | `~/.agentdock/browser-runner` | browser runner 目录；Docker browser 镜像自动指向镜像内只读目录 |
 | `AGENTDOCK_NEXUS_ENDPOINT` | 空 | NexusDock 服务根地址；配置后暴露 `recall_*` 工具并启用 Workflow 模板后端 |
 | `AGENTDOCK_NEXUS_TOKEN` | 空 | NexusDock Bearer Token |
 
@@ -152,7 +153,14 @@ AGENTDOCK_BROWSER_ENABLED=true
 agentdock --browser-enabled
 ```
 
-启用开关只负责暴露 `browser_session`、`browser_act` 和 `browser_snapshot`。运行环境还需要安装 browser runner 及其 Node.js、`playwright-core` 依赖；具体方式见 [浏览器自动化](../guides/browser-control.md)。
+启用开关只负责暴露 `browser_session`、`browser_act` 和 `browser_snapshot`。运行环境还需要 browser runner 及其 Node.js、`playwright-core` 依赖。
+
+| 环境变量 | 默认值 | 说明 |
+| --- | --- | --- |
+| `AGENTDOCK_BROWSER_RUNNER_DIR` | `~/.agentdock/browser-runner` | 包含 `browser-runner.js` 和 Node 依赖的目录 |
+| `AGENTDOCK_BROWSER_EXECUTABLE_PATH` | 空 | runner 使用的 Chromium 可执行文件；Docker browser 镜像自动设置为 `/usr/bin/chromium` |
+
+普通裸机部署通常不需要设置可执行文件路径，runner 会使用 Playwright 缓存或所选系统浏览器。Docker browser 镜像会把 runner 固定在 `/opt/agentdock/browser-runner`，不会把代码和 `node_modules` 复制进持久化状态目录。具体使用方式见 [浏览器自动化](../guides/browser-control.md)。
 
 ## Skill 与动态 MCP 的独立环境
 
