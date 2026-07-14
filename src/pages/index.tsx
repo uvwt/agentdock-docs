@@ -79,7 +79,7 @@ function HomepageHeader(): ReactNode {
             <span>真正完成工作</span>
           </Heading>
           <p className={styles.heroSubtitle}>
-            把支持 MCP 的 AI 客户端连接到你的电脑或服务器，安全使用文件、命令、Git、浏览器和外部服务。
+            把支持 MCP 的 AI 客户端连接到你的电脑或服务器，通过明确的工具边界使用文件、命令、Git、浏览器和外部服务。
           </p>
           <div className={styles.actions}>
             <Link className={styles.primaryAction} to="/docs/getting-started/install">

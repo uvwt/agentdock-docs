@@ -4,13 +4,26 @@ macOS Desktop Skill 可以让 Agent 观察当前登录桌面，并在你的授�
 
 Docker、远程 VPS、系统级后台服务和未登录会话不能控制真实 macOS 桌面。
 
-## 开始前
+## 1. 安装 AgentDock
 
-1. 按 [macOS 安装](../getting-started/macos.md) 在当前用户下运行 AgentDock。
-2. 安装并激活 `desktop` Skill。
-3. 为运行 AgentDock 的终端或托管应用授予“屏幕录制”权限。
-4. 需要点击和输入时，再授予“辅助功能”权限。
-5. 重启相关终端或应用，使权限生效。
+先按 [macOS 安装](../getting-started/macos.md) 在当前登录用户下运行 AgentDock。Docker、LaunchDaemon 和远程 Linux 实例都不能控制当前 Mac 桌面。
+
+## 2. 安装 Desktop Skill
+
+把下面这句话发给已经连接 AgentDock 的客户端：
+
+```text
+请先校验，再安装并激活官方 Desktop Skill：
+https://github.com/uvwt/agentdock/releases/latest/download/skill-desktop.zip
+```
+
+官方 ZIP 随 AgentDock Release 发布，并附带 SHA-256 校验文件。安装完成后可以询问“当前 desktop Skill 是否已经激活”进行确认。
+
+## 3. 授予 macOS 权限
+
+1. 为实际运行 AgentDock 的终端或托管应用授予“屏幕录制”权限。
+2. 需要点击和输入时，再授予“辅助功能”权限。
+3. 重启相关终端或应用，使权限生效。
 
 只给实际运行 AgentDock 的应用授权，不要给无关程序开放这些权限。
 

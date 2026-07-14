@@ -70,6 +70,7 @@ ssh -L 8765:127.0.0.1:8765 <用户名>@<服务器地址>
 ## 按需继续
 
 - Alpine、交互式安装、修改目录、端口或服务管理器：阅读 [Linux 进阶配置](../operations/linux.md)。
+- 使用浏览器自动化：当前免构建方案是 Docker browser 镜像，见 [浏览器自动化](../guides/browser-control.md)。
 - 需要完全自行维护 systemd、反向代理和 OAuth：阅读 [Linux 手动部署](./vps.md)。
 - 启动失败：查看 [故障排查](../operations/troubleshooting.md)。
 - 需要公网访问：先阅读 [安全模型](../operations/security.md)。

@@ -12,9 +12,9 @@
 2. 按 [Docker 进阶配置](../operations/docker.md#启用浏览器自动化) 启动 browser 镜像。
 3. 连接客户端后，确认 Agent 可以看到 `browser_*` 工具。
 
-### 原生 macOS / Windows
+### 原生 macOS / Windows / Linux
 
-macOS 和 Windows Release 当前只安装 AgentDock 二进制，不会自动安装 browser runner。原生模式需要另外准备 Node.js、源码仓库中的 runner 及 `playwright-core`，属于进阶或开发者配置。
+macOS、Windows 和 Linux Release 当前只安装 AgentDock 二进制，不会自动安装 browser runner。原生模式需要另外准备 Node.js、源码仓库中的 runner 及 `playwright-core`，属于进阶或开发者配置。
 
 只想直接使用浏览器自动化时，不要在原生安装后盲目打开浏览器开关，优先使用 Docker browser 镜像。原生 runner 的配置项见 [配置参考](../reference/configuration.md#浏览器工具)。
 
@@ -29,6 +29,18 @@ macOS 和 Windows Release 当前只安装 AgentDock 二进制，不会自动安�
 ```
 
 Agent 应先观察页面，再执行动作，最后重新检查页面状态。
+
+## 多标签页与稳定等待
+
+网页打开新标签页或弹窗后，浏览器工具会返回当前 `page_id` 和 `pages` 列表。Agent 应选择目标页面继续操作，不要默认所有动作仍发生在第一个页面。
+
+页面加载较慢时，优先等待可验证条件，而不是固定睡眠时间：
+
+- 等待 URL 变化。
+- 等待指定文本或元素出现。
+- 等待匹配的网络响应和状态码。
+
+这样比盲目等待几秒更稳定，也更容易判断失败原因。
 
 ## 登录态与 Profile
 

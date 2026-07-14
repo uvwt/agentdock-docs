@@ -13,10 +13,10 @@ AgentDock 通过 MCP 向上层 Agent 暴露一组稳定的内置工具。工具�
 - 管理复杂任务的步骤与验证。
 - 接入外部 MCP、浏览器和 NexusDock Recall。
 
-实际可见工具由当前配置决定：
+AgentDock 当前定义 30 个内置工具，实际可见数量由配置决定：
 
-- 基础工具始终可用。
-- 配置 `AGENTDOCK_NEXUS_ENDPOINT` 后，额外暴露 `recall_*` 工具。
+- 不依赖外部集成的基础工具始终可用。
+- 配置 `AGENTDOCK_NEXUS_ENDPOINT` 后，额外暴露 `workflow_template_manage` 和 `recall_*` 工具。
 - 启用 `AGENTDOCK_BROWSER_ENABLED` 或 `--browser-enabled` 后，额外暴露 `browser_*` 工具。
 - 动态 MCP 的上游工具不会直接混入 AgentDock 的 `tools/list`，而是通过固定的发现和调用入口访问。
 
@@ -29,7 +29,7 @@ AgentDock 通过 MCP 向上层 Agent 暴露一组稳定的内置工具。工具�
 | `server_info` | 返回版本、操作系统、路径模型、认证状态、可选能力和当前工具列表，是部署与排障的首要入口 |
 | `agentdock_context` | 返回轻量能力索引，包括内置工具、已安装 Skill、动态 MCP、Workflow 模板和高优先级上下文 |
 
-`agentdock_context` 只返回适合模型快速判断的索引。需要 Skill 正文、动态 MCP Schema 或 Recall 正文时，再调用对应读取工具。
+`agentdock_context` 只返回适合模型快速判断的索引。未配置 NexusDock 时，它不会展示 Workflow 模板索引或相关规则。需要 Skill 正文、动态 MCP Schema 或 Recall 正文时，再调用对应读取工具。
 
 ## 文件与文本
 
@@ -66,9 +66,9 @@ Windows 版 `exec_command` 可以显式选择 `runtime=windows` 或 `runtime=wsl
 | 工具 | 用途 | action |
 | --- | --- | --- |
 | `task_manage` | 持久化多步骤任务、进度、阻塞和最终验证证据 | `create`、`list`、`get`、`checkpoint`、`block`、`resume`、`final_review`、`complete` |
-| `workflow_template_manage` | 管理和匹配可复用 Workflow 模板 | `save`、`validate`、`publish`、`retire`、`list`、`get`、`get_many`、`match`、`vector_index` |
+| `workflow_template_manage` | 管理和匹配可复用 Workflow 模板；仅配置 NexusDock 后可见 | `save`、`validate`、`publish`、`retire`、`list`、`get`、`get_many`、`match`、`vector_index` |
 
-`task_manage` 保存的是状态，不会替代命令、测试、部署或浏览器验证。普通任务可以完全在本机使用；Workflow 模板存放在 NexusDock Registry，需要配置 NexusDock。
+`task_manage` 保存的是状态，不会替代命令、测试、部署或浏览器验证。普通任务可以完全在本机使用；Workflow 模板存放在 NexusDock Registry，未配置 NexusDock 时 `workflow_template_manage` 不会出现在工具列表中。
 
 多个模板同时适用时，`get_many` 返回模板正文，但不会自动拼接。模型需要删除无关步骤、合并重复项，再把组合结果传给 `task_manage create`。
 
@@ -169,14 +169,18 @@ AgentDock 把只读操作和会修改仓库的操作分开。
 | 工具 | 用途 | action 或典型输入 |
 | --- | --- | --- |
 | `browser_session` | 创建、关闭和清理浏览器会话 | `start`、`close`、`cleanup_stale` |
-| `browser_act` | 在现有会话中打开页面、点击、输入、滚动和等待 | `goto`、`click`、`fill`、`press`、`scroll`、`wait` |
-| `browser_snapshot` | 获取页面文本、可交互元素、截图、控制台错误和网络错误 | `session_id`、`full_page` |
+| `browser_act` | 在指定页面中导航、点击、输入、滚动并等待页面条件 | `page_id`、`goto`、`click`、`fill`、`wait_for_url`、`wait_for_text`、`wait_for_response` |
+| `browser_snapshot` | 获取指定页面及全部页面元数据、文本、截图和错误 | `session_id`、`page_id`、`full_page` |
 
-`browser_session` 支持 Playwright 和 CDP 后端、无头模式、独立 Profile、Cookie、localStorage 和 storage state。默认不要接管用户日常浏览器 Profile。
+`browser_session` 支持 Playwright 和 CDP 后端、无头模式、独立 Profile、Cookie、localStorage 和 storage state 文件。会话返回 `page_id` 和 `pages`；网页打开新标签页后，可以把目标 `page_id` 传给 `browser_act` 或 `browser_snapshot`。默认不要接管用户日常浏览器 Profile。
 
 AgentDock 默认不开放任意页面脚本执行动作。优先使用可观察的点击、输入、滚动和截图完成操作。详细说明见 [浏览器自动化](../guides/browser-control.md)。
 
 ## 返回状态（集成与调试）
+
+:::info
+以下状态语义从 AgentDock `v0.4.3` 开始生效。`v0.4.2` 及更早版本的正常工具结果仍可能包含通用 `ok`；集成方应升级后再依赖本节字段。
+:::
 
 AgentDock 把“工具调用是否成功”和“业务或命令结果是否成功”分开表达：
 

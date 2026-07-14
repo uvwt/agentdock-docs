@@ -11,7 +11,7 @@ Skill 是一份给 Agent 阅读的工作说明，里面写明什么时候使用�
 ```text
 查看当前 Codex 额度。
 用 desktop Skill 操作这个 macOS 应用。
-安装并使用这个 Skill：https://example.com/example-skill.tar.gz
+安装并使用这个 Skill：https://example.com/example-skill.zip
 ```
 
 Agent 通常会：
@@ -32,7 +32,7 @@ Agent 通常会：
 请先审查这个 Skill 的来源、文件和权限需求，确认安全后再安装。
 ```
 
-AgentDock 会保存已安装版本，并允许在更新失败时回滚。Skill 包不应包含 Token、Cookie、浏览器登录态或个人环境文件。
+远程地址必须指向 ZIP 包；本机来源可以是 Skill 目录或 ZIP 文件。AgentDock 会保存已安装版本，并允许在更新失败时回滚。Skill 包不应包含 Token、Cookie、浏览器登录态或个人环境文件。
 
 ## 配置账号或 API Key
 

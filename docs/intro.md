@@ -5,7 +5,7 @@ slug: /intro
 
 # AgentDock
 
-AgentDock 让支持 MCP 的 AI 客户端可以在你的电脑或服务器上读取文件、执行命令、操作 Git、使用浏览器，并按需连接其他服务。
+AgentDock 让支持 MCP 的 AI 客户端可以在你的电脑或服务器上读取文件、执行命令、操作 Git，并按需启用浏览器或连接其他服务。
 
 它不会替你决定权限范围。AgentDock 能访问什么，取决于运行它的系统用户、Docker 挂载目录和你启用的功能。
 

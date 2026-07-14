@@ -31,4 +31,5 @@ MCP 地址
 - 在自己的 Mac 或 Windows 电脑上使用：选原生安装。
 - 在 Linux 服务器上长期运行：选 Linux 安装。
 - 只想快速隔离体验，且电脑已经装好 Docker：选 Docker。
+- 希望直接使用浏览器自动化且不手动准备 runner：选 Docker，再[启用 browser 镜像](../operations/docker.md#启用浏览器自动化)。
 - 需要 macOS 屏幕和辅助功能自动化：必须使用 macOS 原生安装，Docker 无法控制宿主桌面。

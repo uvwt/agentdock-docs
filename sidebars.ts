@@ -11,7 +11,6 @@ const sidebars: SidebarsConfig = {
         id: 'getting-started/install',
       },
       items: [
-        'getting-started/install',
         'getting-started/macos',
         'getting-started/windows',
         'getting-started/linux',
