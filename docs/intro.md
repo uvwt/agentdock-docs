@@ -21,7 +21,7 @@ AgentDock 是本地与远程 Agent 的工具运行层。它把文件、命令、
 
 | 场景 | 推荐入口 |
 | --- | --- |
-| 本机快速体验 | [Docker 部署](./getting-started/docker.md) |
+| 本机快速体验 | [Docker 快速安装](./getting-started/docker.md) |
 | Linux 长期运行 | [Linux 自动安装](./getting-started/linux.md) |
 | 手动配置 systemd 与反代 | [Linux 手动 systemd 部署](./getting-started/vps.md) |
 | Windows 原生运行 | [Windows 原生安装](./getting-started/windows.md) |

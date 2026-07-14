@@ -62,7 +62,7 @@ const sidebars: SidebarsConfig = {
         title: '运维与安全',
         description: '查看安全边界、常见问题和排障方法。',
       },
-      items: ['operations/security', 'operations/troubleshooting'],
+      items: ['operations/docker', 'operations/security', 'operations/troubleshooting'],
     },
     {
       type: 'category',
