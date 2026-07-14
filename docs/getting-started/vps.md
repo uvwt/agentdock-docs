@@ -1,6 +1,6 @@
 # Linux 手动 systemd 部署
 
-本页适合希望自己审查运行用户、Release 二进制、环境文件、systemd 和 HTTPS 反代的部署者。普通部署优先使用 [Linux 自动安装](./linux.md)。
+本页适合需要自己维护运行用户、Release 二进制、环境文件、systemd 和 HTTPS 反代的部署者。普通用户请先使用 [Linux 安装](./linux.md)。
 
 手动部署同样使用预编译 Release，不需要在服务器上安装 Go 或构建源码。
 
@@ -161,4 +161,4 @@ sudo journalctl -u agentdock -n 100 --no-pager
 curl -fsS http://127.0.0.1:8765/healthz
 ```
 
-验证 MCP 时应携带环境文件中的 Bearer Token，并确认公网反代不会丢弃 Authorization Header。源码构建只面向贡献者，见 [开发与质量门禁](../contributing/development.md)。
+验证 MCP 时应携带环境文件中的 Bearer Token，并确认公网反代不会丢弃 Authorization Header。源码构建只面向贡献者，见 [开发者指南](../contributing/development.md)。

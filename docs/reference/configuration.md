@@ -2,6 +2,20 @@
 
 AgentDock 当前不读取统一的 YAML、JSON 或 TOML 配置文件。运行配置通过环境变量提供，部分常用项还可以使用 CLI 参数覆盖。
 
+:::tip
+**大多数用户不需要从本页开始。** 按 Docker、Linux、Windows 或 macOS 安装指南启动后，只需使用指南给出的 MCP 地址和 Token。遇到端口冲突、远程访问、浏览器、NexusDock 或高级部署需求时，再查对应配置。
+:::
+
+## 普通用户通常只需要这些配置
+
+| 场景 | 需要处理的内容 |
+| --- | --- |
+| 本机前台运行 | 通常保持 `127.0.0.1` 和默认端口即可 |
+| Docker | `.env` 中的 `AGENTDOCK_AUTH_TOKEN`，其余使用 Compose 默认值 |
+| 浏览器自动化 | 启用浏览器工具，并准备 Chrome、Edge 或 browser 镜像 |
+| NexusDock Recall | 配置服务地址和可选 Token |
+| 局域网或公网访问 | 认证、HTTPS 和反向代理，不能只修改监听地址 |
+
 推荐按部署方式管理配置：
 
 - 本地前台运行：Shell 环境变量或 CLI 参数。
@@ -11,7 +25,7 @@ AgentDock 当前不读取统一的 YAML、JSON 或 TOML 配置文件。运行配
 
 不要把 Token、密码、Cookie、私钥或 OAuth Secret 提交到源码仓库。
 
-## 配置优先级
+## 配置方式与优先级
 
 AgentDock 启动时按以下顺序解析：
 
@@ -160,7 +174,7 @@ agentdock --browser-enabled
 | `AGENTDOCK_BROWSER_RUNNER_DIR` | `~/.agentdock/browser-runner` | 包含 `browser-runner.js` 和 Node 依赖的目录 |
 | `AGENTDOCK_BROWSER_EXECUTABLE_PATH` | 空 | runner 使用的 Chromium 可执行文件；Docker browser 镜像自动设置为 `/usr/bin/chromium` |
 
-普通裸机部署通常不需要设置可执行文件路径，runner 会使用 Playwright 缓存或所选系统浏览器。Docker browser 镜像会把 runner 固定在 `/opt/agentdock/browser-runner`，不会把代码和 `node_modules` 复制进持久化状态目录。具体使用方式见 [浏览器自动化](../guides/browser-control.md)。
+Docker browser 镜像会自动配置 runner 和 Chromium。macOS、Windows 原生 Release 当前不会安装 runner；启用前需要单独准备 Node.js、runner 和 `playwright-core`。具体选择见 [浏览器自动化](../guides/browser-control.md)。
 
 ## Skill 与动态 MCP 的独立环境
 

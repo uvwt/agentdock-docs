@@ -72,23 +72,22 @@ function HomepageHeader(): ReactNode {
         <div className={styles.heroCopy}>
           <div className={styles.eyebrow}>
             <span className={styles.eyebrowDot} />
-            LOCAL & REMOTE AGENT RUNTIME
+            LOCAL & REMOTE AGENT TOOLS
           </div>
           <Heading as="h1" className={styles.heroTitle}>
             让 Agent
             <span>真正完成工作</span>
           </Heading>
           <p className={styles.heroSubtitle}>
-            AgentDock 为文件、命令、Git、浏览器和外部服务提供清晰的工具边界，
-            并让长任务保持可追踪、可恢复、可验证。
+            把支持 MCP 的 AI 客户端连接到你的电脑或服务器，安全使用文件、命令、Git、浏览器和外部服务。
           </p>
           <div className={styles.actions}>
-            <Link className={styles.primaryAction} to="/docs/getting-started/docker">
-              开始使用
+            <Link className={styles.primaryAction} to="/docs/getting-started/install">
+              选择安装方式
               <span aria-hidden="true">→</span>
             </Link>
-            <Link className={styles.secondaryAction} to="/docs/reference/tools">
-              浏览工具
+            <Link className={styles.secondaryAction} to="/docs/intro">
+              了解功能
             </Link>
           </div>
           <div className={styles.proofRow}>
@@ -101,8 +100,8 @@ function HomepageHeader(): ReactNode {
               <span>任务状态</span>
             </div>
             <div>
-              <strong>MCP</strong>
-              <span>原生协议</span>
+              <strong>跨平台</strong>
+              <span>本机与服务器</span>
             </div>
           </div>
         </div>
@@ -116,7 +115,7 @@ export default function Home(): ReactNode {
   return (
     <Layout
       title="AgentDock 文档"
-      description="AgentDock 官方文档：安装、配置、工具、Skill、动态 MCP、可恢复任务与 NexusDock Recall。">
+      description="AgentDock 官方文档：快速安装、连接客户端、使用 Skill、浏览器和外部 MCP。">
       <HomepageHeader />
       <main>
         <HomepageFeatures />

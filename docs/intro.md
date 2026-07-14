@@ -5,48 +5,54 @@ slug: /intro
 
 # AgentDock
 
-AgentDock 是本地与远程 Agent 的工具运行层。它把文件、命令、Git、Skill、动态 MCP、浏览器自动化、可恢复任务和长期知识召回组织成明确、可审计的工具边界，让 Agent 能直接完成真实工作。
+AgentDock 让支持 MCP 的 AI 客户端可以在你的电脑或服务器上读取文件、执行命令、操作 Git、使用浏览器，并按需连接其他服务。
 
-## 核心能力
+它不会替你决定权限范围。AgentDock 能访问什么，取决于运行它的系统用户、Docker 挂载目录和你启用的功能。
 
-- **文件与命令**：读取、搜索、结构化修改文件，执行有边界的命令并管理长时间会话。
-- **Git 与 GitHub**：检查仓库状态、提交改动、拉取和推送代码。
-- **Skill**：用文档描述工作方法和约束，真实动作仍由文件、命令、浏览器或 MCP 工具完成。
-- **动态 MCP**：按需注册和调用外部 MCP 服务，不把远端工具混入 AgentDock 内置工具列表。
-- **可恢复任务**：持久化多步骤任务、完成条件、阶段进度和验证证据。
-- **NexusDock Recall**：可选接入长期 Markdown、经验卡片和笔记召回。
-- **自动化能力**：可选浏览器自动化；macOS 登录会话中还可以通过 Skill 驱动桌面操作。
+## 第一次使用
 
-## 选择安装方式
+先打开 [安装 AgentDock](./getting-started/install.md)，按当前系统选择原生安装。已经在使用 Docker，或需要隔离运行环境时再选择 Docker。
 
-| 场景 | 推荐入口 |
+| 当前环境 | 推荐入口 |
 | --- | --- |
-| 本机快速体验 | [Docker 快速安装](./getting-started/docker.md) |
-| Linux 长期运行 | [Linux 自动安装](./getting-started/linux.md) |
-| 手动配置 systemd 与反代 | [Linux 手动 systemd 部署](./getting-started/vps.md) |
-| Windows 原生运行 | [Windows 原生安装](./getting-started/windows.md) |
-| macOS 原生运行 | [macOS 安装](./getting-started/macos.md) |
+| macOS | [macOS 安装](./getting-started/macos.md) |
+| Windows 11 | [Windows 安装](./getting-started/windows.md) |
+| Linux 服务器或桌面 | [Linux 安装](./getting-started/linux.md) |
+| 已经安装 Docker | [Docker 安装](./getting-started/docker.md) |
 
-## 路径模型
+安装完成后，把页面给出的 MCP 地址和 Token 填入客户端即可。第一次使用不需要先理解完整配置、systemd、WSL、容器数据卷或反向代理。
 
-AgentDock 使用当前运行用户的 Host 路径：
+## 可以让它做什么
 
-- `~/.agentdock`：任务、Skill、动态 MCP、环境配置和运行产物等内部状态。
-- `~/AgentDock`：文件、命令和 Git 工具的默认工作目录。
+连接成功后，可以直接向 Agent 提出任务，例如：
 
-相对路径从 `~/AgentDock` 解析；绝对路径按运行 AgentDock 的操作系统用户真实解析。Docker 环境由 volume 控制可见范围，裸机环境由操作系统用户权限决定。
+- “检查这个项目为什么启动失败，并修好后验证。”
+- “读取这份仓库，修改代码并提交。”
+- “打开网页完成查询，并把结果整理成文件。”
+- “安装并使用一个 Skill。”
+- “接入一个外部 MCP 服务。”
+- “把长任务拆成步骤，并持续更新进度。”
 
-## 下一步
+Agent 会根据任务选择文件、命令、Git、浏览器、Skill 或外部 MCP 工具。普通用户通常不需要逐个手动调用工具。
 
-- [查看完整配置](./reference/configuration.md)
-- [浏览内置工具](./reference/tools.md)
-- [理解 Skill](./concepts/skills.md)
-- [理解可恢复任务](./concepts/tasks.md)
-- [接入动态 MCP](./concepts/dynamic-mcp.md)
-- [配置 NexusDock Recall](./concepts/recalldock.md)
-- [安全部署](./operations/security.md)
+## 数据保存在哪里
 
-## 项目仓库
+裸机安装默认使用：
 
-- [AgentDock 源码](https://github.com/uvwt/agentdock)
-- [AgentDock 文档源码](https://github.com/uvwt/agentdock-docs)
+```text
+~/.agentdock   AgentDock 状态、任务、Skill 和配置
+~/AgentDock    默认工作目录
+```
+
+Docker 安装默认把这两类数据保存到 Docker volume。删除程序或容器不一定会删除数据；执行清理命令前请先确认是否需要保留。
+
+## 常用入口
+
+- [使用 Skill](./concepts/skills.md)
+- [任务与进度](./concepts/tasks.md)
+- [浏览器自动化](./guides/browser-control.md)
+- [连接外部 MCP](./concepts/dynamic-mcp.md)
+- [完整配置参考](./reference/configuration.md)
+- [故障排查](./operations/troubleshooting.md)
+
+需要修改反向代理、系统服务、容器挂载或完整环境变量时，再进入“进阶与运维”。

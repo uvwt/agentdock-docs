@@ -1,103 +1,64 @@
-# Skill 设计与运行模型
+# 使用 Skill
 
-AgentDock 的 Skill 是给模型读取的工作方法和能力契约，不是插件进程或黑盒执行器。模型先读取 `SKILL.md`，理解触发条件、步骤和安全边界，再使用文件、命令、浏览器或 MCP 等真实工具完成工作。
+Skill 是一份给 Agent 阅读的工作说明，里面写明什么时候使用、要遵守什么步骤、需要哪些依赖，以及哪些操作必须谨慎确认。
 
-## 核心原则
+它不是单独运行的插件。真正的文件修改、命令执行、浏览器操作和外部请求仍由 AgentDock 工具完成。
 
-第一方 Skill 采用：
+## 普通用户如何使用
 
-```text
-可移植核心 + 可选 AgentDock 宿主适配
-```
-
-可移植核心应满足：
-
-- 包内文件使用相对路径。
-- 配置和凭据只从当前进程环境读取。
-- 辅助脚本可以从 Skill 包根目录直接运行。
-- 输入输出使用普通文本、JSON 或标准协议。
-- 不绑定固定用户目录、安装版本或 AgentDock 私有状态文件。
-
-AgentDock 宿主适配负责：
-
-- 通过 `agentdock_context` 发现当前激活 Skill。
-- 通过 `read_file` 读取 `skill://<name>/SKILL.md`。
-- 通过 `skill_package` 校验、安装、回滚和管理独立环境。
-- 通过 `exec_command skill=<name>` 绑定当前激活包目录和环境。
-
-## 包结构
-
-最小 Skill：
+直接告诉 Agent 你的目标即可，例如：
 
 ```text
-example-skill/
-└── SKILL.md
+查看当前 Codex 额度。
+用 desktop Skill 操作这个 macOS 应用。
+安装并使用这个 Skill：https://example.com/example-skill.tar.gz
 ```
 
-按需增加：
+Agent 通常会：
+
+1. 检查当前是否已经安装匹配的 Skill。
+2. 读取 Skill 的说明和安全边界。
+3. 检查需要的命令、账号或环境变量。
+4. 使用真实工具执行任务。
+5. 对有副作用的操作进行确认和验证。
+
+普通用户不需要手工打开 Skill 安装目录，也不要自己拼接版本路径。
+
+## 安装 Skill
+
+安装前应先确认来源可信。可以让 Agent 先校验包，再安装并激活：
 
 ```text
-example-skill/
-├── SKILL.md
-├── references/
-├── scripts/
-├── run.py
-└── tests/
+请先审查这个 Skill 的来源、文件和权限需求，确认安全后再安装。
 ```
 
-`SKILL.md` Frontmatter：
+AgentDock 会保存已安装版本，并允许在更新失败时回滚。Skill 包不应包含 Token、Cookie、浏览器登录态或个人环境文件。
 
-```yaml
----
-name: example-skill
-description: 说明何时使用、解决什么问题以及能力边界
-version: 1.0.0
----
-```
+## 配置账号或 API Key
 
-辅助脚本不是统一入口。Skill 文档应说明从包根目录如何运行脚本，例如：
-
-```bash
-printf '%s' '{"skill_action":"status"}' | python3 run.py
-```
-
-## 安装与环境
-
-校验并安装：
+Skill 需要账号凭据时，让 Agent 使用该 Skill 的独立环境保存，例如：
 
 ```text
-skill_package action=validate source=<path-or-url>
-skill_package action=install source=<path-or-url> channel=stable
+为 example-skill 配置 EXAMPLE_API_KEY，但不要在回复中回显真实值。
 ```
 
-配置环境变量：
+独立环境只在运行对应 Skill 时注入，不会写入 Skill 包，也不会永久污染系统环境。
+
+## 使用时要注意
+
+- 删除、发送、上传、支付、授权等操作仍需要明确确认。
+- Skill 说明不能突破运行用户、Docker volume 或系统权限。
+- 第三方 Skill 可能调用外部服务，安装前应检查来源和能力范围。
+- 遇到失败时，优先查看缺少的依赖或配置，不要把秘密粘贴到公开日志。
+
+## 查看已安装 Skill
+
+可以直接询问：
 
 ```text
-skill_package action=env_set skill=example-skill key=EXAMPLE_API_KEY value=...
-skill_package action=env_list skill=example-skill
+当前有哪些 Skill？它们分别做什么？
 ```
 
-`env_list` 只返回变量名和是否已配置。环境文件、Token、Cookie、Session、缓存和设备私有数据不得进入 Skill 包。
+Agent 会先查看已安装 Skill 的名称和说明，需要时再读取对应使用文档。
 
-## 执行语义
-
-在 AgentDock 中运行当前激活 Skill 的辅助脚本：
-
-```text
-exec_command
-  skill: example-skill
-  cmd: python3 run.py
-```
-
-未显式指定 `workdir` 时，命令从当前激活包根目录运行；Skill 独立环境只注入本次命令。显式 `workdir` 和 `env` 的优先级更高，命令结束后不会污染 AgentDock 主进程或系统环境。
-
-## 更新与验证
-
-1. 修改正文、引用、脚本或测试。
-2. 递增语义化版本。
-3. 运行包内测试和语法检查。
-4. 使用 `skill-authoring` 检查可移植性和创作质量。
-5. 使用 `skill_package validate` 检查包结构与安装安全。
-6. 安装激活后，通过 `agentdock_context`、`skill://` 和代表性只读动作验证。
-
-同名同版本的 Skill 内容应保持不可变；需要修改时发布新版本。
+创建或维护 Skill 属于开发者工作，见 [开发者指南](../contributing/development.md#skill-开发)。

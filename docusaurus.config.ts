@@ -76,12 +76,12 @@ const config: Config = {
         },
         {
           to: '/docs/reference/configuration',
-          label: '配置',
+          label: '配置参考',
           position: 'left',
         },
         {
           to: '/docs/reference/tools',
-          label: '工具',
+          label: '工具目录',
           position: 'left',
         },
         {
@@ -97,7 +97,7 @@ const config: Config = {
         {
           title: '文档',
           items: [
-            {label: '快速开始', to: '/docs/getting-started/docker'},
+            {label: '安装 AgentDock', to: '/docs/getting-started/install'},
             {label: '配置参考', to: '/docs/reference/configuration'},
             {label: '工具目录', to: '/docs/reference/tools'},
           ],

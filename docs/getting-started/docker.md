@@ -1,26 +1,21 @@
-# Docker 快速安装
+# Docker 安装
 
-这是体验 AgentDock 最省事的方式：不需要下载源码，也不需要自己构建镜像。
+适合已经安装 Docker，或希望把 AgentDock 与宿主系统隔离运行的用户。不需要下载源码或执行 `docker build`。
 
-Docker 版适合文件、命令、Git、Skill 和动态 MCP。它不能直接控制 macOS 桌面；需要桌面自动化时请使用 [macOS 安装](./macos.md)。
+需要控制 macOS 桌面时不要使用 Docker，请改用 [macOS 安装](./macos.md)。
 
-## 开始前
-
-先安装 Docker：
-
-- Windows 或 macOS：安装 [Docker Desktop](https://docs.docker.com/desktop/)。
-- Linux：安装 [Docker Engine](https://docs.docker.com/engine/install/) 和 Docker Compose 插件。
-
-打开终端，确认下面两条命令都能正常输出版本号：
+## 1. 确认 Docker 可用
 
 ```bash
 docker --version
 docker compose version
 ```
 
-## 1. 下载启动配置
+两条命令都能显示版本号后再继续。
 
-根据你的系统选择一组命令。
+## 2. 下载启动配置
+
+根据当前系统选择一组命令。
 
 ### macOS / Linux
 
@@ -43,43 +38,20 @@ $token = [guid]::NewGuid().ToString("N") + [guid]::NewGuid().ToString("N")
 "AGENTDOCK_AUTH_TOKEN=$token" | Set-Content -Encoding ascii .env
 ```
 
-`.env` 中保存的是本机连接密码。不要把它提交到 Git，也不要发给别人。
+`.env` 中保存的是连接 Token。不要把它提交到 Git 或发给别人。
 
-## 2. 启动 AgentDock
+## 3. 启动并检查
 
 ```bash
 docker compose up -d
-```
-
-第一次启动会下载镜像，通常需要几十秒到几分钟。
-
-## 3. 确认启动成功
-
-```bash
 docker compose ps
 ```
 
-当状态显示为 `healthy` 时，AgentDock 已经可以使用。如果仍是 `starting`，等待十几秒后再执行一次。
-
-也可以直接检查健康接口。
-
-macOS / Linux：
-
-```bash
-curl -fsS http://127.0.0.1:18766/healthz
-```
-
-Windows PowerShell：
-
-```powershell
-Invoke-RestMethod http://127.0.0.1:18766/healthz
-```
-
-正常结果中会包含 `ok: true`。
+第一次启动需要下载镜像。等待状态变为 `healthy`；如果仍是 `starting`，十几秒后再执行一次 `docker compose ps`。
 
 ## 4. 连接 MCP 客户端
 
-在客户端的 MCP、Tools 或 Connectors 设置中，新建一个 HTTP MCP 连接并填写：
+在客户端的 MCP、Tools 或 Connectors 设置中，新建连接：
 
 ```text
 传输方式    Streamable HTTP
@@ -87,7 +59,7 @@ Invoke-RestMethod http://127.0.0.1:18766/healthz
 请求头      Authorization: Bearer <你的 Token>
 ```
 
-Token 就是 `.env` 文件中 `AGENTDOCK_AUTH_TOKEN=` 后面的内容。
+Token 是 `.env` 文件中 `AGENTDOCK_AUTH_TOKEN=` 后面的内容。
 
 查看 Token：
 
@@ -102,27 +74,20 @@ Get-Content .env
 ```
 
 :::tip
-**安装完成：** 看到 `healthy` 并把 MCP 地址与 Token 填入客户端后，Docker 安装就完成了。下面的内容都不是首次启动必须操作的。
+**安装完成：** `docker compose ps` 显示 `healthy`，并把 MCP 地址与 Token 填入客户端后即可使用。
 :::
 
-## 常用命令
+## 更新
+
+重新下载最新 `docker-compose.yml`，然后执行：
 
 ```bash
-# 查看日志
-docker compose logs -f
-
-# 重启
-docker compose restart
-
-# 停止并移除容器，数据仍会保留
-docker compose down
-
-# 再次启动
-docker compose up -d
+docker compose pull
+docker compose up -d --force-recreate
 ```
 
 ## 按需继续
 
-- 需要 Chromium 浏览器自动化、开发工具镜像、修改端口或挂载宿主项目：阅读 [Docker 进阶配置](../operations/docker.md)。
-- 启动失败或状态一直不是 `healthy`：查看 [故障排查](../operations/troubleshooting.md)。
+- 需要浏览器镜像、开发工具镜像、修改端口、挂载项目或迁移旧数据：阅读 [Docker 进阶配置](../operations/docker.md)。
+- 启动失败：查看 [故障排查](../operations/troubleshooting.md)。
 - 需要局域网或公网访问：先阅读 [安全模型](../operations/security.md)。

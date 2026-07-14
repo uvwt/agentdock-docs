@@ -1,48 +1,53 @@
 # NexusDock Recall
 
-NexusDock Recall 是可选的长期知识存储，用于保存稳定项目文档、经验卡片和问题笔记，并提供搜索、读取、写入、Git 同步和向量召回能力。
+NexusDock Recall 是 AgentDock 的可选长期知识服务。它用于保存稳定项目说明、经验、决策和问题记录，让后续任务能够找到可靠上下文。
 
-AgentDock 本身不要求 NexusDock；未配置时，文件、命令、Git、Skill、动态 MCP 和本地任务仍可正常使用。
+没有 NexusDock 时，文件、命令、Git、Skill、动态 MCP 和本地任务仍可正常使用。
 
-## 配置
+## 什么时候适合使用
 
-在 AgentDock 进程环境中设置：
+适合保存：
+
+- 长期有效的项目结构和运行方式。
+- 已验证的部署或排障经验。
+- 需要跨会话复用的决策和偏好。
+- 仍待解决的问题与学习记录。
+
+不适合保存：
+
+- Token、密码、Cookie、私钥或浏览器登录态。
+- 一次性日志和临时执行状态。
+- 未验证的猜测。
+- 当前任务的实时进度。
+
+## 接入
+
+需要一个可访问的 NexusDock 地址和可选 Token。可以让 Agent 配置：
 
 ```text
-AGENTDOCK_NEXUS_ENDPOINT=https://nexus.example.com
-AGENTDOCK_NEXUS_TOKEN=<secret>
+为 AgentDock 接入 NexusDock Recall，地址是 https://nexus.example.com，Token 使用安全环境变量保存。
 ```
 
-端口和部署拓扑由 NexusDock 实例决定，AgentDock 不依赖固定本机端口。
+精确环境变量见 [配置参考](../reference/configuration.md#nexusdock-recall-与-workflow)。
 
-## 工具
+## 如何使用
+
+可以直接说：
 
 ```text
-recall_bootstrap  加载高优先级上下文和索引
-recall_search     搜索 Markdown、经验卡片或笔记
-recall_read       按路径读取单个条目
-recall_write      创建、修改或删除长期内容
-recall_maintain   查看同步与索引状态并执行维护
+开始前先查一下这个项目已有的部署记录。
+把这次确认过的结论更新到项目长期文档，不要记录临时日志。
+搜索以前关于 OAuth 的排障经验。
 ```
 
-重要任务通常先使用 `recall_bootstrap` 获取紧凑上下文；需要具体正文时再搜索和读取，避免一次加载大量无关内容。
+Agent 会先搜索已有内容，再决定读取、更新或创建，避免产生重复和冲突。
 
 ## 内容类型
 
-- **Markdown**：稳定项目文档、Runbook、总览和结构化长期事实。
-- **Card**：单一、可复用的经验、偏好、决策或踩坑记录。
-- **Note**：问题讨论、学习记录、尚未完全收敛的结论。
+- **Markdown**：稳定项目文档、Runbook 和结构化长期事实。
+- **Card**：单一、可复用的经验、偏好或决策。
+- **Note**：问题讨论、学习记录和尚未收敛的结论。
 
-选择内容类型时优先考虑未来如何检索和维护，不要把一次性日志或执行状态当成长久知识。
+## 与任务进度的区别
 
-## 安全写入
-
-- 不保存 Token、密码、Cookie、Session、私钥或 OAuth Code。
-- 不保存临时日志、一次性状态和未经验证的猜测。
-- 写入前先搜索已有内容，优先更新权威条目，避免重复和冲突。
-- 删除和覆盖操作应先预览，并明确确认。
-- 设备私有环境文件、浏览器登录态和执行中任务不跨设备同步。
-
-## 与可恢复任务的区别
-
-NexusDock Recall 保存长期可复用知识；`task_manage` 保存当前 AgentDock 实例上的执行进度。任务状态不应写入 Recall，也不会因为配置了 NexusDock 就自动跨设备接续。
+NexusDock Recall 保存长期知识；任务系统保存当前执行进度。任务状态不会因为接入 NexusDock 就自动跨设备继续。

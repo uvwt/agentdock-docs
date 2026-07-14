@@ -12,40 +12,40 @@ type FeatureItem = {
 
 const features: FeatureItem[] = [
   {
-    label: 'CONFIG',
-    title: '配置与认证',
-    description: '统一查看 CLI、环境变量、Bearer Token、OAuth、可信代理和可选能力。',
-    to: '/docs/reference/configuration',
+    label: 'START',
+    title: '安装并连接',
+    description: '按 macOS、Windows、Linux 或 Docker 指南完成安装，并把 MCP 地址填入客户端。',
+    to: '/docs/getting-started/install',
   },
   {
-    label: 'TOOLS',
-    title: '内置工具',
-    description: '按文件、命令、Git、任务、浏览器和 Recall 浏览完整工具边界。',
+    label: 'WORK',
+    title: '处理文件和代码',
+    description: '让 Agent 读取项目、执行命令、修改文件并操作 Git，完成后提供真实验证。',
     to: '/docs/reference/tools',
   },
   {
     label: 'SKILLS',
-    title: '可移植工作方法',
-    description: '用纯文档 Skill 固化流程、约束和经验，真实动作仍由稳定工具执行。',
+    title: '使用 Skill',
+    description: '安装可信 Skill，把成熟工作方法、依赖和安全边界交给 Agent 使用。',
     to: '/docs/concepts/skills',
   },
   {
+    label: 'BROWSER',
+    title: '操作浏览器',
+    description: '打开网页、点击、输入、截图，并同时检查页面、控制台和网络错误。',
+    to: '/docs/guides/browser-control',
+  },
+  {
     label: 'MCP',
-    title: '动态服务接入',
-    description: '按需注册外部 MCP，通过搜索、检查 Schema 和调用三步完成安全接入。',
+    title: '连接外部服务',
+    description: '按需接入其他 MCP Server，凭据放在独立环境中，不写入注册信息。',
     to: '/docs/concepts/dynamic-mcp',
   },
   {
     label: 'TASKS',
-    title: '可恢复任务',
-    description: '把目标、步骤、阻塞、进度和验证证据持久化，长任务中断后继续执行。',
+    title: '跟踪复杂任务',
+    description: '保存目标、步骤、进度和验证结果，中断后继续，不把“执行结束”误当成完成。',
     to: '/docs/concepts/tasks',
-  },
-  {
-    label: 'RECALL',
-    title: '长期知识召回',
-    description: '接入 NexusDock Recall，在重要任务开始时加载可靠上下文与 Runbook。',
-    to: '/docs/concepts/recalldock',
   },
 ];
 
@@ -71,11 +71,11 @@ export default function HomepageFeatures(): ReactNode {
         <div className="container">
           <div className={styles.sectionHeader}>
             <div>
-              <span className={styles.kicker}>CLEAR BOUNDARIES</span>
-              <Heading as="h2">从连接到执行，每一步都清晰可见</Heading>
+              <span className={styles.kicker}>WHAT YOU CAN DO</span>
+              <Heading as="h2">从安装到完成真实任务</Heading>
             </div>
             <p>
-              AgentDock 不把所有能力堆进一个黑盒，而是让工具、Skill、动态 MCP、任务状态和长期知识各司其职。
+              先完成最短安装，再按需要启用 Skill、浏览器、外部 MCP 和长期任务能力。
             </p>
           </div>
           <div className={styles.grid}>
@@ -90,12 +90,12 @@ export default function HomepageFeatures(): ReactNode {
         <div className={`container ${styles.quickStartInner}`}>
           <div>
             <span className={styles.kicker}>GET STARTED</span>
-            <Heading as="h2">选择适合当前环境的启动方式</Heading>
-            <p>先用 Docker 快速体验，或按平台完成长期部署。</p>
+            <Heading as="h2">按当前系统完成安装</Heading>
+            <p>普通用户优先选择 macOS、Windows 或 Linux 原生安装；已经使用 Docker 时再选择容器方式。</p>
           </div>
           <div className={styles.quickLinks}>
-            <Link className={styles.quickPrimary} to="/docs/getting-started/docker">
-              Docker 快速开始
+            <Link className={styles.quickPrimary} to="/docs/getting-started/install">
+              选择安装方式
               <span aria-hidden="true">→</span>
             </Link>
             <Link className={styles.quickSecondary} to="/docs/intro">

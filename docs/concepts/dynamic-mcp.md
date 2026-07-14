@@ -1,134 +1,74 @@
-# 动态 MCP
+# 连接外部 MCP
 
-AgentDock 把外部 MCP Server 与内置工具分开管理。远端工具不会直接混入 AgentDock 的固定工具列表，而是通过搜索、检查和调用三个步骤按需使用，避免客户端因工具列表频繁变化而失效。
+动态 MCP 让 AgentDock 在不重启或重新编译的情况下连接其他 MCP Server，例如设计平台、任务系统、搜索服务或本地分析工具。
 
-## 调用流程
+普通用户只需要准备服务地址或启动命令，以及该服务要求的凭据。Agent 会负责注册、检查和验证。
 
-```text
-agentdock_context
-→ mcp_tool_search
-→ mcp_tool_inspect
-→ mcp_tool_call
-```
+## 最简单的使用方式
 
-- `mcp_manage`：注册、启用、禁用、刷新、删除 Server，并管理独立环境。
-- `mcp_tool_search`：搜索轻量工具摘要。
-- `mcp_tool_inspect`：读取 `<server>:<tool>` 的完整输入 Schema。
-- `mcp_tool_call`：校验参数并调用上游工具。
-
-## 注册 HTTP MCP
-
-```json
-{
-  "action": "add",
-  "name": "figma",
-  "description": "访问 Figma 设计文件和节点。",
-  "transport": "streamable_http",
-  "url": "https://mcp.example.com/mcp",
-  "header_env": {
-    "Authorization": "FIGMA_MCP_AUTHORIZATION"
-  },
-  "enabled": true
-}
-```
-
-`header_env` 的键是 HTTP Header 名，值是环境变量名。注册信息不会保存 Token 本身。
-
-把秘密写入该 MCP 的独立环境：
-
-```json
-{
-  "action": "env_set",
-  "name": "figma",
-  "key": "FIGMA_MCP_AUTHORIZATION",
-  "value": "Bearer ..."
-}
-```
-
-更新环境后执行 `refresh`，使当前连接重新读取配置。
-
-## 注册 stdio MCP
-
-```json
-{
-  "action": "add",
-  "name": "local-analyzer",
-  "description": "提供本地代码分析工具。",
-  "transport": "stdio",
-  "command": "/absolute/path/to/mcp-server",
-  "args": ["--stdio"],
-  "cwd": "/absolute/working/directory",
-  "env_from_env": {
-    "SERVICE_TOKEN": "LOCAL_ANALYZER_TOKEN"
-  },
-  "enabled": true
-}
-```
-
-`env_from_env` 的键是子进程变量名，值是 AgentDock 宿主进程中的环境变量名。它适合复用已经由服务管理器注入的环境；不要在注册信息中写入真实秘密。
-
-更推荐使用 MCP 独立环境直接配置子进程变量，并省略 `env_from_env`：
-
-```json
-{
-  "action": "env_set",
-  "name": "local-analyzer",
-  "key": "SERVICE_TOKEN",
-  "value": "..."
-}
-```
-
-stdio Server 会作为持久子进程运行；禁用、刷新、删除或 AgentDock 退出时会回收进程树。更新独立环境后执行 `refresh`。
-
-## 发现和调用
-
-搜索：
-
-```json
-{
-  "server": "figma",
-  "query": "screenshot",
-  "limit": 10
-}
-```
-
-检查：
-
-```json
-{
-  "name": "figma:get_screenshot"
-}
-```
-
-调用：
-
-```json
-{
-  "name": "figma:get_screenshot",
-  "arguments": {
-    "file_key": "...",
-    "node_id": "1:2"
-  }
-}
-```
-
-AgentDock 会先按发现到的 Schema 做结构校验，上游 MCP Server 仍负责最终业务校验。
-
-## 管理与安全
-
-常用动作：
+可以直接告诉 Agent：
 
 ```text
-list
-inspect
-add
-enable
-disable
-refresh
-remove
-env_set
-env_unset
-env_list
+接入这个 MCP：https://mcp.example.com/mcp
+名称使用 example，认证 Token 放到独立环境里，接入后验证能否列出工具。
 ```
 
-`env_list` 只返回变量名和是否已配置，不返回秘密值。不要把 Token、Cookie、OAuth Code 或密码直接写入 MCP 注册信息、README 或日志。
+Agent 通常会：
+
+1. 确认来源和传输方式。
+2. 注册 MCP Server。
+3. 把 Token 保存到该 MCP 的独立环境。
+4. 刷新连接。
+5. 搜索一个工具并完成只读验证。
+
+## 两种连接方式
+
+### HTTP MCP
+
+适合已经提供网络地址的服务：
+
+```text
+https://mcp.example.com/mcp
+```
+
+认证信息通过独立环境映射到 HTTP Header。注册信息只保存变量名，不保存真实 Token。
+
+### 本地 stdio MCP
+
+适合安装在同一台机器上的命令行 MCP Server。需要提供：
+
+- 可执行文件的绝对路径。
+- 启动参数。
+- 可选工作目录。
+- 运行所需环境变量。
+
+本地 MCP 会继承运行 AgentDock 的系统权限，因此安装前同样要审查来源。
+
+## 凭据怎么保存
+
+不要把 Token、Cookie、密码或 OAuth Code 直接写进聊天记录、README 或 MCP 注册信息。
+
+让 Agent 使用 `mcp_manage env_set` 保存秘密。`env_list` 只会显示变量名和是否已配置，不会返回真实值。
+
+更新凭据后需要刷新 MCP 连接。
+
+## 如何确认接入成功
+
+可以要求 Agent：
+
+```text
+列出 example MCP 的工具，选择一个只读工具确认参数，并完成一次无副作用调用。
+```
+
+如果失败，依次检查服务是否启用、地址或命令是否正确、所需变量是否已配置，以及上游服务是否可达。
+
+## 管理已有 MCP
+
+常用操作包括：
+
+- 查看和检查配置。
+- 启用、禁用或刷新连接。
+- 更新或删除独立环境变量。
+- 删除不再使用的 Server。
+
+精确 action 和参数见 [工具介绍](../reference/tools.md#动态-mcp)。

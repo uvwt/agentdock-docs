@@ -1,10 +1,10 @@
 # macOS 安装
 
-AgentDock 为 Apple Silicon 和 Intel Mac 发布预编译二进制。普通安装不需要 Go、Git 或源码。
+AgentDock 为 Apple Silicon 和 Intel Mac 提供预编译版本。普通安装不需要 Go、Git 或源码。
 
-裸机模式可以使用浏览器自动化，并在授予屏幕录制和辅助功能权限后使用 macOS Desktop Skill。
+原生安装适合使用本机文件，以及需要屏幕录制和辅助功能权限的 macOS 桌面自动化。
 
-## 安装
+## 1. 安装 AgentDock
 
 ```bash
 curl -fL https://github.com/uvwt/agentdock/releases/latest/download/install-macos.sh \
@@ -12,60 +12,60 @@ curl -fL https://github.com/uvwt/agentdock/releases/latest/download/install-maco
 zsh /tmp/install-agentdock-macos.sh
 ```
 
-安装脚本会：
+脚本会识别当前 Mac 架构、校验下载文件，并安装到：
 
-1. 识别 `arm64` 或 `amd64`。
-2. 下载对应的 GitHub Release 压缩包和 SHA-256 校验文件。
-3. 安装到 `~/.local/bin/agentdock`。
-4. 创建 `~/.agentdock` 和 `~/AgentDock`。
-5. 升级时把旧二进制备份到 `~/.agentdock/backups/bin`。
+```text
+~/.local/bin/agentdock
+```
 
-首次安装后，如 `~/.local/bin` 尚未加入 PATH：
+如果脚本提示 PATH 尚未包含该目录，执行：
 
 ```bash
 echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zprofile
 export PATH="$HOME/.local/bin:$PATH"
 ```
 
-## 前台运行
+## 2. 启动
 
 ```bash
 agentdock --host 127.0.0.1 --port 8765
 ```
 
-健康检查：
+保持这个终端窗口运行。第一次体验时不需要先配置后台服务。
+
+## 3. 确认启动成功
+
+另开一个终端执行：
 
 ```bash
 curl -fsS http://127.0.0.1:8765/healthz
 ```
 
-本机回环监听可以无认证运行。需要监听局域网地址或通过反代公开时，必须配置 Bearer Token 或 OAuth，并使用 HTTPS。
+正常结果中会包含 `ok: true`。
 
-## 安装指定版本
+## 4. 连接 MCP 客户端
 
-```bash
-zsh /tmp/install-agentdock-macos.sh --version vX.Y.Z
+在同一台 Mac 上使用时填写：
+
+```text
+传输方式    Streamable HTTP
+地址        http://127.0.0.1:8765/mcp
+认证        不需要
 ```
 
-也可以更改安装目录：
+只监听 `127.0.0.1` 时可以无认证运行。需要局域网或公网访问时，必须启用认证并使用 HTTPS。
 
-```bash
-zsh /tmp/install-agentdock-macos.sh --install-dir "$HOME/bin"
-```
+:::tip
+**安装完成：** 健康检查通过并在客户端连接成功后，就可以开始使用文件、命令、Git 和 Skill。
+:::
 
 ## 更新
 
-重新下载并运行最新安装脚本即可。运行数据和工作目录不会被删除，旧二进制会先备份。
+重新下载并运行最新安装脚本即可。任务、Skill、配置和工作目录不会被删除，旧二进制会先备份。
 
-## 目录与权限
+## 按需继续
 
-```text
-~/.agentdock  AgentDock 内部状态
-~/AgentDock   默认工作目录
-```
-
-裸机进程能访问哪些文件，取决于当前 macOS 用户权限。开启桌面自动化前，应只给实际运行 AgentDock 的终端或托管应用授予必要的屏幕录制和辅助功能权限。
-
-长期后台运行可以使用 LaunchAgent，固定二进制路径、工作目录和环境变量。涉及 Desktop Skill 时，AgentDock 必须运行在当前登录用户会话中，不能放到系统级 LaunchDaemon。
-
-桌面能力见 [macOS Desktop Skill](../guides/desktop-automation.md)。源码构建只面向贡献者，见 [开发与质量门禁](../contributing/development.md)。
+- 指定版本、修改安装目录或配置后台运行：阅读 [macOS 进阶配置](../operations/macos.md)。
+- 使用屏幕、键盘和鼠标自动化：阅读 [macOS 桌面自动化](../guides/desktop-automation.md)。
+- 使用浏览器自动化：当前免构建方案是 Docker browser 镜像，见 [浏览器自动化](../guides/browser-control.md)。
+- 启动失败：查看 [故障排查](../operations/troubleshooting.md)。

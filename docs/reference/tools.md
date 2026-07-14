@@ -2,6 +2,17 @@
 
 AgentDock 通过 MCP 向上层 Agent 暴露一组稳定的内置工具。工具负责执行真实动作，Skill 负责描述工作方法，动态 MCP 负责接入外部服务，这三者职责不同。
 
+普通用户通常不需要逐个手动调用工具。连接 MCP 客户端后，直接描述目标，Agent 会选择合适工具。这个页面主要用于了解能力范围、排查连接问题或进行集成开发。
+
+## 常见能力
+
+- 读取、搜索、修改和发布文件。
+- 执行命令并持续观察长时间任务。
+- 检查、提交、拉取和推送 Git 仓库。
+- 安装和使用 Skill。
+- 管理复杂任务的步骤与验证。
+- 接入外部 MCP、浏览器和 NexusDock Recall。
+
 实际可见工具由当前配置决定：
 
 - 基础工具始终可用。
@@ -10,32 +21,6 @@ AgentDock 通过 MCP 向上层 Agent 暴露一组稳定的内置工具。工具�
 - 动态 MCP 的上游工具不会直接混入 AgentDock 的 `tools/list`，而是通过固定的发现和调用入口访问。
 
 调用 `server_info` 可以查看当前实例真正暴露的工具清单。
-
-## 工具结果状态
-
-AgentDock 把“工具调用是否成功”和“业务或命令结果是否成功”分开表达：
-
-- MCP 协议层的 `isError` 表示工具调用错误。参数错误、权限不足、资源不存在、网络失败或内部异常会返回 `isError: true`。
-- 正常返回的 `structuredContent` 不包含通用 `ok` 或 `tool_ok`，避免模型把“工具成功返回结果”误判成“命令或业务成功”。
-- 命令完成后使用 `command_ok`、`exit_code` 和可选的 `command_error`。命令仍在运行时不会提前返回 `command_ok`。
-- 浏览器操作使用 `browser_ok`、`browser_error`；其他工具使用 `valid`、`changed`、`configured`、`written`、`encrypted_backup_ok` 等领域字段。
-
-命令退出失败仍然属于一次正常的工具返回，因为 AgentDock 需要保留 stdout、stderr 和退出码：
-
-```json
-{
-  "status": "exited",
-  "command_ok": false,
-  "exit_code": 1,
-  "command_error": "exit status 1",
-  "stdout": "",
-  "stderr": "..."
-}
-```
-
-业务检查未通过也不等于工具调用错误。例如 Skill 校验可以正常返回 `valid: false` 和具体问题列表。调用方应先看 MCP `isError`，再按工具领域读取 `command_ok`、`valid`、`changed` 等字段。
-
-HTTP 健康检查、Runtime API、WSL 子进程等内部或独立协议可能使用自己的状态字段，但这些字段不会作为 MCP 工具结果中的通用成功标记暴露。
 
 ## 系统与上下文
 
@@ -101,7 +86,7 @@ agentdock_context
 → 使用真实文件、命令、浏览器或 MCP 工具执行
 ```
 
-`skill_package env_list` 不返回秘密值，只返回变量名和是否已配置。完整设计见 [Skill 设计与运行模型](../concepts/skills.md)。
+`skill_package env_list` 不返回秘密值，只返回变量名和是否已配置。普通用户使用方式见 [使用 Skill](../concepts/skills.md)。
 
 ## 动态 MCP
 
@@ -190,6 +175,32 @@ AgentDock 把只读操作和会修改仓库的操作分开。
 `browser_session` 支持 Playwright 和 CDP 后端、无头模式、独立 Profile、Cookie、localStorage 和 storage state。默认不要接管用户日常浏览器 Profile。
 
 AgentDock 默认不开放任意页面脚本执行动作。优先使用可观察的点击、输入、滚动和截图完成操作。详细说明见 [浏览器自动化](../guides/browser-control.md)。
+
+## 返回状态（集成与调试）
+
+AgentDock 把“工具调用是否成功”和“业务或命令结果是否成功”分开表达：
+
+- MCP 协议层的 `isError` 表示工具调用错误。参数错误、权限不足、资源不存在、网络失败或内部异常会返回 `isError: true`。
+- 正常返回的 `structuredContent` 不包含通用 `ok` 或 `tool_ok`，避免模型把“工具成功返回结果”误判成“命令或业务成功”。
+- 命令完成后使用 `command_ok`、`exit_code` 和可选的 `command_error`。命令仍在运行时不会提前返回 `command_ok`。
+- 浏览器操作使用 `browser_ok`、`browser_error`；其他工具使用 `valid`、`changed`、`configured`、`written`、`encrypted_backup_ok` 等领域字段。
+
+命令退出失败仍然属于一次正常的工具返回，因为 AgentDock 需要保留 stdout、stderr 和退出码：
+
+```json
+{
+  "status": "exited",
+  "command_ok": false,
+  "exit_code": 1,
+  "command_error": "exit status 1",
+  "stdout": "",
+  "stderr": "..."
+}
+```
+
+业务检查未通过也不等于工具调用错误。例如 Skill 校验可以正常返回 `valid: false` 和具体问题列表。调用方应先看 MCP `isError`，再按工具领域读取 `command_ok`、`valid`、`changed` 等字段。
+
+HTTP 健康检查、Runtime API、WSL 子进程等内部或独立协议可能使用自己的状态字段，但这些字段不会作为 MCP 工具结果中的通用成功标记暴露。
 
 ## 工具选择原则
 

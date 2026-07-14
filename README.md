@@ -32,18 +32,19 @@ pnpm check
 
 ```text
 docs/
-├── reference/        # 配置与内置工具
-├── getting-started/  # 安装与部署
+├── getting-started/  # 普通用户安装与首次连接
 ├── concepts/         # Skill、任务、动态 MCP、NexusDock Recall
 ├── guides/           # 浏览器和桌面自动化
-├── operations/       # 安全与排障
-└── contributing/     # 开发与贡献
+├── reference/        # 完整配置与工具参考
+├── operations/       # 高级部署、安全与排障
+└── contributing/     # 开发者指南
 ```
 
 导航顺序由 `sidebars.ts` 显式维护。
 
 ## 内容规范
 
+- 普通用户页面先给出可完成的最短路径，内部实现、完整参数和维护者流程进入参考、运维或开发者章节。
 - 面向公开用户，不记录个人设备路径、内网端口、私有域名或维护者凭据。
 - 不把迁移历史、废弃接口清单和临时兼容方案放进主文档。
 - 命令、参数和环境变量必须以当前源码为准。
