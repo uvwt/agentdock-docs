@@ -16,7 +16,7 @@ AgentDock 通过 MCP 向上层 Agent 暴露一组稳定的内置工具。工具�
 AgentDock 当前定义 30 个内置工具，实际可见数量由配置决定：
 
 - 不依赖外部集成的基础工具始终可用。
-- 配置 `AGENTDOCK_NEXUS_ENDPOINT` 后，额外暴露 `workflow_template_manage` 和 `recall_*` 工具。
+- 配置 `AGENTDOCK_NEXUS_ENDPOINT` 后，额外暴露 `workflow_template_manage`、`recall_*` 和 `private_note_manage`。
 - 启用 `AGENTDOCK_BROWSER_ENABLED` 或 `--browser-enabled` 后，额外暴露 `browser_*` 工具。
 - 动态 MCP 的上游工具不会直接混入 AgentDock 的 `tools/list`，而是通过固定的发现和调用入口访问。
 
@@ -156,11 +156,18 @@ AgentDock 把只读操作和会修改仓库的操作分开。
 
 ## 私密笔记
 
+`private_note_manage` 只在配置 `AGENTDOCK_NEXUS_ENDPOINT` 后暴露：
+
 | 工具 | 用途 | action |
 | --- | --- | --- |
-| `private_note_manage` | 管理本机低频、私密且不应同步到 Recall 的笔记 | `search`、`read`、`write`、`status`、`maintain` |
+| `private_note_manage` | 访问 NexusDock Private Notes 私密笔记库 | `search`、`read`、`write`、`delete`、`status`、`maintain` |
 
-这个工具不是普通记忆入口。只有用户明确要求本地私密记录，或内容明显包含敏感凭据时才应使用。写入必须显式确认；敏感值会在搜索和输出中脱敏。
+这个工具不是普通记忆入口。只有用户明确要求访问私密笔记，或内容明显包含敏感凭据和个人信息时才应使用。
+
+- `search` 只返回标题、简介、标签、分类、路径和更新时间等元数据，不搜索正文。
+- 只有显式 `read` 才返回明文。
+- `write` 和 `delete` 必须使用 `confirmed=true`。
+- Git 备份只保存 age 密文，明文与密钥必须保持 Git 忽略。
 
 ## 浏览器自动化
 

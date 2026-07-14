@@ -13,7 +13,7 @@ AgentDock 当前不读取统一的 YAML、JSON 或 TOML 配置文件。运行配
 | 本机前台运行 | 通常保持 `127.0.0.1` 和默认端口即可 |
 | Docker | `.env` 中的 `AGENTDOCK_AUTH_TOKEN`，其余使用 Compose 默认值 |
 | 浏览器自动化 | 启用浏览器工具，并准备 Chrome、Edge 或 browser 镜像 |
-| NexusDock Recall | 配置服务地址和可选 Token |
+| NexusDock（Recall、Workflow、私密笔记） | 配置服务地址和可选 Token |
 | 局域网或公网访问 | 认证、HTTPS 和反向代理，不能只修改监听地址 |
 
 推荐按部署方式管理配置：
@@ -74,7 +74,7 @@ agentdock \
 | `AGENTDOCK_STDIO` | `false` | 是否使用 stdio 模式 |
 | `AGENTDOCK_BROWSER_ENABLED` | `false` | 是否暴露 `browser_*` 工具 |
 | `AGENTDOCK_BROWSER_RUNNER_DIR` | `~/.agentdock/browser-runner` | browser runner 目录；Docker browser 镜像自动指向镜像内只读目录 |
-| `AGENTDOCK_NEXUS_ENDPOINT` | 空 | NexusDock 服务根地址；配置后暴露 `recall_*` 工具并启用 Workflow 模板后端 |
+| `AGENTDOCK_NEXUS_ENDPOINT` | 空 | NexusDock 服务根地址；配置后暴露 Recall、Workflow 和私密笔记能力 |
 | `AGENTDOCK_NEXUS_TOKEN` | 空 | NexusDock Bearer Token |
 
 布尔值建议只使用 `true` 或 `false`，避免不同服务管理器对其他写法的处理差异。
@@ -138,9 +138,9 @@ AGENTDOCK_TRUSTED_PROXY_CIDRS=127.0.0.0/8,::1/128
 
 多个网段使用逗号分隔。不要把不受控制的公网网段加入该变量，否则认证限流和客户端地址判断可能被伪造。
 
-## NexusDock Recall 与 Workflow
+## NexusDock Recall、Workflow 与私密笔记
 
-配置 NexusDock 后，AgentDock 会暴露 `recall_*` 工具，并让 `workflow_template_manage` 使用 NexusDock Workflow Registry：
+配置 NexusDock 后，AgentDock 会暴露 `recall_*`、`workflow_template_manage` 和 `private_note_manage`。Recall 与 Workflow 使用 NexusDock Registry，私密笔记使用 NexusDock Private Notes：
 
 ```bash
 AGENTDOCK_NEXUS_ENDPOINT=https://nexus.example.com
@@ -150,8 +150,7 @@ AGENTDOCK_NEXUS_TOKEN=<nexus-token>
 `AGENTDOCK_NEXUS_ENDPOINT` 使用 NexusDock 服务根地址，不要附加具体 API 路径。未配置时：
 
 - 本地 `task_manage` 仍可管理普通可恢复任务。
-- `recall_*` 工具不会出现在 `tools/list`。
-- Workflow 模板查询和变更不可用。
+- `recall_*`、`workflow_template_manage` 和 `private_note_manage` 不会出现在 `tools/list`。
 
 ## 浏览器工具
 
@@ -174,7 +173,7 @@ agentdock --browser-enabled
 | `AGENTDOCK_BROWSER_RUNNER_DIR` | `~/.agentdock/browser-runner` | 包含 `browser-runner.js` 和 Node 依赖的目录 |
 | `AGENTDOCK_BROWSER_EXECUTABLE_PATH` | 空 | runner 使用的 Chromium 可执行文件；Docker browser 镜像自动设置为 `/usr/bin/chromium` |
 
-Docker browser 镜像会自动配置 runner 和 Chromium。macOS、Windows 原生 Release 当前不会安装 runner；启用前需要单独准备 Node.js、runner 和 `playwright-core`。具体选择见 [浏览器自动化](../guides/browser-control.md)。
+Docker browser 镜像会自动配置 runner 和 Chromium。macOS、Windows、Linux 原生 Release 当前不会安装 runner；启用前需要单独准备 Node.js、runner 和 `playwright-core`。具体选择见 [浏览器自动化](../guides/browser-control.md)。
 
 ## Skill 与动态 MCP 的独立环境
 
@@ -200,9 +199,11 @@ Skill 和动态 MCP 的业务秘密不应长期放在 AgentDock 主进程环境�
 
 分别通过 `skill_package` 和 `mcp_manage` 调用。`env_list` 只返回变量名和是否已配置，不返回真实值。
 
-## 私密笔记加密
+## 私密笔记
 
-`private_note_manage` 可以通过 age X25519 加密私密笔记。通常先让工具初始化本机身份和 Recipient：
+从 `v0.4.4` 开始，`private_note_manage` 通过 NexusDock Private Notes 接口工作，不再读取 AgentDock 本机的私密笔记目录或 `AGENTDOCK_PRIVATE_NOTES_*` 环境变量。需要先配置 `AGENTDOCK_NEXUS_ENDPOINT` 和可选 Token。
+
+NexusDock 负责明文存储边界、age X25519 密文备份和 Git 忽略规则。可以通过维护动作初始化或检查加密：
 
 ```json
 {
@@ -211,14 +212,7 @@ Skill 和动态 MCP 的业务秘密不应长期放在 AgentDock 主进程环境�
 }
 ```
 
-需要使用外部 Recipient 时，可以配置：
-
-| 环境变量 | 说明 |
-| --- | --- |
-| `AGENTDOCK_PRIVATE_NOTES_AGE_RECIPIENT` | 一个或多个 age X25519 Recipient，可使用换行、逗号或分号分隔 |
-| `AGENTDOCK_PRIVATE_NOTES_AGE_RECIPIENTS_FILE` | 包含 Recipient 的文本文件路径 |
-
-不要把 age Identity 私钥放进这两个变量或提交到仓库。
+搜索只匹配标题、简介、标签、分类和路径等安全元数据，不搜索或返回正文。只有显式 `read` 才返回明文；`write` 和 `delete` 都需要 `confirmed=true`。
 
 ## 查看当前状态
 
