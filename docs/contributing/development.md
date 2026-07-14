@@ -37,6 +37,26 @@ pnpm check
 
 `pnpm check` 会执行 TypeScript 检查和 Docusaurus 生产构建，并验证内部链接。
 
+## macOS 源码部署
+
+`make install-macos` 面向普通用户：它下载 GitHub Release，并安装到 `~/.local/bin/agentdock`。已有 LaunchAgent 如果固定运行源码仓库内的二进制，不应使用这个目标更新生产实例。
+
+贡献者从源码更新现有 macOS 裸机实例时，使用：
+
+```bash
+make check
+
+AGENTDOCK_CODESIGN_IDENTITY="<codesign identity>" \
+AGENTDOCK_CODESIGN_KEYCHAIN="<keychain path>" \
+AGENTDOCK_CODESIGN_IDENTIFIER="com.local.agentdock" \
+make deploy-macos-source
+
+make restart-macos
+make smoke-macos
+```
+
+`deploy-macos-source` 会重新执行格式、测试和 vet，构建临时二进制，要求稳定代码签名，备份旧二进制，再替换源码仓库内的运行文件。重启后仍需检查 healthz、实际监听 PID、错误日志和签名；不能只因为 healthz 返回成功就认定新进程已经接管端口。
+
 文档职责：
 
 - 源码仓库 README 只保留产品摘要、最短启动方式、开发门禁和在线文档入口。
