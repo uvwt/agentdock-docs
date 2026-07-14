@@ -530,6 +530,12 @@ body {
 }
 
 @media screen and (max-width: 996px) {
+  /* 移动端抽屉是 navbar 内的 fixed 元素；滤镜会创建包含块并把抽屉裁到导航栏高度。 */
+  .navbar {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
   .navbar__brand {
     margin-right: 0;
   }
