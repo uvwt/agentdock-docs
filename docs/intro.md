@@ -48,6 +48,7 @@ Docker 安装默认把这两类数据保存到 Docker volume。删除程序或�
 
 ## 常用入口
 
+- [使用 ChatGPT 连接 AgentDock](./guides/chatgpt.md)
 - [使用 Skill](./concepts/skills.md)
 - [任务与进度](./concepts/tasks.md)
 - [浏览器自动化](./guides/browser-control.md)

@@ -131,16 +131,25 @@ https://agentdock.example.com/mcp
 
 ## OAuth（可选）
 
-需要 OAuth 动态客户端注册和 PKCE S256 时：
+ChatGPT 等需要浏览器授权的 MCP 客户端推荐使用 OAuth。AgentDock 支持动态客户端注册、Authorization Code、PKCE S256 和 Refresh Token：
 
 ```bash
 AGENTDOCK_OAUTH_ENABLED=true
 AGENTDOCK_SERVER_URL=https://agentdock.example.com
-AGENTDOCK_OAUTH_PASSWORD=<login-password>
-AGENTDOCK_OAUTH_TOKEN_SECRET=<random-signing-secret>
+AGENTDOCK_OAUTH_PASSWORD=<至少-12-个字符的授权密码>
+AGENTDOCK_OAUTH_TOKEN_SECRET=<至少-32-字节的随机签名密钥>
 ```
 
-公网 `AGENTDOCK_SERVER_URL` 必须使用 HTTPS。OAuth 与 Bearer Token 可以按客户端需求选择，不要把密码或签名密钥提交到仓库。
+公网 `AGENTDOCK_SERVER_URL` 必须使用 HTTPS，并且只填写 Origin，不附加 `/mcp`。签名密钥应稳定保存，不要在每次服务重启时重新生成。OAuth 与 Bearer Token 可以按客户端需求选择或同时启用，不要把密码或签名密钥提交到仓库。
+
+配置并重启服务后，可先验证：
+
+```bash
+curl -fsS https://agentdock.example.com/.well-known/oauth-authorization-server
+curl -fsS https://agentdock.example.com/.well-known/oauth-protected-resource/mcp
+```
+
+ChatGPT 中实际填写的 MCP 地址为 `https://agentdock.example.com/mcp`。完整操作见 [使用 ChatGPT 连接 AgentDock](../guides/chatgpt.md)。
 
 ## 更新
 
