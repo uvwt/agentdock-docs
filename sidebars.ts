@@ -26,6 +26,8 @@ const sidebars: SidebarsConfig = {
         description: '了解 Skill、任务、浏览器、桌面自动化和外部服务接入。',
       },
       items: [
+        'guides/mcp-clients',
+        'guides/chatgpt',
         'concepts/skills',
         'concepts/tasks',
         'guides/browser-control',

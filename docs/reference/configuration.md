@@ -106,14 +106,16 @@ services:
 
 ## OAuth 配置
 
-OAuth 适合需要浏览器授权流程的 MCP 客户端。启用时必须同时配置以下变量：
+OAuth 适合 ChatGPT 等需要浏览器授权流程的远程 MCP 客户端。AgentDock 支持 Authorization Code、PKCE S256、动态客户端注册和 Refresh Token；兼容客户端可以通过服务端元数据自动完成注册，不需要管理员预先创建 Client ID 或 Client Secret。
+
+启用时必须同时配置以下变量：
 
 | 环境变量 | 要求 | 说明 |
 | --- | --- | --- |
 | `AGENTDOCK_OAUTH_ENABLED` | `true` | 启用 OAuth |
 | `AGENTDOCK_SERVER_URL` | 必填 | AgentDock 对客户端公开的 Origin，例如 `https://agentdock.example.com` |
 | `AGENTDOCK_OAUTH_PASSWORD` | 至少 12 个字符 | 用户在授权页面输入的连接密码 |
-| `AGENTDOCK_OAUTH_TOKEN_SECRET` | 至少 32 字节 | OAuth 状态和 Token 的签名密钥 |
+| `AGENTDOCK_OAUTH_TOKEN_SECRET` | 至少 32 字节 | OAuth 状态和 Token 的签名密钥；应稳定保存，不要在每次重启时重新生成 |
 
 示例：
 
@@ -124,9 +126,26 @@ AGENTDOCK_OAUTH_PASSWORD=<long-login-password>
 AGENTDOCK_OAUTH_TOKEN_SECRET=<random-secret-at-least-32-bytes>
 ```
 
-`AGENTDOCK_SERVER_URL` 必须是没有路径、查询参数或 Fragment 的完整 Origin。非回环地址必须使用 HTTPS；仅 `localhost` 或回环 IP 可以使用 HTTP。
+可使用 OpenSSL 生成随机值：
 
-Bearer Token 和 OAuth 可以同时配置。只需要一种认证方式时，不要额外保留无用秘密。
+```bash
+openssl rand -base64 24
+openssl rand -hex 32
+```
+
+`AGENTDOCK_SERVER_URL` 必须是没有路径、查询参数或 Fragment 的完整 Origin。非回环地址必须使用 HTTPS；仅 `localhost` 或回环 IP 可以使用 HTTP。客户端实际填写的 MCP 地址则需要附加 `/mcp`，例如 `https://agentdock.example.com/mcp`。
+
+启用后会公开以下 OAuth 入口：
+
+| 路径 | 用途 |
+| --- | --- |
+| `/.well-known/oauth-authorization-server` | OAuth Authorization Server 元数据 |
+| `/.well-known/oauth-protected-resource/mcp` | MCP Protected Resource 元数据 |
+| `/register` | 动态客户端注册 |
+| `/oauth/authorize` | 浏览器授权页 |
+| `/oauth/token` | Authorization Code 和 Refresh Token 兑换 |
+
+Bearer Token 和 OAuth 可以同时配置。只需要一种认证方式时，不要额外保留无用秘密。面向 ChatGPT 的完整连接流程见 [使用 ChatGPT 连接 AgentDock](../guides/chatgpt.md)。
 
 ## 可信反向代理
 
