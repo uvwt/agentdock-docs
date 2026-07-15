@@ -1,6 +1,6 @@
 # 使用 ChatGPT 连接 AgentDock
 
-ChatGPT 通过自定义 MCP 连接器访问远程 AgentDock 时，推荐使用 OAuth。连接过程中，ChatGPT 会自动发现 AgentDock 的 OAuth 元数据、注册客户端，并通过浏览器完成授权；不需要手动创建 Client ID 或 Client Secret。
+ChatGPT 通过自定义 MCP 插件访问远程 AgentDock 时，推荐使用 OAuth。连接过程中，ChatGPT 会自动发现 AgentDock 的 OAuth 元数据、注册客户端，并通过浏览器完成授权；不需要手动创建 Client ID 或 Client Secret。
 
 AgentDock 当前支持 OAuth 2.0 Authorization Code、PKCE S256、动态客户端注册和 Refresh Token。
 
@@ -77,22 +77,22 @@ registration_endpoint   https://agentdock.example.com/register
 
 这里不需要手动访问 `/oauth/authorize`。它需要 ChatGPT 生成的客户端、回调地址和 PKCE 参数，直接打开通常只会得到参数错误。
 
-## 3. 在 ChatGPT 中添加连接器
+## 3. 在 ChatGPT 中创建插件
 
-ChatGPT 的菜单名称可能随版本调整，进入用于管理“应用”“连接器”或“MCP”的设置页面，然后：
-
-1. 选择添加自定义连接器或自定义 MCP。
-2. 名称填写 `AgentDock`。
-3. MCP Server URL 填写：
+1. 打开 ChatGPT，进入 **设置 > 插件 > 高级设置**。
+2. 开启 **开发人员模式**。
+3. 点击 **创建插件**。
+4. 插件名称填写 `AgentDock`。
+5. MCP Server URL 填写：
 
    ```text
    https://agentdock.example.com/mcp
    ```
 
-4. 保存并发起连接。认证方式选择 OAuth，或让 ChatGPT 根据服务端元数据自动发现。
-5. 浏览器跳转到 AgentDock 授权页后，确认页面显示的应用名称和回调域名确实来自刚刚发起的 ChatGPT 连接。
-6. 输入 `AGENTDOCK_OAUTH_PASSWORD`，点击“验证并连接”。
-7. 页面返回 ChatGPT 后，确认连接器状态已经变为可用。
+6. 保存插件并发起连接。认证方式选择 OAuth，或让 ChatGPT 根据服务端元数据自动发现。
+7. 浏览器跳转到 AgentDock 授权页后，确认页面显示的插件名称和回调域名确实来自刚刚发起的 ChatGPT 连接。
+8. 输入 `AGENTDOCK_OAUTH_PASSWORD`，点击“验证并连接”。
+9. 页面返回 ChatGPT 后，确认插件状态已经变为可用。
 
 ChatGPT 会通过 AgentDock 的动态客户端注册端点自动获取 Client ID，因此不需要手工填写 Client ID、Client Secret、授权地址或 Token 地址。
 
@@ -134,7 +134,7 @@ OAuth 授权成功时，`POST /oauth/authorize` 会返回 `302` 跳转到 ChatGP
 
 ### 修改配置后仍然连接失败
 
-重启 AgentDock 后，先重新验证三个公网端点。然后在 ChatGPT 中移除旧连接并重新添加，避免客户端继续使用旧的注册信息或授权状态。
+重启 AgentDock 后，先重新验证三个公网端点。然后在 ChatGPT 中删除旧插件并重新创建，避免客户端继续使用旧的注册信息或授权状态。
 
 ## 安全建议
 
