@@ -9,6 +9,10 @@
 | Linux 服务器或桌面 | [Linux 安装](./linux.md) |
 | 已经安装 Docker | [Docker 安装](./docker.md) |
 
+以上标准安装方式都会自动安装并激活 AgentDock 官方核心 Skill。用户安装的其他 Skill、已有版本和独立环境仍保存在同一个 Skill Store 中，升级 AgentDock 时不会被清空。
+
+从尚未包含核心 Skill Bundle 的旧版本首次升级时，需要重新运行对应平台的安装脚本；完成这次升级后，后续 `agentdock update` 会同步更新二进制和官方核心 Skill。
+
 不需要下载源码，也不需要安装 Go 或自己构建 AgentDock。
 
 ## 安装完成后
