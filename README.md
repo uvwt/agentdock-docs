@@ -35,7 +35,7 @@ http://localhost:3000/agentdock-docs/
 pnpm check
 ```
 
-This command runs the TypeScript check, verifies that English and Simplified Chinese documents have matching paths and structure, and builds both locales for production.
+This command runs the TypeScript check, locale-preference tests, verifies that English and Simplified Chinese documents have matching paths and structure, and builds both locales for production.
 
 ## Documentation layout
 
@@ -59,6 +59,7 @@ Navigation order is maintained explicitly in `sidebars.ts`. Docusaurus locale re
 - Corresponding pages must keep the same heading levels, section order, code-fence languages, commands, configuration fields, and link destinations.
 - Translation may follow natural conventions in each language, but it must not add, remove, or change product behavior.
 - Add, delete, or rename a page in both locales in the same change.
+- On the first visit, browser languages select English or Simplified Chinese automatically. A manual locale-menu choice is stored in `localStorage` and takes priority afterward.
 - Shared images stay under `static/img/`; do not duplicate language-neutral assets.
 
 ## Content rules

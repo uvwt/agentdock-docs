@@ -28,6 +28,7 @@ const config: Config = {
   trailingSlash: false,
   onBrokenLinks: 'throw',
   onBrokenAnchors: 'throw',
+  clientModules: ['./src/clientModules/localePreference.mjs'],
 
   future: {
     v4: true,
