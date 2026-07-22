@@ -1,0 +1,50 @@
+{
+  "link.title.Documentation": {
+    "message": "文档",
+    "description": "The title of the footer links column with title=Documentation in the footer"
+  },
+  "link.title.Capabilities": {
+    "message": "能力",
+    "description": "The title of the footer links column with title=Capabilities in the footer"
+  },
+  "link.title.Project": {
+    "message": "项目",
+    "description": "The title of the footer links column with title=Project in the footer"
+  },
+  "link.item.label.Install AgentDock": {
+    "message": "安装 AgentDock",
+    "description": "The label of footer link with label=Install AgentDock linking to /docs/getting-started/install"
+  },
+  "link.item.label.Configuration": {
+    "message": "配置参考",
+    "description": "The label of footer link with label=Configuration linking to /docs/reference/configuration"
+  },
+  "link.item.label.Tools": {
+    "message": "工具目录",
+    "description": "The label of footer link with label=Tools linking to /docs/reference/tools"
+  },
+  "link.item.label.Skills": {
+    "message": "Skill",
+    "description": "The label of footer link with label=Skills linking to /docs/concepts/skills"
+  },
+  "link.item.label.Dynamic MCP": {
+    "message": "动态 MCP",
+    "description": "The label of footer link with label=Dynamic MCP linking to /docs/concepts/dynamic-mcp"
+  },
+  "link.item.label.Recoverable tasks": {
+    "message": "可恢复任务",
+    "description": "The label of footer link with label=Recoverable tasks linking to /docs/concepts/tasks"
+  },
+  "link.item.label.AgentDock source": {
+    "message": "AgentDock 源码",
+    "description": "The label of footer link with label=AgentDock source linking to https://github.com/uvwt/agentdock"
+  },
+  "link.item.label.Documentation source": {
+    "message": "文档源码",
+    "description": "The label of footer link with label=Documentation source linking to https://github.com/uvwt/agentdock-docs"
+  },
+  "copyright": {
+    "message": "© 2026 AgentDock. Built with Docusaurus.",
+    "description": "The footer copyright"
+  }
+}

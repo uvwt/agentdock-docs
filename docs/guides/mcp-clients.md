@@ -1,98 +1,98 @@
-# 在不同客户端中连接 AgentDock
+# Connect AgentDock from different clients
 
-AgentDock 通过 Streamable HTTP MCP 接入 Claude Desktop、ChatGPT、Claude Code、Cursor、VS Code、Codex、TRAE 和 WorkBuddy。本页示例统一使用：
+AgentDock connects to Claude Desktop, ChatGPT, Claude Code, Cursor, VS Code, Codex, TRAE, and WorkBuddy over Streamable HTTP MCP. Every example on this page uses:
 
 ```text
 https://agentdock.example.com/mcp
 ```
 
-请把它替换为你自己的 AgentDock MCP 地址。
+Replace it with your own AgentDock MCP URL.
 
 :::note
-不同客户端的菜单名称、套餐限制和管理员策略可能调整。本文使用当前常见界面名称；找不到对应入口时，可在设置中搜索 `MCP`、`插件` 或 `Connectors`。
+Menu names, plan restrictions, and workspace policies may change between client releases. This page uses common current labels. When an entry is not visible, search settings for `MCP`, `Plugins`, or `Connectors`.
 :::
 
-## 连接前准备
+## Before connecting
 
-使用公网客户端或云端服务时，应先确认：
+For a public client or cloud service, confirm that:
 
-- AgentDock 已通过公网 HTTPS 域名提供服务。
-- MCP 地址以 `/mcp` 结尾。
-- OAuth 已启用，或者客户端支持通过 Header 发送 Bearer Token。
-- 反向代理会转发 `/mcp`、`/register`、`/oauth/*` 和 `/.well-known/*`。
+- AgentDock is available through a public HTTPS domain.
+- The MCP URL ends with `/mcp`.
+- OAuth is enabled, or the client supports a Bearer Token in an HTTP header.
+- The reverse proxy forwards `/mcp`, `/register`, `/oauth/*`, and `/.well-known/*`.
 
-启用 OAuth 时，AgentDock 至少需要：
+OAuth requires at least:
 
 ```bash
 AGENTDOCK_OAUTH_ENABLED=true
 AGENTDOCK_SERVER_URL=https://agentdock.example.com
-AGENTDOCK_OAUTH_PASSWORD=<至少-12-个字符的授权密码>
-AGENTDOCK_OAUTH_TOKEN_SECRET=<至少-32-字节的随机签名密钥>
+AGENTDOCK_OAUTH_PASSWORD=<authorization-password-at-least-12-characters>
+AGENTDOCK_OAUTH_TOKEN_SECRET=<random-signing-key-at-least-32-bytes>
 ```
 
-`AGENTDOCK_SERVER_URL` 只填写 Origin，不附加 `/mcp`。客户端中填写的地址才是完整的 `https://agentdock.example.com/mcp`。
+`AGENTDOCK_SERVER_URL` contains only the origin, without `/mcp`. The client receives the complete `https://agentdock.example.com/mcp` URL.
 
-对于与 AgentDock 运行在同一台电脑上的本地客户端，也可以连接：
+A local client running on the same computer as AgentDock may also connect to:
 
 ```text
 http://127.0.0.1:8765/mcp
 ```
 
-云端客户端无法访问你电脑或服务器的 `127.0.0.1`。
+A cloud client cannot reach `127.0.0.1` on your computer or server.
 
 ## Claude Desktop
 
-Claude Desktop 是否支持自定义 MCP，以及可添加的服务器数量，取决于当前套餐和工作区策略。
+Availability of custom MCP connections and the number of servers you can add depend on the current plan and workspace policy.
 
-1. 打开 Claude Desktop，进入 **Customize > Connectors**。
-2. 点击 **+**，选择 **Add Connector**。
-3. 名称填写 `AgentDock`。
-4. MCP Server URL 填写：
+1. Open Claude Desktop and go to **Customize > Connectors**.
+2. Select **+**, then **Add Connector**.
+3. Enter `AgentDock` as the name.
+4. Enter this MCP Server URL:
 
    ```text
    https://agentdock.example.com/mcp
    ```
 
-5. 保存后点击 **Connect**。
-6. 浏览器打开 AgentDock 授权页后，输入 `AGENTDOCK_OAUTH_PASSWORD` 完成授权。
+5. Save and select **Connect**.
+6. When the browser opens the AgentDock authorization page, enter `AGENTDOCK_OAUTH_PASSWORD`.
 
 ## ChatGPT
 
-ChatGPT 需要当前套餐和工作区支持自定义 MCP 插件；企业工作区还可能需要管理员先开放开发人员模式。
+The current plan and workspace must support custom MCP plugins. An enterprise workspace may also require an administrator to enable developer mode.
 
-1. 打开 ChatGPT，进入 **设置 > 插件 > 高级设置**。
-2. 开启 **开发人员模式**。
-3. 点击 **创建插件**。
-4. 插件名称填写 `AgentDock`。
-5. MCP Server URL 填写：
+1. Open ChatGPT and go to **Settings > Plugins > Advanced settings**.
+2. Enable **Developer mode**.
+3. Select **Create plugin**.
+4. Enter `AgentDock` as the plugin name.
+5. Enter this MCP Server URL:
 
    ```text
    https://agentdock.example.com/mcp
    ```
 
-6. 保存插件并发起连接。
-7. 浏览器打开 AgentDock 授权页后，确认插件名称与回调域名，再输入 `AGENTDOCK_OAUTH_PASSWORD` 完成授权。
-8. 返回 ChatGPT，确认 AgentDock 插件已经可用。
+6. Save the plugin and begin the connection.
+7. When the browser opens the AgentDock authorization page, confirm the plugin name and callback domain, then enter `AGENTDOCK_OAUTH_PASSWORD`.
+8. Return to ChatGPT and confirm that the AgentDock plugin is available.
 
-更完整的端点检查和排障步骤见 [使用 ChatGPT 连接 AgentDock](./chatgpt.md)。
+See [Connect ChatGPT to AgentDock](./chatgpt.md) for complete endpoint checks and troubleshooting.
 
 ## Claude Code
 
 ### OAuth
 
-在终端运行：
+Run:
 
 ```bash
 claude mcp add --transport http agentdock https://agentdock.example.com/mcp
 ```
 
-然后在 Claude Code 会话中运行：
+Then run this inside Claude Code:
 
 ```text
 /mcp
 ```
 
-选择 AgentDock，并按提示在浏览器中完成 OAuth 授权。
+Select AgentDock and complete OAuth authorization in the browser.
 
 ### Bearer Token
 
@@ -101,14 +101,14 @@ claude mcp add --transport http agentdock https://agentdock.example.com/mcp \
   --header "Authorization: Bearer YOUR_TOKEN_HERE"
 ```
 
-不要把真实 Token 提交到 Shell 历史、脚本或公开仓库。长期使用时，优先通过受限环境变量或客户端秘密管理能力注入。
+Do not leave a real token in shell history, scripts, or a public repository. For long-term use, inject it through a restricted environment variable or the client's secret-management capability.
 
 ## Cursor
 
-1. 打开 Cursor，进入 **Cursor Settings**。
-2. 在左侧选择 **Tools & MCP**。
-3. 点击 **Add Custom MCP**。
-4. 编辑项目中的 `.cursor/mcp.json`：
+1. Open **Cursor Settings**.
+2. Select **Tools & MCP**.
+3. Select **Add Custom MCP**.
+4. Edit `.cursor/mcp.json` in the project:
 
 ```json
 {
@@ -120,9 +120,9 @@ claude mcp add --transport http agentdock https://agentdock.example.com/mcp \
 }
 ```
 
-保存后回到 **Tools & MCP**，找到 AgentDock，点击 **Connect**，并在浏览器中完成 OAuth 授权。
+Return to **Tools & MCP**, find AgentDock, select **Connect**, and complete OAuth in the browser.
 
-使用 Bearer Token 时：
+For a Bearer Token:
 
 ```json
 {
@@ -137,11 +137,11 @@ claude mcp add --transport http agentdock https://agentdock.example.com/mcp \
 }
 ```
 
-项目级 `.cursor/mcp.json` 可能进入版本控制。不要把真实 Token 直接写入会提交的文件。
+Project-level `.cursor/mcp.json` may be committed to version control. Never place a real token in a file that will be committed.
 
 ## VS Code
 
-在工作区创建或编辑 `.vscode/mcp.json`：
+Create or edit `.vscode/mcp.json` in the workspace:
 
 ```json
 {
@@ -154,15 +154,15 @@ claude mcp add --transport http agentdock https://agentdock.example.com/mcp \
 }
 ```
 
-也可以打开命令面板：
+You may also open the command palette:
 
 ```text
 Ctrl+Shift+P / Cmd+Shift+P
 ```
 
-运行 **Add Server**，选择 **HTTP (HTTP or Server-Sent Events)**，输入 AgentDock MCP 地址和服务器 ID，再选择保存到工作区或全局配置。保存后按提示在浏览器中完成 OAuth 授权。
+Run **Add Server**, choose **HTTP (HTTP or Server-Sent Events)**, enter the AgentDock MCP URL and server ID, and choose a workspace or global configuration. Complete OAuth in the browser after saving.
 
-使用 Bearer Token 时：
+For a Bearer Token:
 
 ```json
 {
@@ -178,38 +178,38 @@ Ctrl+Shift+P / Cmd+Shift+P
 }
 ```
 
-工作区配置可能进入 Git。不要提交真实 Token。
+Workspace configuration may enter Git. Do not commit a real token.
 
 ## Codex
 
 ### Codex App
 
-1. 打开 Codex，进入 **设置 > 插件 > MCP**。
-2. 点击 **添加服务器**。
-3. 名称填写 `AgentDock`。
-4. 传输方式选择 **流式 HTTP**。
-5. MCP Server URL 填写：
+1. Open Codex and go to **Settings > Plugins > MCP**.
+2. Select **Add server**.
+3. Enter `AgentDock` as the name.
+4. Choose **Streamable HTTP** as the transport.
+5. Enter this MCP Server URL:
 
    ```text
    https://agentdock.example.com/mcp
    ```
 
-6. 保存后点击右侧的 **进行身份验证**，在浏览器中完成 OAuth 授权。
+6. Save, select **Authenticate**, and complete OAuth in the browser.
 
-### 命令行
+### Command line
 
 ```bash
 codex mcp add agentdock --url https://agentdock.example.com/mcp
 ```
 
-命令执行后，按终端提示完成 OAuth 登录和授权。
+Follow the terminal prompt to complete OAuth login and authorization.
 
 ## TRAE
 
-1. 打开 TRAE，进入设置。
-2. 在左侧选择 **MCP**。
-3. 点击 **添加 > 手动添加**。
-4. 添加以下配置：
+1. Open TRAE settings.
+2. Select **MCP**.
+3. Select **Add > Add manually**.
+4. Add this configuration:
 
 ```json
 {
@@ -221,9 +221,9 @@ codex mcp add agentdock --url https://agentdock.example.com/mcp
 }
 ```
 
-保存后，在已安装的 MCP Servers 中找到 AgentDock，点击右侧 **前往验证**，并在浏览器中完成 OAuth 授权。
+After saving, find AgentDock in the installed MCP servers, select **Authenticate**, and complete OAuth in the browser.
 
-使用 Bearer Token 时：
+For a Bearer Token:
 
 ```json
 {
@@ -240,10 +240,10 @@ codex mcp add agentdock --url https://agentdock.example.com/mcp
 
 ## WorkBuddy
 
-1. 打开 WorkBuddy，在左侧选择 **技能**。
-2. 在右侧选择 **MCP 服务器**。
-3. 点击 **配置 MCP**。
-4. 添加以下配置：
+1. Open WorkBuddy and select **Skills** on the left.
+2. Select **MCP Servers** on the right.
+3. Select **Configure MCP**.
+4. Add this configuration:
 
 ```json
 {
@@ -257,9 +257,9 @@ codex mcp add agentdock --url https://agentdock.example.com/mcp
 }
 ```
 
-保存后返回 MCP 列表，找到 AgentDock，点击右侧 **连接**，并在浏览器中完成 OAuth 授权。
+After saving, return to the MCP list, find AgentDock, select **Connect**, and complete OAuth in the browser.
 
-使用 Bearer Token 时：
+For a Bearer Token:
 
 ```json
 {
@@ -276,21 +276,21 @@ codex mcp add agentdock --url https://agentdock.example.com/mcp
 }
 ```
 
-## 验证连接
+## Verify the connection
 
-连接完成后，不要只看客户端显示“已连接”。应完成一次真实只读调用，例如：
+Do not stop after the client reports “connected.” Complete a real read-only call, for example:
 
 ```text
-调用 AgentDock 的 server_info，告诉我服务版本、操作系统和当前认证方式。
+Call AgentDock's server_info and tell me the service version, operating system, and current authentication mode.
 ```
 
-如果 OAuth 页面没有打开，先验证：
+If the OAuth page does not open, verify:
 
 ```bash
 curl -fsS https://agentdock.example.com/.well-known/oauth-authorization-server
 curl -fsS https://agentdock.example.com/.well-known/oauth-protected-resource/mcp
 ```
 
-如果授权页面返回 `302`，通常表示 AgentDock 正在跳转回客户端，这是 OAuth 正常流程。页面没有继续跳转时，再检查反向代理是否保留 `Location` Header，以及客户端回调地址是否被浏览器或网络策略拦截。
+A `302` from the authorization page usually means AgentDock is redirecting to the client as expected. If the browser does not continue, confirm that the reverse proxy preserves the `Location` header and that the browser or network policy does not block the callback URL.
 
-完整认证配置见 [配置](../reference/configuration.md#oauth-配置)，公网部署见 [Linux 手动部署](../getting-started/vps.md)。
+See [Configuration](../reference/configuration.md#oauth-configuration) for complete authentication settings and [Manual Linux deployment](../getting-started/vps.md) for public deployment.

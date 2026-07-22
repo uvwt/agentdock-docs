@@ -1,21 +1,21 @@
-# Docker 安装
+# Docker installation
 
-适合已经安装 Docker，或希望把 AgentDock 与宿主系统隔离运行的用户。不需要下载源码或执行 `docker build`。
+Use this option when Docker is already installed or when you want AgentDock isolated from the host operating system. You do not need the source code or a local `docker build`.
 
-需要控制 macOS 桌面时不要使用 Docker，请改用 [macOS 安装](./macos.md)。
+Do not use Docker when you need to control the macOS desktop. Use the [macOS installation](./macos.md) instead.
 
-## 1. 确认 Docker 可用
+## 1. Verify Docker
 
 ```bash
 docker --version
 docker compose version
 ```
 
-两条命令都能显示版本号后再继续。
+Continue only after both commands print a version.
 
-## 2. 下载启动配置
+## 2. Download the startup configuration
 
-根据当前系统选择一组命令。
+Choose the command set for your current system.
 
 ### macOS / Linux
 
@@ -38,30 +38,30 @@ $token = [guid]::NewGuid().ToString("N") + [guid]::NewGuid().ToString("N")
 "AGENTDOCK_AUTH_TOKEN=$token" | Set-Content -Encoding ascii .env
 ```
 
-`.env` 中保存的是连接 Token。不要把它提交到 Git 或发给别人。
+The `.env` file contains the connection token. Do not commit it to Git or share it with other people.
 
-## 3. 启动并检查
+## 3. Start and inspect the service
 
 ```bash
 docker compose up -d
 docker compose ps
 ```
 
-第一次启动需要下载镜像。等待状态变为 `healthy`；如果仍是 `starting`，十几秒后再执行一次 `docker compose ps`。
+The first startup downloads the image. Wait until the service becomes `healthy`. If it still shows `starting`, run `docker compose ps` again after several seconds.
 
-## 4. 连接 MCP 客户端
+## 4. Connect an MCP client
 
-在客户端的 MCP、Tools 或 Connectors 设置中，新建连接：
+Create a connection in your client's MCP, Tools, or Connectors settings:
 
 ```text
-传输方式    Streamable HTTP
-地址        http://127.0.0.1:18766/mcp
-请求头      Authorization: Bearer <你的 Token>
+Transport     Streamable HTTP
+URL           http://127.0.0.1:18766/mcp
+Request header Authorization: Bearer <your token>
 ```
 
-Token 是 `.env` 文件中 `AGENTDOCK_AUTH_TOKEN=` 后面的内容。
+The token is the value after `AGENTDOCK_AUTH_TOKEN=` in `.env`.
 
-查看 Token：
+Read the token:
 
 ```bash
 # macOS / Linux
@@ -74,20 +74,20 @@ Get-Content .env
 ```
 
 :::tip
-**安装完成：** `docker compose ps` 显示 `healthy`，并把 MCP 地址与 Token 填入客户端后即可使用。
+**Installation is complete** when `docker compose ps` shows `healthy` and the client has the MCP URL and token.
 :::
 
-## 更新
+## Update
 
-重新下载最新 `docker-compose.yml`，然后执行：
+Download the latest `docker-compose.yml` again, then run:
 
 ```bash
 docker compose pull
 docker compose up -d --force-recreate
 ```
 
-## 按需继续
+## Continue when needed
 
-- 需要浏览器镜像、开发工具镜像、修改端口、挂载项目或迁移旧数据：阅读 [Docker 进阶配置](../operations/docker.md)。
-- 启动失败：查看 [故障排查](../operations/troubleshooting.md)。
-- 需要局域网或公网访问：先阅读 [安全模型](../operations/security.md)。
+- For the browser image, development image, custom ports, project mounts, or old-data migration, see [Advanced Docker configuration](../operations/docker.md).
+- If startup fails, see [Troubleshooting](../operations/troubleshooting.md).
+- Before allowing LAN or public access, read the [Security model](../operations/security.md).

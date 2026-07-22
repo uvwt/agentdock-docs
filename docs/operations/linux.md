@@ -1,10 +1,10 @@
-# Linux 进阶配置
+# Advanced Linux configuration
 
-普通用户首次安装只需要完成 [Linux 安装](../getting-started/linux.md)。本页用于交互式安装、修改目录和端口、选择服务管理器、配置 NexusDock 或只安装二进制。
+Regular users only need the [Linux installation](../getting-started/linux.md) for their first setup. This page covers interactive installation, custom directories and ports, service-manager selection, NexusDock configuration, and binary-only installation.
 
-## Alpine 与极简系统
+## Alpine and minimal systems
 
-系统缺少 Bash 或 curl 时，先运行引导脚本：
+When Bash or curl is missing, run the bootstrap script first:
 
 ```sh
 wget -O /tmp/install-agentdock-bootstrap.sh \
@@ -12,11 +12,11 @@ wget -O /tmp/install-agentdock-bootstrap.sh \
 sudo sh /tmp/install-agentdock-bootstrap.sh
 ```
 
-引导脚本只负责安装最小依赖并下载正式安装器，后续仍使用预编译 AgentDock。
+The bootstrap script installs only the minimum dependencies and downloads the full installer. AgentDock itself still uses a prebuilt release.
 
-## 交互式安装
+## Interactive installation
 
-不设置 `AGENTDOCK_NONINTERACTIVE` 时，安装器会逐项询问配置：
+Without `AGENTDOCK_NONINTERACTIVE`, the installer asks for each setting:
 
 ```bash
 curl -fsSL https://github.com/uvwt/agentdock/releases/latest/download/install-linux.sh \
@@ -24,19 +24,19 @@ curl -fsSL https://github.com/uvwt/agentdock/releases/latest/download/install-li
 bash /tmp/install-agentdock.sh
 ```
 
-普通部署保持 `binary` 即可。`source` 和 `auto` 只用于开发或预编译产物不可用的调试场景。
+Keep the `binary` mode for a normal deployment. `source` and `auto` are only for development or troubleshooting when prebuilt artifacts are unavailable.
 
-## 默认目录
+## Default directories
 
 ```text
-安装目录      /opt/agentdock
-运行数据目录  /srv/agentdock
-环境文件      /etc/agentdock/agentdock.env
-服务用户      agentdock
-监听地址      127.0.0.1:8765
+Installation directory  /opt/agentdock
+Runtime data directory  /srv/agentdock
+Environment file        /etc/agentdock/agentdock.env
+Service user            agentdock
+Listen address          127.0.0.1:8765
 ```
 
-典型 systemd 安装会生成：
+A typical systemd installation creates:
 
 ```text
 /opt/agentdock/bin/agentdock
@@ -46,11 +46,11 @@ bash /tmp/install-agentdock.sh
 /etc/systemd/system/agentdock.service
 ```
 
-OpenRC 会改为创建 `/etc/init.d/agentdock`。
+OpenRC creates `/etc/init.d/agentdock` instead.
 
-## 非交互配置
+## Non-interactive configuration
 
-自动化部署时可以通过环境变量覆盖默认值：
+Override defaults through environment variables in automated deployments:
 
 ```bash
 sudo env \
@@ -60,28 +60,28 @@ sudo env \
   bash /tmp/install-agentdock.sh
 ```
 
-常用变量：
+Common variables:
 
-| 变量 | 用途 |
+| Variable | Purpose |
 | --- | --- |
-| `AGENTDOCK_RELEASE_VERSION` | `latest` 或 `vX.Y.Z` |
-| `AGENTDOCK_SOURCE_DIR` | 二进制安装根目录 |
-| `AGENTDOCK_DATA_DIR` | 状态和工作目录根目录 |
-| `AGENTDOCK_ENV_FILE` | 服务环境文件 |
-| `AGENTDOCK_SERVICE_NAME` | systemd/OpenRC 服务名 |
-| `AGENTDOCK_SERVICE_USER` | 低权限运行用户 |
-| `AGENTDOCK_SERVICE_MANAGER` | `auto`、`systemd`、`openrc` 或 `none` |
-| `AGENTDOCK_HOST` | 监听地址 |
-| `AGENTDOCK_PORT` | 监听端口 |
-| `AGENTDOCK_AUTH_TOKEN` | 自定义 Bearer Token |
-| `AGENTDOCK_NEXUS_ENDPOINT` | NexusDock 地址 |
-| `AGENTDOCK_NEXUS_TOKEN` | NexusDock Token |
+| `AGENTDOCK_RELEASE_VERSION` | `latest` or `vX.Y.Z` |
+| `AGENTDOCK_SOURCE_DIR` | Binary installation root |
+| `AGENTDOCK_DATA_DIR` | State and working-directory root |
+| `AGENTDOCK_ENV_FILE` | Service environment file |
+| `AGENTDOCK_SERVICE_NAME` | systemd or OpenRC service name |
+| `AGENTDOCK_SERVICE_USER` | Low-privilege runtime user |
+| `AGENTDOCK_SERVICE_MANAGER` | `auto`, `systemd`, `openrc`, or `none` |
+| `AGENTDOCK_HOST` | Listen address |
+| `AGENTDOCK_PORT` | Listen port |
+| `AGENTDOCK_AUTH_TOKEN` | Custom Bearer Token |
+| `AGENTDOCK_NEXUS_ENDPOINT` | NexusDock URL |
+| `AGENTDOCK_NEXUS_TOKEN` | NexusDock token |
 
-不要把真实 Token 写进仓库。未提供 `AGENTDOCK_AUTH_TOKEN` 时，安装器会自动生成并写入 root-only 环境文件。
+Do not commit real tokens. When `AGENTDOCK_AUTH_TOKEN` is omitted, the installer generates one and writes it to a root-only environment file.
 
-## 只安装二进制
+## Install only the binary
 
-不希望注册系统服务时：
+To avoid registering a system service:
 
 ```bash
 sudo env \
@@ -90,48 +90,48 @@ sudo env \
   bash /tmp/install-agentdock.sh
 ```
 
-这种模式不会自动启动 AgentDock，需要手动运行 `/opt/agentdock/bin/agentdock`。
+This mode does not start AgentDock automatically. Run `/opt/agentdock/bin/agentdock` manually.
 
-## 修改端口或 Token
+## Change the port or token
 
-编辑环境文件：
+Edit the environment file:
 
 ```bash
 sudoedit /etc/agentdock/agentdock.env
 ```
 
-修改后重启服务：
+Restart the service afterward:
 
 ```bash
 sudo systemctl restart agentdock
 sudo systemctl status agentdock --no-pager
 ```
 
-OpenRC 使用：
+For OpenRC:
 
 ```sh
 sudo rc-service agentdock restart
 sudo rc-service agentdock status
 ```
 
-## 查看日志
+## View logs
 
-systemd：
+For systemd:
 
 ```bash
 sudo journalctl -u agentdock -n 100 --no-pager
 sudo journalctl -u agentdock -f
 ```
 
-OpenRC：
+For OpenRC:
 
 ```sh
 sudo tail -n 100 /var/log/agentdock.log /var/log/agentdock.err
 ```
 
-## 更新
+## Update
 
-重新运行安装器即可替换二进制。运行数据和环境文件会保留。固定版本时设置：
+Rerun the installer to replace the binary. Runtime data and the environment file are preserved. To install a fixed version:
 
 ```bash
 sudo env \
@@ -140,4 +140,4 @@ sudo env \
   bash /tmp/install-agentdock.sh
 ```
 
-需要完全自行维护 systemd、环境文件、反向代理和 OAuth 时，阅读 [Linux 手动部署](../getting-started/vps.md)。
+To maintain systemd, the environment file, reverse proxy, and OAuth entirely yourself, see [Manual Linux deployment](../getting-started/vps.md).

@@ -5,7 +5,7 @@ const sidebars: SidebarsConfig = {
     'intro',
     {
       type: 'category',
-      label: '安装',
+      label: 'Installation',
       link: {
         type: 'doc',
         id: 'getting-started/install',
@@ -19,11 +19,12 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
-      label: '使用 AgentDock',
+      label: 'Using AgentDock',
       link: {
         type: 'generated-index',
-        title: '使用 AgentDock',
-        description: '了解 Skill、任务、浏览器、桌面自动化和外部服务接入。',
+        title: 'Using AgentDock',
+        description:
+          'Learn how to use Skills, tasks, browser and desktop automation, and external services.',
       },
       items: [
         'guides/mcp-clients',
@@ -38,35 +39,36 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
-      label: '配置与工具',
+      label: 'Configuration and tools',
       link: {
         type: 'generated-index',
-        title: '配置与工具',
-        description: '查看完整运行配置、认证方式和内置工具目录。',
+        title: 'Configuration and tools',
+        description: 'Review runtime configuration, authentication, and the built-in tool catalog.',
       },
       items: ['reference/configuration', 'reference/tools'],
     },
     {
       type: 'category',
-      label: '进阶与运维',
+      label: 'Advanced operations',
       link: {
         type: 'generated-index',
-        title: '进阶与运维',
-        description: '查看平台进阶配置、手动部署、安全边界和故障排查。',
+        title: 'Advanced operations',
+        description:
+          'Review advanced platform configuration, manual deployment, security boundaries, and troubleshooting.',
       },
       items: [
         'operations/macos',
         'operations/windows',
         'operations/linux',
         'operations/docker',
-        {type: 'doc', id: 'getting-started/vps', label: 'Linux 手动部署（高级）'},
+        {type: 'doc', id: 'getting-started/vps', label: 'Manual Linux deployment'},
         'operations/security',
         'operations/troubleshooting',
       ],
     },
     {
       type: 'category',
-      label: '开发者',
+      label: 'Developers',
       items: ['contributing/development'],
     },
   ],

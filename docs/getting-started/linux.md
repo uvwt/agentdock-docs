@@ -1,10 +1,10 @@
-# Linux 安装
+# Linux installation
 
-AgentDock 为 Linux x64 和 ARM64 提供预编译版本。普通安装不需要 Go、Git 或源码。
+AgentDock provides prebuilt releases for Linux x64 and ARM64. A regular installation does not require Go, Git, or the source repository.
 
-## 1. 安装
+## 1. Install
 
-在终端执行：
+Run this in a terminal:
 
 ```bash
 curl -fsSL https://github.com/uvwt/agentdock/releases/latest/download/install-linux.sh \
@@ -12,65 +12,65 @@ curl -fsSL https://github.com/uvwt/agentdock/releases/latest/download/install-li
 sudo env AGENTDOCK_NONINTERACTIVE=true bash /tmp/install-agentdock.sh
 ```
 
-安装器会使用安全默认值，自动选择 systemd 或 OpenRC、创建低权限运行用户、生成连接 Token，并完成健康检查。
+The installer uses safe defaults, selects systemd or OpenRC, creates a low-privilege service user, generates a connection token, and completes a health check.
 
-## 2. 确认服务正常
+## 2. Verify the service
 
-systemd：
+For systemd:
 
 ```bash
 sudo systemctl status agentdock --no-pager
 curl -fsS http://127.0.0.1:8765/healthz
 ```
 
-OpenRC：
+For OpenRC:
 
 ```sh
 sudo rc-service agentdock status
 curl -fsS http://127.0.0.1:8765/healthz
 ```
 
-健康接口正常时会返回包含 `ok: true` 的结果。
+A healthy response contains `ok: true`.
 
-## 3. 查看连接 Token
+## 3. Read the connection token
 
 ```bash
 sudo awk -F= '/^AGENTDOCK_AUTH_TOKEN=/{print $2}' \
   /etc/agentdock/agentdock.env
 ```
 
-把输出保存到密码管理器，不要发到聊天记录或提交到 Git。
+Save the output in a password manager. Do not paste it into chat history or commit it to Git.
 
-## 4. 连接 MCP 客户端
+## 4. Connect an MCP client
 
-客户端就在这台 Linux 机器上时填写：
+When the client runs on the same Linux machine, use:
 
 ```text
-传输方式    Streamable HTTP
-地址        http://127.0.0.1:8765/mcp
-请求头      Authorization: Bearer <你的 Token>
+Transport      Streamable HTTP
+URL            http://127.0.0.1:8765/mcp
+Request header Authorization: Bearer <your token>
 ```
 
-AgentDock 在远程服务器上时，从自己的电脑建立 SSH 隧道：
+When AgentDock runs on a remote server, create an SSH tunnel from your own computer:
 
 ```bash
-ssh -L 8765:127.0.0.1:8765 <用户名>@<服务器地址>
+ssh -L 8765:127.0.0.1:8765 <username>@<server-address>
 ```
 
-保持 SSH 窗口打开，再让本机客户端连接同一个 `http://127.0.0.1:8765/mcp` 地址。
+Keep the SSH session open and let the local client connect to the same `http://127.0.0.1:8765/mcp` URL.
 
 :::tip
-**安装完成：** 服务状态正常、健康检查通过，并把 MCP 地址与 Token 填入客户端后即可使用。
+**Installation is complete** when the service is running, the health check succeeds, and the client has the MCP URL and token.
 :::
 
-## 更新
+## Update
 
-重新下载并运行第 1 步即可。任务、Skill、配置和工作目录会保留。
+Download and run step 1 again. Tasks, Skills, configuration, and the working directory are preserved.
 
-## 按需继续
+## Continue when needed
 
-- Alpine、交互式安装、修改目录、端口或服务管理器：阅读 [Linux 进阶配置](../operations/linux.md)。
-- 使用浏览器自动化：当前免构建方案是 Docker browser 镜像，见 [浏览器自动化](../guides/browser-control.md)。
-- 需要完全自行维护 systemd、反向代理和 OAuth：阅读 [Linux 手动部署](./vps.md)。
-- 启动失败：查看 [故障排查](../operations/troubleshooting.md)。
-- 需要公网访问：先阅读 [安全模型](../operations/security.md)。
+- For Alpine, interactive installation, custom directories, ports, or service managers, see [Advanced Linux configuration](../operations/linux.md).
+- For browser automation, the current build-free option is the Docker browser image. See [Browser automation](../guides/browser-control.md).
+- To maintain systemd, the reverse proxy, and OAuth entirely yourself, see [Manual Linux deployment](./vps.md).
+- If startup fails, see [Troubleshooting](../operations/troubleshooting.md).
+- Before public access, read the [Security model](../operations/security.md).

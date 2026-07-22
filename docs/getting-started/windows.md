@@ -1,10 +1,10 @@
-# Windows 安装
+# Windows installation
 
-AgentDock 支持 Windows 11 x64 和 ARM64。可以直接使用 Windows 文件、PowerShell、Git 和 Skill，不要求安装 WSL，也不需要编译源码。
+AgentDock supports Windows 11 x64 and ARM64. It can work directly with Windows files, PowerShell, Git, and Skills. WSL is optional, and no source compilation is required.
 
-## 1. 下载并运行安装脚本
+## 1. Download and run the installer
 
-打开 PowerShell：
+Open PowerShell:
 
 ```powershell
 $script = Join-Path $env:TEMP 'install-agentdock.ps1'
@@ -14,9 +14,9 @@ Invoke-WebRequest `
 powershell -ExecutionPolicy Bypass -File $script
 ```
 
-安装器会下载并校验当前架构的预编译版本，安装到当前用户目录，并把安装目录加入用户 PATH。安装结束后关闭并重新打开 PowerShell，再继续下一步。
+The installer downloads and verifies the prebuilt release for the current architecture, installs it under the current user's profile, and adds the installation directory to the user `PATH`. Close and reopen PowerShell after installation before continuing.
 
-## 2. 启动
+## 2. Start AgentDock
 
 ```powershell
 & "$env:LOCALAPPDATA\AgentDock\bin\agentdock.exe" `
@@ -24,39 +24,39 @@ powershell -ExecutionPolicy Bypass -File $script
   --port 8765
 ```
 
-保持这个 PowerShell 窗口运行。第一次体验时不需要先注册自动启动。新打开的 PowerShell 通常也可以直接使用 `agentdock` 命令。
+Keep this PowerShell window open. You do not need to register automatic startup for the first trial. A newly opened PowerShell window can usually use the `agentdock` command directly.
 
-## 3. 确认启动成功
+## 3. Verify startup
 
-另开一个 PowerShell 窗口：
+Open another PowerShell window:
 
 ```powershell
 Invoke-RestMethod http://127.0.0.1:8765/healthz
 ```
 
-正常结果中会显示 `ok` 为 `True`。
+A healthy response shows `ok` as `True`.
 
-## 4. 连接 MCP 客户端
+## 4. Connect an MCP client
 
-在同一台电脑上填写：
+For a client on the same computer, use:
 
 ```text
-传输方式    Streamable HTTP
-地址        http://127.0.0.1:8765/mcp
-认证        不需要
+Transport      Streamable HTTP
+URL            http://127.0.0.1:8765/mcp
+Authentication Not required
 ```
 
 :::tip
-**安装完成：** 健康检查通过并在客户端连接成功后，就可以开始使用。
+**Installation is complete** when the health check succeeds and the client connects.
 :::
 
-## 更新
+## Update
 
-重新下载最新安装脚本并再次运行即可。任务、Skill、配置和工作目录会保留。
+Download the latest installer and run it again. Tasks, Skills, configuration, and the working directory are preserved.
 
-## 按需继续
+## Continue when needed
 
-- 登录后自动启动、指定版本、校验脚本、WSL 或卸载：阅读 [Windows 进阶配置](../operations/windows.md)。
-- 使用浏览器自动化：当前免构建方案是 Docker browser 镜像，见 [浏览器自动化](../guides/browser-control.md)。
-- 启动失败：查看 [故障排查](../operations/troubleshooting.md)。
-- 需要局域网或公网访问：先阅读 [安全模型](../operations/security.md)。
+- For login startup, a fixed version, installer verification, WSL, or removal, see [Advanced Windows configuration](../operations/windows.md).
+- For browser automation, the current build-free option is the Docker browser image. See [Browser automation](../guides/browser-control.md).
+- If startup fails, see [Troubleshooting](../operations/troubleshooting.md).
+- Before allowing LAN or public access, read the [Security model](../operations/security.md).

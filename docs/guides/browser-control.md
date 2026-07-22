@@ -1,71 +1,71 @@
-# 浏览器自动化
+# Browser automation
 
-启用浏览器能力后，Agent 可以打开网页、点击、输入、滚动、截图，并检查页面控制台和网络错误。
+When browser capabilities are enabled, an agent can open pages, click, type, scroll, capture screenshots, and inspect console and network errors.
 
-## 开始前
+## Before you start
 
-### 推荐：Docker browser 镜像
+### Recommended: Docker browser image
 
-当前面向普通用户的完整免构建方案是 Docker browser 镜像。它已经包含 Chromium、browser runner 和所需 Node.js 依赖：
+The complete build-free option for regular users is the Docker browser image. It already includes Chromium, the browser runner, and the required Node.js dependencies:
 
-1. 先完成 [Docker 安装](../getting-started/docker.md)。
-2. 按 [Docker 进阶配置](../operations/docker.md#启用浏览器自动化) 启动 browser 镜像。
-3. 连接客户端后，确认 Agent 可以看到 `browser_*` 工具。
+1. Complete the [Docker installation](../getting-started/docker.md).
+2. Start the browser image as described in [Advanced Docker configuration](../operations/docker.md#enable-browser-automation).
+3. After connecting a client, confirm that the agent can see the `browser_*` tools.
 
-### 原生 macOS / Windows / Linux
+### Native macOS / Windows / Linux
 
-macOS、Windows 和 Linux Release 当前只安装 AgentDock 二进制，不会自动安装 browser runner。原生模式需要另外准备 Node.js、源码仓库中的 runner 及 `playwright-core`，属于进阶或开发者配置。
+Native macOS, Windows, and Linux releases currently install only the AgentDock binary. They do not install the browser runner automatically. Native mode requires Node.js, the runner from the source repository, and `playwright-core`, so it is an advanced or contributor configuration.
 
-只想直接使用浏览器自动化时，不要在原生安装后盲目打开浏览器开关，优先使用 Docker browser 镜像。原生 runner 的配置项见 [配置参考](../reference/configuration.md#浏览器工具)。
+If you only want working browser automation, do not enable browser tools blindly after a native installation. Prefer the Docker browser image. See [Configuration](../reference/configuration.md#browser-tools) for native runner settings.
 
-## 直接提出任务
+## Describe the task directly
 
-普通用户不需要手工调用浏览器工具，可以直接说：
+Regular users do not need to call browser tools manually. You can say:
 
 ```text
-打开这个页面，检查是否能正常加载，并告诉我有没有控制台或网络错误。
-登录后搜索指定内容，但提交表单前先让我确认。
-把最终页面截图给我看。
+Open this page, check whether it loads correctly, and report any console or network errors.
+After login, search for the requested content, but ask before submitting the form.
+Show me a screenshot of the final page.
 ```
 
-Agent 应先观察页面，再执行动作，最后重新检查页面状态。
+The agent should observe the page first, perform actions, and inspect the final state again.
 
-## 多标签页与稳定等待
+## Multiple tabs and reliable waiting
 
-网页打开新标签页或弹窗后，浏览器工具会返回当前 `page_id` 和 `pages` 列表。Agent 应选择目标页面继续操作，不要默认所有动作仍发生在第一个页面。
+When a page opens a new tab or popup, browser tools return the active `page_id` and a `pages` list. The agent should select the target page explicitly instead of assuming every action still belongs to the first page.
 
-页面加载较慢时，优先等待可验证条件，而不是固定睡眠时间：
+For slow pages, wait for a verifiable condition instead of sleeping for a fixed number of seconds:
 
-- 等待 URL 变化。
-- 等待指定文本或元素出现。
-- 等待匹配的网络响应和状态码。
+- Wait for the URL to change.
+- Wait for specific text or an element to appear.
+- Wait for a matching network response and status code.
 
-这样比盲目等待几秒更稳定，也更容易判断失败原因。
+This is more reliable than an arbitrary delay and makes failures easier to diagnose.
 
-## 登录态与 Profile
+## Login state and profiles
 
-需要保持登录时，使用 AgentDock 专用的独立浏览器 Profile。不要直接复用日常浏览器主 Profile，避免自动化访问不必要的账号或污染个人数据。
+Use a dedicated AgentDock browser profile when login state must persist. Do not reuse your daily browser profile, which may expose unrelated accounts or personal data to automation.
 
-首次登录通常需要你手动完成验证码、扫码或安全确认。不要让 Agent 在聊天或日志中回显密码、Cookie 或 Authorization Header。
+The first login often requires manual CAPTCHA, QR-code, or security confirmation. Do not let the agent reveal passwords, cookies, or Authorization headers in chat or logs.
 
-## 连接已经打开的浏览器
+## Connect to an existing browser
 
-高级用户可以通过 CDP 连接一个已开启调试端口的浏览器。调试端口必须只监听 `127.0.0.1`；公开 CDP 端口相当于向外部开放完整浏览器控制权限。
+Advanced users can connect to a browser that was started with a CDP debugging port. The debugging port must listen only on `127.0.0.1`; a public CDP port provides complete browser control to anyone who can reach it.
 
-## 截图与故障判断
+## Screenshots and failure diagnosis
 
-截图只能证明视觉状态。判断页面是否真正正常时，还应检查：
+A screenshot proves only the visual state. To determine whether the page actually works, also inspect:
 
-- 最终 URL 和页面文本。
-- `console_errors`。
-- `network_errors`。
-- `page_errors`。
+- The final URL and page text.
+- `console_errors`.
+- `network_errors`.
+- `page_errors`.
 
-## 安全边界
+## Security boundaries
 
-- 上传文件、发送消息、提交表单、删除内容和授权前要确认目标与副作用。
-- 使用独立 Profile，不挂载日常浏览器完整用户目录。
-- 只给自动化访问任务需要的网站和文件。
-- 用完持久会话后，根据需要保存或清理登录态。
+- Confirm the target and side effects before uploading files, sending messages, submitting forms, deleting content, or authorizing access.
+- Use a dedicated profile and do not mount the complete daily browser profile.
+- Allow automation to access only the websites and files required by the task.
+- Save or clean up persistent login state as appropriate after the session.
 
-精确工具参数见 [工具介绍](../reference/tools.md#浏览器自动化)。
+See [Tools](../reference/tools.md#browser-automation) for exact parameters.

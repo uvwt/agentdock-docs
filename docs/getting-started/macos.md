@@ -1,10 +1,10 @@
-# macOS 安装
+# macOS installation
 
-AgentDock 为 Apple Silicon 和 Intel Mac 提供预编译版本。普通安装不需要 Go、Git 或源码。
+AgentDock provides prebuilt releases for Apple Silicon and Intel Macs. A regular installation does not require Go, Git, or the source repository.
 
-原生安装适合使用本机文件，以及需要屏幕录制和辅助功能权限的 macOS 桌面自动化。
+Use the native installation for local files and for macOS desktop automation that needs Screen Recording and Accessibility permissions.
 
-## 1. 安装 AgentDock
+## 1. Install AgentDock
 
 ```bash
 curl -fL https://github.com/uvwt/agentdock/releases/latest/download/install-macos.sh \
@@ -12,60 +12,60 @@ curl -fL https://github.com/uvwt/agentdock/releases/latest/download/install-maco
 zsh /tmp/install-agentdock-macos.sh
 ```
 
-脚本会识别当前 Mac 架构、校验下载文件，并安装到：
+The script detects the Mac architecture, verifies the download, and installs AgentDock at:
 
 ```text
 ~/.local/bin/agentdock
 ```
 
-如果脚本提示 PATH 尚未包含该目录，执行：
+If the script reports that this directory is not in `PATH`, run:
 
 ```bash
 echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zprofile
 export PATH="$HOME/.local/bin:$PATH"
 ```
 
-## 2. 启动
+## 2. Start AgentDock
 
 ```bash
 agentdock --host 127.0.0.1 --port 8765
 ```
 
-保持这个终端窗口运行。第一次体验时不需要先配置后台服务。
+Keep this terminal open. You do not need a background service for the first trial.
 
-## 3. 确认启动成功
+## 3. Verify startup
 
-另开一个终端执行：
+Open another terminal and run:
 
 ```bash
 curl -fsS http://127.0.0.1:8765/healthz
 ```
 
-正常结果中会包含 `ok: true`。
+A healthy response contains `ok: true`.
 
-## 4. 连接 MCP 客户端
+## 4. Connect an MCP client
 
-在同一台 Mac 上使用时填写：
+For a client on the same Mac, use:
 
 ```text
-传输方式    Streamable HTTP
-地址        http://127.0.0.1:8765/mcp
-认证        不需要
+Transport      Streamable HTTP
+URL            http://127.0.0.1:8765/mcp
+Authentication Not required
 ```
 
-只监听 `127.0.0.1` 时可以无认证运行。需要局域网或公网访问时，必须启用认证并使用 HTTPS。
+Authentication may be disabled while listening only on `127.0.0.1`. LAN or public access requires authentication and HTTPS.
 
 :::tip
-**安装完成：** 健康检查通过并在客户端连接成功后，就可以开始使用文件、命令、Git 和 Skill。
+**Installation is complete** when the health check succeeds and the client connects. You can then use files, commands, Git, and Skills.
 :::
 
-## 更新
+## Update
 
-重新下载并运行最新安装脚本即可。任务、Skill、配置和工作目录不会被删除，旧二进制会先备份。
+Download and run the latest installer again. Tasks, Skills, configuration, and the working directory are preserved, and the previous binary is backed up first.
 
-## 按需继续
+## Continue when needed
 
-- 指定版本、修改安装目录或配置后台运行：阅读 [macOS 进阶配置](../operations/macos.md)。
-- 使用屏幕、键盘和鼠标自动化：阅读 [macOS 桌面自动化](../guides/desktop-automation.md)。
-- 使用浏览器自动化：当前免构建方案是 Docker browser 镜像，见 [浏览器自动化](../guides/browser-control.md)。
-- 启动失败：查看 [故障排查](../operations/troubleshooting.md)。
+- For a fixed version, custom installation directory, or background service, see [Advanced macOS configuration](../operations/macos.md).
+- For screen, keyboard, and mouse automation, see [macOS desktop automation](../guides/desktop-automation.md).
+- For browser automation, the current build-free option is the Docker browser image. See [Browser automation](../guides/browser-control.md).
+- If startup fails, see [Troubleshooting](../operations/troubleshooting.md).

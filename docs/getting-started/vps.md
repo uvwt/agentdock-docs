@@ -1,18 +1,18 @@
-# Linux 手动 systemd 部署
+# Manual Linux systemd deployment
 
-本页适合需要自己维护运行用户、Release 二进制、环境文件、systemd 和 HTTPS 反代的部署者。普通用户请先使用 [Linux 安装](./linux.md)。
+This page is for operators who want to maintain the service user, release binary, environment file, systemd unit, and HTTPS reverse proxy themselves. Regular users should start with the [Linux installation](./linux.md).
 
-手动部署同样使用预编译 Release，不需要在服务器上安装 Go 或构建源码。
+Manual deployment still uses a prebuilt release. You do not need Go or a source build on the server.
 
-## 推荐拓扑
+## Recommended topology
 
 ```text
 MCP client -> HTTPS reverse proxy -> 127.0.0.1:8765 -> AgentDock
 ```
 
-AgentDock 只监听回环地址，Caddy、Nginx 或其他反代负责 TLS 和公网入口。
+AgentDock listens only on a loopback address. Caddy, Nginx, or another reverse proxy provides TLS and the public endpoint.
 
-## 创建运行用户和目录
+## Create the service user and directories
 
 ```bash
 sudo useradd --system --create-home --home-dir /srv/agentdock agentdock
@@ -21,7 +21,7 @@ sudo install -d -m 0755 /opt/agentdock/bin
 sudo install -d -m 0750 /etc/agentdock
 ```
 
-## 下载并安装 Release 二进制
+## Download and install the release binary
 
 ```bash
 case "$(uname -m)" in
@@ -46,15 +46,15 @@ sudo install -m 0755 "$TMP_DIR/bin/agentdock" /opt/agentdock/bin/agentdock
 rm -rf "$TMP_DIR"
 ```
 
-生产环境可以把 `BASE_URL` 改为指定版本：
+In production, replace `BASE_URL` with a fixed release:
 
 ```bash
 BASE_URL="https://github.com/uvwt/agentdock/releases/download/vX.Y.Z"
 ```
 
-## 环境文件
+## Environment file
 
-创建 `/etc/agentdock/agentdock.env`：
+Create `/etc/agentdock/agentdock.env`:
 
 ```bash
 AGENTDOCK_HOST=127.0.0.1
@@ -63,14 +63,14 @@ AGENTDOCK_LOG_LEVEL=info
 AGENTDOCK_AUTH_TOKEN=<replace-with-a-random-secret>
 ```
 
-然后收紧权限：
+Restrict its permissions:
 
 ```bash
 sudo chown root:agentdock /etc/agentdock/agentdock.env
 sudo chmod 0640 /etc/agentdock/agentdock.env
 ```
 
-需要 NexusDock Recall 或 Workflow 模板时，额外配置：
+Add these variables when NexusDock Recall or workflow templates are required:
 
 ```bash
 AGENTDOCK_NEXUS_ENDPOINT=https://nexus.example.com
@@ -79,7 +79,7 @@ AGENTDOCK_NEXUS_TOKEN=<replace-with-a-secret>
 
 ## systemd unit
 
-创建 `/etc/systemd/system/agentdock.service`：
+Create `/etc/systemd/system/agentdock.service`:
 
 ```ini
 [Unit]
@@ -104,16 +104,16 @@ RestartSec=3
 WantedBy=multi-user.target
 ```
 
-启动：
+Start the service:
 
 ```bash
 sudo systemctl daemon-reload
 sudo systemctl enable --now agentdock
 ```
 
-## HTTPS 反代
+## HTTPS reverse proxy
 
-Caddy 示例：
+Caddy example:
 
 ```caddyfile
 agentdock.example.com {
@@ -121,48 +121,48 @@ agentdock.example.com {
 }
 ```
 
-客户端地址：
+Client URL:
 
 ```text
 https://agentdock.example.com/mcp
 ```
 
-反代不要记录 Authorization Header。只有反代确实位于可信网段并负责重写 `X-Forwarded-For` 时，才配置 `AGENTDOCK_TRUSTED_PROXY_CIDRS`。
+Do not log the Authorization header at the proxy. Configure `AGENTDOCK_TRUSTED_PROXY_CIDRS` only when the proxy is on a trusted network and rewrites `X-Forwarded-For` correctly.
 
-## OAuth（可选）
+## OAuth (optional)
 
-ChatGPT 等需要浏览器授权的 MCP 客户端推荐使用 OAuth。AgentDock 支持动态客户端注册、Authorization Code、PKCE S256 和 Refresh Token：
+OAuth is recommended for MCP clients such as ChatGPT that use browser authorization. AgentDock supports dynamic client registration, Authorization Code, PKCE S256, and Refresh Tokens:
 
 ```bash
 AGENTDOCK_OAUTH_ENABLED=true
 AGENTDOCK_SERVER_URL=https://agentdock.example.com
-AGENTDOCK_OAUTH_PASSWORD=<至少-12-个字符的授权密码>
-AGENTDOCK_OAUTH_TOKEN_SECRET=<至少-32-字节的随机签名密钥>
+AGENTDOCK_OAUTH_PASSWORD=<authorization-password-at-least-12-characters>
+AGENTDOCK_OAUTH_TOKEN_SECRET=<random-signing-key-at-least-32-bytes>
 ```
 
-公网 `AGENTDOCK_SERVER_URL` 必须使用 HTTPS，并且只填写 Origin，不附加 `/mcp`。签名密钥应稳定保存，不要在每次服务重启时重新生成。OAuth 与 Bearer Token 可以按客户端需求选择或同时启用，不要把密码或签名密钥提交到仓库。
+A public `AGENTDOCK_SERVER_URL` must use HTTPS and contain only the origin, without `/mcp`. Keep the signing key stable instead of regenerating it on every restart. OAuth and Bearer Token authentication can be enabled separately or together according to client requirements. Do not commit the password or signing key.
 
-配置并重启服务后，可先验证：
+After configuration and restart, verify:
 
 ```bash
 curl -fsS https://agentdock.example.com/.well-known/oauth-authorization-server
 curl -fsS https://agentdock.example.com/.well-known/oauth-protected-resource/mcp
 ```
 
-ChatGPT 中实际填写的 MCP 地址为 `https://agentdock.example.com/mcp`。完整操作见 [使用 ChatGPT 连接 AgentDock](../guides/chatgpt.md)。
+The MCP URL entered in ChatGPT is `https://agentdock.example.com/mcp`. See [Connect ChatGPT to AgentDock](../guides/chatgpt.md) for the complete workflow.
 
-## 更新
+## Update
 
-重新下载并校验目标 Release，覆盖 `/opt/agentdock/bin/agentdock`，然后重启：
+Download and verify the target release again, replace `/opt/agentdock/bin/agentdock`, then restart:
 
 ```bash
 sudo systemctl restart agentdock
 sudo systemctl status agentdock --no-pager
 ```
 
-运行数据和环境文件位于独立目录，不会随二进制替换而删除。
+Runtime data and the environment file live in separate directories and are not deleted when the binary is replaced.
 
-## 验证
+## Verification
 
 ```bash
 sudo systemctl status agentdock --no-pager
@@ -170,4 +170,4 @@ sudo journalctl -u agentdock -n 100 --no-pager
 curl -fsS http://127.0.0.1:8765/healthz
 ```
 
-验证 MCP 时应携带环境文件中的 Bearer Token，并确认公网反代不会丢弃 Authorization Header。源码构建只面向贡献者，见 [开发者指南](../contributing/development.md)。
+Use the Bearer Token from the environment file when verifying MCP, and confirm that the public reverse proxy preserves the Authorization header. Source builds are for contributors only; see the [Contributor guide](../contributing/development.md).

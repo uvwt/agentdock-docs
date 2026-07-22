@@ -1,58 +1,58 @@
-# macOS 桌面自动化
+# macOS desktop automation
 
-macOS Desktop Skill 可以让 Agent 观察当前登录桌面，并在你的授权范围内点击、输入、使用快捷键或拖拽。
+The macOS Desktop Skill lets an agent observe the current logged-in desktop and, within the permissions you grant, click, type, use keyboard shortcuts, or drag.
 
-Docker、远程 VPS、系统级后台服务和未登录会话不能控制真实 macOS 桌面。
+Docker, remote VPS hosts, system-level background services, and logged-out sessions cannot control the real macOS desktop.
 
-## 1. 安装 AgentDock
+## 1. Install AgentDock
 
-先按 [macOS 安装](../getting-started/macos.md) 在当前登录用户下运行 AgentDock。Docker、LaunchDaemon 和远程 Linux 实例都不能控制当前 Mac 桌面。
+Follow the [macOS installation](../getting-started/macos.md) and run AgentDock as the current logged-in user. Docker, a LaunchDaemon, and a remote Linux instance cannot control the current Mac desktop.
 
-## 2. 安装 Desktop Skill
+## 2. Install the Desktop Skill
 
-把下面这句话发给已经连接 AgentDock 的客户端：
+Send this instruction to a client that is already connected to AgentDock:
 
 ```text
-请先校验，再安装并激活官方 Desktop Skill：
+Validate, install, and activate the official Desktop Skill:
 https://github.com/uvwt/agentdock/releases/latest/download/skill-desktop.zip
 ```
 
-官方 ZIP 随 AgentDock Release 发布，并附带 SHA-256 校验文件。安装完成后可以询问“当前 desktop Skill 是否已经激活”进行确认。
+The official ZIP is published with each AgentDock release and has a matching SHA-256 checksum file. After installation, ask whether the `desktop` Skill is active.
 
-## 3. 授予 macOS 权限
+## 3. Grant macOS permissions
 
-1. 为实际运行 AgentDock 的终端或托管应用授予“屏幕录制”权限。
-2. 需要点击和输入时，再授予“辅助功能”权限。
-3. 重启相关终端或应用，使权限生效。
+1. Grant Screen Recording permission to the terminal or host application that actually runs AgentDock.
+2. Grant Accessibility permission when clicking or typing is required.
+3. Restart the relevant terminal or application so the permission takes effect.
 
-只给实际运行 AgentDock 的应用授权，不要给无关程序开放这些权限。
+Grant these permissions only to the process that runs AgentDock, not to unrelated applications.
 
-## 怎样使用
+## How to use it
 
-可以直接提出目标：
+Describe the goal directly:
 
 ```text
-查看当前窗口，并告诉我这个错误提示是什么。
-在这个应用里找到设置页面，但修改前先让我确认。
-把文本填入表单，不要点击最终提交。
+Inspect the current window and explain this error message.
+Find the settings page in this application, but ask before changing anything.
+Fill this text into the form without submitting it.
 ```
 
-Agent 应先观察当前应用和窗口，再执行操作，最后重新观察或截图确认结果。
+The agent should observe the current application and window first, perform the action, and observe or capture a screenshot again to verify the result.
 
-## 需要确认的操作
+## Operations that require confirmation
 
-以下动作通常需要额外确认：
+The following actions usually need an additional confirmation:
 
-- 发送消息、邮件或文件。
-- 删除内容。
-- 上传、付款或授权。
-- 修改系统权限和账号设置。
-- 使用剪贴板写入敏感信息。
+- Send messages, email, or files.
+- Delete content.
+- Upload, pay, or authorize access.
+- Change system permissions or account settings.
+- Write sensitive information to the clipboard.
 
-坐标点击容易受窗口位置、缩放和多显示器影响，应优先使用可读的辅助功能元素。
+Coordinate-based clicking is fragile across window positions, scaling, and multiple displays. Prefer readable Accessibility elements when available.
 
-## 隐私
+## Privacy
 
-桌面截图可能包含通知、聊天、账号和文件内容。不要自动公开、同步或提交截图和运行产物。
+Desktop screenshots may contain notifications, chats, accounts, and file contents. Do not publish, synchronize, or commit screenshots and runtime artifacts automatically.
 
-Desktop Skill 的实现和内部命令不需要普通用户手工调用。创建 Skill 的说明见 [开发者指南](../contributing/development.md#skill-开发)。
+Regular users do not need to call the Desktop Skill's internal commands manually. See [Contributor guide](../contributing/development.md#skill-development) for Skill development.

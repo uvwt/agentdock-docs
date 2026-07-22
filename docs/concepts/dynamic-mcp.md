@@ -1,74 +1,74 @@
-# 连接外部 MCP
+# Connect external MCP servers
 
-动态 MCP 让 AgentDock 在不重启或重新编译的情况下连接其他 MCP Server，例如设计平台、任务系统、搜索服务或本地分析工具。
+Dynamic MCP lets AgentDock connect to other MCP servers without restarting or rebuilding. Examples include design platforms, task systems, search services, and local analysis tools.
 
-普通用户只需要准备服务地址或启动命令，以及该服务要求的凭据。Agent 会负责注册、检查和验证。
+Regular users only need the service URL or launch command and any credentials required by that service. The agent handles registration, inspection, and verification.
 
-## 最简单的使用方式
+## Simplest usage
 
-可以直接告诉 Agent：
+Tell the agent what to connect:
 
 ```text
-接入这个 MCP：https://mcp.example.com/mcp
-名称使用 example，认证 Token 放到独立环境里，接入后验证能否列出工具。
+Connect this MCP server: https://mcp.example.com/mcp
+Use example as its name, store the authentication token in its isolated environment, and verify that its tools can be listed.
 ```
 
-Agent 通常会：
+The agent will usually:
 
-1. 确认来源和传输方式。
-2. 注册 MCP Server。
-3. 把 Token 保存到该 MCP 的独立环境。
-4. 刷新连接。
-5. 搜索一个工具并完成只读验证。
+1. Confirm the source and transport.
+2. Register the MCP server.
+3. Save the token in that MCP server's isolated environment.
+4. Refresh the connection.
+5. Find one tool and complete a read-only verification call.
 
-## 两种连接方式
+## Two transport options
 
 ### HTTP MCP
 
-适合已经提供网络地址的服务：
+Use HTTP for services that already expose a network endpoint:
 
 ```text
 https://mcp.example.com/mcp
 ```
 
-认证信息通过独立环境映射到 HTTP Header。注册信息只保存变量名，不保存真实 Token。
+Authentication data is mapped from an isolated environment variable to an HTTP header. Registry data stores only the variable name, never the actual token.
 
-### 本地 stdio MCP
+### Local stdio MCP
 
-适合安装在同一台机器上的命令行 MCP Server。需要提供：
+Use stdio for command-line MCP servers installed on the same machine. You need to provide:
 
-- 可执行文件的绝对路径。
-- 启动参数。
-- 可选工作目录。
-- 运行所需环境变量。
+- The absolute path to the executable.
+- Launch arguments.
+- An optional working directory.
+- Any required environment variables.
 
-本地 MCP 会继承运行 AgentDock 的系统权限，因此安装前同样要审查来源。
+A local MCP server inherits the operating-system permissions of the AgentDock process, so review its source before installation.
 
-## 凭据怎么保存
+## Credential storage
 
-不要把 Token、Cookie、密码或 OAuth Code 直接写进聊天记录、README 或 MCP 注册信息。
+Do not place tokens, cookies, passwords, or OAuth codes directly in chat history, a README, or MCP registry data.
 
-让 Agent 使用 `mcp_manage env_set` 保存秘密。`env_list` 只会显示变量名和是否已配置，不会返回真实值。
+Ask the agent to store secrets with `mcp_manage env_set`. `env_list` shows only variable names and whether they are configured; it never returns the actual values.
 
-更新凭据后需要刷新 MCP 连接。
+Refresh the MCP connection after updating credentials.
 
-## 如何确认接入成功
+## Verify the connection
 
-可以要求 Agent：
+You can ask the agent:
 
 ```text
-列出 example MCP 的工具，选择一个只读工具确认参数，并完成一次无副作用调用。
+List the tools provided by the example MCP server, inspect the parameters of one read-only tool, and complete one call without side effects.
 ```
 
-如果失败，依次检查服务是否启用、地址或命令是否正确、所需变量是否已配置，以及上游服务是否可达。
+If verification fails, check whether the server is enabled, whether the URL or command is correct, whether all required variables are configured, and whether the upstream service is reachable.
 
-## 管理已有 MCP
+## Manage existing MCP servers
 
-常用操作包括：
+Common operations include:
 
-- 查看和检查配置。
-- 启用、禁用或刷新连接。
-- 更新或删除独立环境变量。
-- 删除不再使用的 Server。
+- View and inspect configuration.
+- Enable, disable, or refresh a connection.
+- Update or remove isolated environment variables.
+- Remove a server that is no longer used.
 
-精确 action 和参数见 [工具介绍](../reference/tools.md#动态-mcp)。
+See [Tools](../reference/tools.md#dynamic-mcp) for exact actions and parameters.

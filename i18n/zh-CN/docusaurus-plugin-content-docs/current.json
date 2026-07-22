@@ -1,0 +1,54 @@
+{
+  "version.label": {
+    "message": "Next",
+    "description": "The label for version current"
+  },
+  "sidebar.docsSidebar.category.Installation": {
+    "message": "安装",
+    "description": "The label for category 'Installation' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.Using AgentDock": {
+    "message": "使用 AgentDock",
+    "description": "The label for category 'Using AgentDock' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.Using AgentDock.link.generated-index.title": {
+    "message": "使用 AgentDock",
+    "description": "The generated-index page title for category 'Using AgentDock' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.Using AgentDock.link.generated-index.description": {
+    "message": "了解 Skill、任务、浏览器、桌面自动化和外部服务接入。",
+    "description": "The generated-index page description for category 'Using AgentDock' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.Configuration and tools": {
+    "message": "配置与工具",
+    "description": "The label for category 'Configuration and tools' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.Configuration and tools.link.generated-index.title": {
+    "message": "配置与工具",
+    "description": "The generated-index page title for category 'Configuration and tools' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.Configuration and tools.link.generated-index.description": {
+    "message": "查看完整运行配置、认证方式和内置工具目录。",
+    "description": "The generated-index page description for category 'Configuration and tools' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.Advanced operations": {
+    "message": "进阶与运维",
+    "description": "The label for category 'Advanced operations' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.Advanced operations.link.generated-index.title": {
+    "message": "进阶与运维",
+    "description": "The generated-index page title for category 'Advanced operations' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.Advanced operations.link.generated-index.description": {
+    "message": "查看平台进阶配置、手动部署、安全边界和故障排查。",
+    "description": "The generated-index page description for category 'Advanced operations' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.Developers": {
+    "message": "开发者",
+    "description": "The label for category 'Developers' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.doc.Manual Linux deployment": {
+    "message": "Linux 手动部署（高级）",
+    "description": "The label for the doc item 'Manual Linux deployment' in sidebar 'docsSidebar', linking to the doc getting-started/vps"
+  }
+}

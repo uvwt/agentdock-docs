@@ -1,58 +1,77 @@
 # AgentDock Docs
 
-AgentDock 官方公开文档，使用 Docusaurus、TypeScript 和 pnpm 构建。
+English | [简体中文](./README.zh-CN.md)
 
-- 线上站点：<https://uvwt.github.io/agentdock-docs/>
-- AgentDock 源码：<https://github.com/uvwt/agentdock>
+Official public documentation for AgentDock, built with Docusaurus, TypeScript, and pnpm.
 
-安装、配置、概念、运维和排障以本仓库为准；AgentDock 源码仓库 README 只保留入口和最短使用说明。
+- Documentation: <https://uvwt.github.io/agentdock-docs/>
+- Simplified Chinese documentation: <https://uvwt.github.io/agentdock-docs/zh-CN/>
+- AgentDock source: <https://github.com/uvwt/agentdock>
 
-## 本地开发
+This repository is the source of truth for installation, configuration, concepts, operations, and troubleshooting. The AgentDock source repository README keeps only the project overview and shortest onboarding path.
+
+## Local development
 
 ```bash
 pnpm install --frozen-lockfile
 pnpm start
 ```
 
-本地开发服务器默认运行在：
+Start the Simplified Chinese locale with:
+
+```bash
+pnpm start -- --locale zh-CN
+```
+
+The local development server runs at:
 
 ```text
 http://localhost:3000/agentdock-docs/
 ```
 
-## 质量检查
+## Quality checks
 
 ```bash
 pnpm check
 ```
 
-该命令会执行 TypeScript 检查和 Docusaurus 生产构建。
+This command runs the TypeScript check, verifies that English and Simplified Chinese documents have matching paths and structure, and builds both locales for production.
 
-## 文档结构
+## Documentation layout
 
 ```text
-docs/
-├── getting-started/  # 普通用户安装与首次连接
-├── concepts/         # Skill、任务、动态 MCP、NexusDock Recall
-├── guides/           # 浏览器和桌面自动化
-├── reference/        # 完整配置与工具参考
-├── operations/       # 高级部署、安全与排障
-└── contributing/     # 开发者指南
+docs/                                            # English source documents
+├── getting-started/                             # Installation and first connection
+├── concepts/                                    # Skills, tasks, dynamic MCP, and NexusDock Recall
+├── guides/                                      # Browser and desktop automation
+├── reference/                                   # Configuration and tool reference
+├── operations/                                  # Advanced deployment, security, and troubleshooting
+└── contributing/                                # Contributor guide
+
+i18n/zh-CN/docusaurus-plugin-content-docs/current/  # Matching Simplified Chinese documents
 ```
 
-导航顺序由 `sidebars.ts` 显式维护。
+Navigation order is maintained explicitly in `sidebars.ts`. Docusaurus locale resources under `i18n/zh-CN/` localize the home page, navbar, footer, sidebar, and theme text.
 
-## 内容规范
+## Localization rules
 
-- 普通用户页面先给出可完成的最短路径，内部实现、完整参数和维护者流程进入参考、运维或开发者章节。
-- 面向公开用户，不记录个人设备路径、内网端口、私有域名或维护者凭据。
-- 不把迁移历史、废弃接口清单和临时兼容方案放进主文档。
-- 命令、参数和环境变量必须以当前源码为准。
-- 修改用户可见行为时，代码和文档应在同一任务中完成验证。
+- English and Simplified Chinese documents must have identical relative file paths.
+- Corresponding pages must keep the same heading levels, section order, code-fence languages, commands, configuration fields, and link destinations.
+- Translation may follow natural conventions in each language, but it must not add, remove, or change product behavior.
+- Add, delete, or rename a page in both locales in the same change.
+- Shared images stay under `static/img/`; do not duplicate language-neutral assets.
 
-## 搜索
+## Content rules
 
-构建时同时提供以下变量后启用 Algolia DocSearch：
+- Give regular users the shortest complete path first. Move internals, exhaustive parameters, and maintainer workflows into reference, operations, or contributor sections.
+- Write for public users. Do not record personal device paths, private ports, private domains, or maintainer credentials.
+- Keep migration history, retired API inventories, and temporary compatibility plans out of primary user documentation.
+- Commands, flags, and environment variables must match the current source code.
+- Validate code and documentation together whenever user-visible behavior changes.
+
+## Search
+
+Provide all of these variables at build time to enable Algolia DocSearch:
 
 ```bash
 ALGOLIA_APP_ID=...
@@ -61,11 +80,11 @@ ALGOLIA_INDEX_NAME=...
 pnpm build
 ```
 
-未配置搜索变量时，站点仍可正常构建和部署。
+The site still builds and deploys normally when search variables are absent.
 
-## 部署
+## Deployment
 
-`.github/workflows/docs.yml` 会在 Pull Request 中执行检查，并在 `main` 更新后发布 GitHub Pages。
+`.github/workflows/docs.yml` checks pull requests and publishes GitHub Pages after `main` changes.
 
 ## License
 

@@ -1,81 +1,81 @@
-# macOS 进阶配置
+# Advanced macOS configuration
 
-普通用户首次安装只需要完成 [macOS 安装](../getting-started/macos.md)。本页用于固定版本、修改安装目录、后台运行和桌面权限配置。
+Regular users only need the [macOS installation](../getting-started/macos.md) for their first setup. This page covers fixed versions, custom installation directories, background operation, and desktop permissions.
 
-## 把 AgentDock 加入 PATH
+## Add AgentDock to PATH
 
-安装器默认把二进制放到 `~/.local/bin`。希望直接执行 `agentdock` 时：
+The installer places the binary in `~/.local/bin` by default. To run `agentdock` directly:
 
 ```bash
 echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zprofile
 source ~/.zprofile
 ```
 
-随后可以直接运行：
+Then run:
 
 ```bash
 agentdock
 ```
 
-## 安装指定版本
+## Install a specific version
 
 ```bash
 zsh /tmp/install-agentdock-macos.sh --version vX.Y.Z
 ```
 
-## 修改安装目录
+## Change the installation directory
 
 ```bash
 zsh /tmp/install-agentdock-macos.sh --install-dir "$HOME/bin"
 ```
 
-修改目录后要确保该目录已经加入 PATH，或始终使用完整路径启动。
+After changing the directory, add it to `PATH` or always use the full binary path.
 
-## 后台运行
+## Run in the background
 
-长期后台运行可以使用当前登录用户的 LaunchAgent。涉及 Desktop Skill 时，AgentDock 必须运行在登录用户会话中，不能使用系统级 LaunchDaemon。
+For long-running background operation, use a LaunchAgent for the current logged-in user. When the Desktop Skill is involved, AgentDock must run in the logged-in user session and cannot use a system-level LaunchDaemon.
 
-推荐固定以下内容：
+Keep these values stable:
 
 ```text
-程序路径    $HOME/.local/bin/agentdock
-工作目录    $HOME/AgentDock
-状态目录    $HOME/.agentdock
-监听地址    127.0.0.1:8765
+Program path     $HOME/.local/bin/agentdock
+Working directory $HOME/AgentDock
+State directory   $HOME/.agentdock
+Listen address    127.0.0.1:8765
 ```
 
-启动配置中的 Token、OAuth Secret 或第三方凭据不应直接写入公开仓库。修改 LaunchAgent 后使用 `launchctl` 重新加载，并执行健康检查：
+Do not place tokens, OAuth secrets, or third-party credentials directly in a public startup configuration. Reload the LaunchAgent after modifying it, then run a health check:
 
 ```bash
 curl -fsS http://127.0.0.1:8765/healthz
 ```
 
-## 目录与权限
+## Directories and permissions
 
 ```text
-~/.agentdock  AgentDock 内部状态
-~/AgentDock   默认工作目录
+~/.agentdock  AgentDock internal state
+~/AgentDock   Default working directory
 ```
 
-裸机进程能访问哪些文件，取决于当前 macOS 用户权限。不要给 AgentDock 运行用户授予不需要的目录访问权。
+A native process can access whatever the current macOS user can access. Do not grant the AgentDock runtime user unnecessary directory permissions.
 
-## Desktop Skill 权限
+## Desktop Skill permissions
 
-使用屏幕、键盘和鼠标自动化前，需要在“系统设置 → 隐私与安全性”中给实际托管 AgentDock 的终端或应用授予：
+Before using screen, keyboard, and mouse automation, open **System Settings > Privacy & Security** and grant these permissions to the terminal or application that actually hosts AgentDock:
 
-- 辅助功能
-- 屏幕与系统音频录制
+- Accessibility
+- Screen & System Audio Recording
 
-只给实际运行 AgentDock 的程序授权。更换终端、应用路径或代码签名后，macOS 可能要求重新授权。
+Grant permissions only to the process that runs AgentDock. macOS may request authorization again after the host terminal, application path, or code signature changes.
 
-具体步骤见 [macOS 桌面自动化](../guides/desktop-automation.md)。
+See [macOS desktop automation](../guides/desktop-automation.md) for the complete procedure.
 
-## 更新与备份
+## Updates and backups
 
-重新运行安装脚本即可升级。旧二进制会备份到：
+Rerun the installer to upgrade. Previous binaries are backed up under:
 
 ```text
 ~/.agentdock/backups/bin
 ```
 
-运行数据和默认工作目录不会被删除。
+Runtime data and the default working directory are not deleted.

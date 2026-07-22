@@ -1,5 +1,6 @@
 import type {ReactNode} from 'react';
 import Link from '@docusaurus/Link';
+import Translate, {translate} from '@docusaurus/Translate';
 import Layout from '@theme/Layout';
 import Heading from '@theme/Heading';
 import HomepageFeatures from '@site/src/components/HomepageFeatures';
@@ -7,7 +8,12 @@ import styles from './index.module.css';
 
 function RuntimePreview(): ReactNode {
   return (
-    <div className={styles.previewShell} aria-label="AgentDock 任务执行预览">
+    <div
+      className={styles.previewShell}
+      aria-label={translate({
+        id: 'homepage.runtimePreview.ariaLabel',
+        message: 'AgentDock task execution preview',
+      })}>
       <div className={styles.previewGlow} />
       <div className={styles.previewCard}>
         <div className={styles.previewHeader}>
@@ -26,7 +32,11 @@ function RuntimePreview(): ReactNode {
           <div className={styles.taskHeading}>
             <div>
               <span className={styles.taskLabel}>ACTIVE TASK</span>
-              <strong>更新项目并完成验证</strong>
+              <strong>
+                <Translate id="homepage.runtimePreview.taskTitle">
+                  Update the project and verify the result
+                </Translate>
+              </strong>
             </div>
             <span className={styles.progress}>3 / 4</span>
           </div>
@@ -34,29 +44,53 @@ function RuntimePreview(): ReactNode {
           <div className={styles.stepList}>
             <div className={styles.stepDone}>
               <span className={styles.stepIcon}>✓</span>
-              <span>检查真实环境</span>
+              <span>
+                <Translate id="homepage.runtimePreview.inspectEnvironment">
+                  Inspect the real environment
+                </Translate>
+              </span>
               <code>read_file</code>
             </div>
             <div className={styles.stepDone}>
               <span className={styles.stepIcon}>✓</span>
-              <span>实施代码修改</span>
+              <span>
+                <Translate id="homepage.runtimePreview.applyChanges">
+                  Apply the code changes
+                </Translate>
+              </span>
               <code>file_edit</code>
             </div>
             <div className={styles.stepDone}>
               <span className={styles.stepIcon}>✓</span>
-              <span>执行测试与构建</span>
+              <span>
+                <Translate id="homepage.runtimePreview.runChecks">
+                  Run tests and builds
+                </Translate>
+              </span>
               <code>exec_command</code>
             </div>
             <div className={styles.stepCurrent}>
               <span className={styles.currentPulse} />
-              <span>发布并验证结果</span>
+              <span>
+                <Translate id="homepage.runtimePreview.publishAndVerify">
+                  Publish and verify the result
+                </Translate>
+              </span>
               <code>browser_snapshot</code>
             </div>
           </div>
 
           <div className={styles.previewFooter}>
-            <span>任务状态已持久化</span>
-            <span className={styles.resumeText}>随时可恢复 →</span>
+            <span>
+              <Translate id="homepage.runtimePreview.statePersisted">
+                Task state persisted
+              </Translate>
+            </span>
+            <span className={styles.resumeText}>
+              <Translate id="homepage.runtimePreview.resumeAnytime">
+                Resume at any time →
+              </Translate>
+            </span>
           </div>
         </div>
       </div>
@@ -75,33 +109,48 @@ function HomepageHeader(): ReactNode {
             LOCAL & REMOTE AGENT TOOLS
           </div>
           <Heading as="h1" className={styles.heroTitle}>
-            让 Agent
-            <span>真正完成工作</span>
+            <Translate id="homepage.hero.titleLine1">Let agents</Translate>
+            <span>
+              <Translate id="homepage.hero.titleLine2">finish real work</Translate>
+            </span>
           </Heading>
           <p className={styles.heroSubtitle}>
-            把支持 MCP 的 AI 客户端连接到你的电脑或服务器，通过明确的工具边界使用文件、命令、Git、浏览器和外部服务。
+            <Translate id="homepage.hero.subtitle">
+              Connect an MCP-compatible AI client to your computers and servers, then use files,
+              commands, Git, browsers, and external services through explicit tool boundaries.
+            </Translate>
           </p>
           <div className={styles.actions}>
             <Link className={styles.primaryAction} to="/docs/getting-started/install">
-              选择安装方式
+              <Translate id="homepage.hero.chooseInstall">Choose an installation</Translate>
               <span aria-hidden="true">→</span>
             </Link>
             <Link className={styles.secondaryAction} to="/docs/intro">
-              了解功能
+              <Translate id="homepage.hero.exploreFeatures">Explore the features</Translate>
             </Link>
           </div>
           <div className={styles.proofRow}>
             <div>
               <strong>30</strong>
-              <span>内置工具</span>
+              <span>
+                <Translate id="homepage.hero.builtInTools">built-in tools</Translate>
+              </span>
             </div>
             <div>
-              <strong>可恢复</strong>
-              <span>任务状态</span>
+              <strong>
+                <Translate id="homepage.hero.recoverable">Recoverable</Translate>
+              </strong>
+              <span>
+                <Translate id="homepage.hero.taskState">task state</Translate>
+              </span>
             </div>
             <div>
-              <strong>跨平台</strong>
-              <span>本机与服务器</span>
+              <strong>
+                <Translate id="homepage.hero.crossPlatform">Cross-platform</Translate>
+              </strong>
+              <span>
+                <Translate id="homepage.hero.localAndRemote">local and remote</Translate>
+              </span>
             </div>
           </div>
         </div>
@@ -114,8 +163,12 @@ function HomepageHeader(): ReactNode {
 export default function Home(): ReactNode {
   return (
     <Layout
-      title="AgentDock 文档"
-      description="AgentDock 官方文档：快速安装、连接客户端、使用 Skill、浏览器和外部 MCP。">
+      title={translate({id: 'homepage.meta.title', message: 'AgentDock documentation'})}
+      description={translate({
+        id: 'homepage.meta.description',
+        message:
+          'Official AgentDock documentation for installation, MCP clients, Skills, browser automation, and external MCP servers.',
+      })}>
       <HomepageHeader />
       <main>
         <HomepageFeatures />

@@ -1,10 +1,10 @@
-# Windows 进阶配置
+# Advanced Windows configuration
 
-普通用户首次安装只需要完成 [Windows 安装](../getting-started/windows.md)。本页用于登录后自动启动、固定版本、WSL、浏览器和卸载。
+Regular users only need the [Windows installation](../getting-started/windows.md) for their first setup. This page covers login startup, fixed versions, WSL, browser capabilities, and removal.
 
-## 登录后自动启动
+## Start after login
 
-先按安装页下载 `$script`，再执行：
+After downloading `$script` as described on the installation page, run:
 
 ```powershell
 powershell -ExecutionPolicy Bypass `
@@ -13,19 +13,19 @@ powershell -ExecutionPolicy Bypass `
   -Port 8765
 ```
 
-安装器会生成 Bearer Token、加密保存到当前用户 DPAPI，并立即启动 AgentDock。首次生成时 Token 只显示一次，请保存到你的密码管理器。
+The installer generates a Bearer Token, protects it with the current user's DPAPI, and starts AgentDock immediately. A newly generated token is shown only once, so save it in a password manager.
 
-连接信息：
+Connection details:
 
 ```text
-传输方式    Streamable HTTP
-地址        http://127.0.0.1:8765/mcp
-请求头      Authorization: Bearer <安装器显示的 Token>
+Transport      Streamable HTTP
+URL            http://127.0.0.1:8765/mcp
+Request header Authorization: Bearer <token shown by the installer>
 ```
 
-该方式在当前用户登录后启动，不是未登录前运行的系统服务。
+This mode starts after the current user logs in. It is not a system service that runs before login.
 
-## 安装指定版本
+## Install a specific version
 
 ```powershell
 powershell -ExecutionPolicy Bypass `
@@ -33,11 +33,11 @@ powershell -ExecutionPolicy Bypass `
   -Version vX.Y.Z
 ```
 
-再次运行安装器即可升级。已存在的运行数据和启动配置会保留。
+Run the installer again to upgrade. Existing runtime data and startup configuration are preserved.
 
-## 校验安装脚本
+## Verify the installer script
 
-需要在执行前额外校验安装脚本时：
+To verify the installer script before execution:
 
 ```powershell
 $base = 'https://github.com/uvwt/agentdock/releases/latest/download'
@@ -52,11 +52,11 @@ $actual = (Get-FileHash -LiteralPath $script -Algorithm SHA256).Hash.ToLowerInva
 if ($actual -ne $expected) { throw 'AgentDock installer checksum mismatch.' }
 ```
 
-安装器还会校验实际下载的 AgentDock ZIP。
+The installer also verifies the AgentDock ZIP that it downloads.
 
-## WSL 运行时
+## WSL runtime
 
-已经安装 WSL 时，命令和文件工具可以显式选择 Linux 运行时：
+When WSL is installed, command and file tools can select a Linux runtime explicitly:
 
 ```json
 {
@@ -65,24 +65,24 @@ if ($actual -ne $expected) { throw 'AgentDock installer checksum mismatch.' }
 }
 ```
 
-`wsl_distribution` 可以省略，此时使用系统默认发行版。WSL 文件工具要求目标发行版安装 `python3`，路径使用 `/home/...`、`/mnt/d/...` 等 Linux 绝对路径。
+You may omit `wsl_distribution` to use the system default distribution. WSL file tools require `python3` in the target distribution and use Linux absolute paths such as `/home/...` and `/mnt/d/...`.
 
-WSL 写入拒绝软链接、设备文件和 `/proc`、`/sys`、`/dev`、`/run` 等特殊目录。跨文件系统移动和递归删除目录不在当前支持范围内。
+WSL writes reject symbolic links, device files, and special directories such as `/proc`, `/sys`, `/dev`, and `/run`. Cross-filesystem moves and recursive directory deletion are not currently supported.
 
-## 浏览器能力
+## Browser capabilities
 
-Windows Release 不会自动安装 browser runner。原生模式需要另外准备 Node.js、源码仓库中的 runner 和 `playwright-core`；普通用户优先使用已经包含完整依赖的 Docker browser 镜像。具体选择见 [浏览器自动化](../guides/browser-control.md)。
+The Windows release does not install the browser runner automatically. Native mode requires Node.js, the runner from the source repository, and `playwright-core`. Regular users should prefer the Docker browser image, which already includes all dependencies. See [Browser automation](../guides/browser-control.md).
 
-## 命令与 Skill
+## Commands and Skills
 
-- `exec_command` 优先使用 PowerShell 7，然后回退到 Windows PowerShell 或 `cmd.exe`。
-- `tty=true` 使用 ConPTY。
-- Skill 声明的 Python、Node.js 或其他平台依赖需要由用户安装。
-- macOS Desktop Skill 不支持 Windows。
+- `exec_command` prefers PowerShell 7, then falls back to Windows PowerShell or `cmd.exe`.
+- `tty=true` uses ConPTY.
+- Python, Node.js, and other platform dependencies declared by a Skill must be installed by the user.
+- The macOS Desktop Skill does not support Windows.
 
-## 卸载
+## Remove AgentDock
 
-下载并运行卸载脚本：
+Download and run the uninstaller:
 
 ```powershell
 $uninstaller = Join-Path $env:TEMP 'uninstall-agentdock.ps1'
@@ -92,7 +92,7 @@ Invoke-WebRequest `
 powershell -ExecutionPolicy Bypass -File $uninstaller
 ```
 
-同时删除 `%USERPROFILE%\.agentdock` 和 `%USERPROFILE%\AgentDock`：
+To also remove `%USERPROFILE%\.agentdock` and `%USERPROFILE%\AgentDock`:
 
 ```powershell
 powershell -ExecutionPolicy Bypass `
@@ -101,5 +101,5 @@ powershell -ExecutionPolicy Bypass `
 ```
 
 :::danger
-`-PurgeState` 会删除任务、Skill 配置、运行数据和默认工作目录。执行前先备份需要保留的内容。
+`-PurgeState` deletes tasks, Skill configuration, runtime data, and the default working directory. Back up anything you need before running it.
 :::

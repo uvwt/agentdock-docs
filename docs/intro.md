@@ -5,56 +5,56 @@ slug: /intro
 
 # AgentDock
 
-AgentDock 让支持 MCP 的 AI 客户端可以在你的电脑或服务器上读取文件、执行命令、操作 Git，并按需启用浏览器或连接其他服务。
+AgentDock lets MCP-compatible AI clients read files, run commands, operate Git, enable browser automation, and connect external services on your computers and servers.
 
-它不会替你决定权限范围。AgentDock 能访问什么，取决于运行它的系统用户、Docker 挂载目录和你启用的功能。
+It does not decide the permission boundary for you. What AgentDock can access depends on the operating-system user that runs it, the directories mounted into Docker, and the capabilities you enable.
 
-## 第一次使用
+## First use
 
-先打开 [安装 AgentDock](./getting-started/install.md)，按当前系统选择原生安装。已经在使用 Docker，或需要隔离运行环境时再选择 Docker。
+Open [Install AgentDock](./getting-started/install.md) and choose the native installer for your current system. Choose Docker when it is already part of your environment or when you need runtime isolation.
 
-| 当前环境 | 推荐入口 |
+| Current environment | Recommended guide |
 | --- | --- |
-| macOS | [macOS 安装](./getting-started/macos.md) |
-| Windows 11 | [Windows 安装](./getting-started/windows.md) |
-| Linux 服务器或桌面 | [Linux 安装](./getting-started/linux.md) |
-| 已经安装 Docker | [Docker 安装](./getting-started/docker.md) |
+| macOS | [macOS installation](./getting-started/macos.md) |
+| Windows 11 | [Windows installation](./getting-started/windows.md) |
+| Linux server or desktop | [Linux installation](./getting-started/linux.md) |
+| Docker already installed | [Docker installation](./getting-started/docker.md) |
 
-安装完成后，把页面给出的 MCP 地址和 Token 填入客户端即可。第一次使用不需要先理解完整配置、systemd、WSL、容器数据卷或反向代理。
+After installation, add the MCP URL and token shown in the guide to your client. You do not need to understand the complete configuration, systemd, WSL, container volumes, or reverse proxies before your first connection.
 
-## 可以让它做什么
+## What can it do?
 
-连接成功后，可以直接向 Agent 提出任务，例如：
+After connecting, describe a goal directly, for example:
 
-- “检查这个项目为什么启动失败，并修好后验证。”
-- “读取这份仓库，修改代码并提交。”
-- “打开网页完成查询，并把结果整理成文件。”
-- “安装并使用一个 Skill。”
-- “接入一个外部 MCP 服务。”
-- “把长任务拆成步骤，并持续更新进度。”
+- “Find out why this project fails to start, fix it, and verify the result.”
+- “Read this repository, change the code, and commit it.”
+- “Open a website, complete a lookup, and save the result as a file.”
+- “Install and use a Skill.”
+- “Connect an external MCP service.”
+- “Break this long task into steps and keep its progress updated.”
 
-Agent 会根据任务选择文件、命令、Git、浏览器、Skill 或外部 MCP 工具。普通用户通常不需要逐个手动调用工具。
+The agent selects file, command, Git, browser, Skill, or external MCP tools based on the task. Regular users rarely need to call individual tools manually.
 
-## 数据保存在哪里
+## Where data is stored
 
-裸机安装默认使用：
+A native installation uses these defaults:
 
 ```text
-~/.agentdock   AgentDock 状态、任务、Skill 和配置
-~/AgentDock    默认工作目录
+~/.agentdock   AgentDock state, tasks, Skills, and configuration
+~/AgentDock    Default working directory
 ```
 
-Docker 安装默认把这两类数据保存到 Docker volume。删除程序或容器不一定会删除数据；执行清理命令前请先确认是否需要保留。
+Docker stores both categories in Docker volumes by default. Removing the program or container does not necessarily remove its data; confirm what must be preserved before running cleanup commands.
 
-## 常用入口
+## Common entry points
 
-- [在不同客户端中连接 AgentDock](./guides/mcp-clients.md)
-- [使用 ChatGPT 连接 AgentDock](./guides/chatgpt.md)
-- [使用 Skill](./concepts/skills.md)
-- [任务与进度](./concepts/tasks.md)
-- [浏览器自动化](./guides/browser-control.md)
-- [连接外部 MCP](./concepts/dynamic-mcp.md)
-- [完整配置参考](./reference/configuration.md)
-- [故障排查](./operations/troubleshooting.md)
+- [Connect AgentDock from different clients](./guides/mcp-clients.md)
+- [Connect ChatGPT to AgentDock](./guides/chatgpt.md)
+- [Use Skills](./concepts/skills.md)
+- [Tasks and progress](./concepts/tasks.md)
+- [Browser automation](./guides/browser-control.md)
+- [Connect external MCP servers](./concepts/dynamic-mcp.md)
+- [Complete configuration reference](./reference/configuration.md)
+- [Troubleshooting](./operations/troubleshooting.md)
 
-需要修改反向代理、系统服务、容器挂载或完整环境变量时，再进入“进阶与运维”。
+Open “Advanced operations” only when you need reverse-proxy changes, system services, container mounts, or the complete environment-variable reference.

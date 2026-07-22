@@ -1,43 +1,43 @@
-# Docker 进阶配置
+# Advanced Docker configuration
 
-普通用户首次安装只需要完成 [Docker 安装](../getting-started/docker.md)。本页用于修改端口、选择其他镜像、挂载宿主目录、更新版本或迁移旧数据。
+Regular users only need the [Docker installation](../getting-started/docker.md) for their first setup. This page covers custom ports, other images, host-directory mounts, upgrades, and old-data migration.
 
-## 镜像类型
+## Image variants
 
-AgentDock 发布三种 `linux/amd64` 和 `linux/arm64` 镜像：
+AgentDock publishes three image variants for `linux/amd64` and `linux/arm64`:
 
-| 标签 | 适用场景 |
+| Tag | Use case |
 | --- | --- |
-| `latest` / `vX.Y.Z` | 默认运行镜像，包含 Node.js、Python、Git、pnpm 等常用工具 |
-| `dev-latest` / `dev-vX.Y.Z` | 额外包含 Go、C、C++ 和 `pkg-config` 构建链 |
-| `browser-latest` / `browser-vX.Y.Z` | 额外包含 Chromium 和 browser runner |
+| `latest` / `vX.Y.Z` | Default runtime image with common tools such as Node.js, Python, Git, and pnpm |
+| `dev-latest` / `dev-vX.Y.Z` | Adds Go, C, C++, and the `pkg-config` build toolchain |
+| `browser-latest` / `browser-vX.Y.Z` | Adds Chromium and the browser runner |
 
-默认 Compose 使用正式运行镜像。需要在容器内编译 Go 或原生扩展时，可以在 `.env` 中增加：
+The default Compose file uses the production runtime image. When you need to compile Go or native extensions inside the container, add this to `.env`:
 
 ```dotenv
 AGENTDOCK_IMAGE=ghcr.io/uvwt/agentdock:dev-vX.Y.Z
 ```
 
-然后重建容器：
+Then recreate the container:
 
 ```bash
 docker compose up -d --force-recreate
 ```
 
-`dev` 和 `browser` 是不同用途的镜像；browser 镜像不默认包含 Go 编译器。
+The `dev` and `browser` images serve different purposes. The browser image does not include the Go compiler by default.
 
-## 启用浏览器自动化
+## Enable browser automation
 
-下载与当前 Release 配套的浏览器 Compose 文件：
+Download the browser Compose file that matches the current release.
 
-macOS / Linux：
+macOS / Linux:
 
 ```bash
 curl -fL https://github.com/uvwt/agentdock/releases/latest/download/docker-compose.browser.yml \
   -o docker-compose.browser.yml
 ```
 
-Windows PowerShell：
+Windows PowerShell:
 
 ```powershell
 Invoke-WebRequest `
@@ -45,57 +45,57 @@ Invoke-WebRequest `
   -OutFile docker-compose.browser.yml
 ```
 
-启动浏览器镜像：
+Start the browser image:
 
 ```bash
 docker compose -f docker-compose.yml -f docker-compose.browser.yml up -d
 ```
 
-该镜像会启用 `browser_*` 工具，并把浏览器共享内存提高到 1 GB。浏览器 profile、截图和会话状态仍保存在 AgentDock 数据卷中。
+This image enables the `browser_*` tools and increases browser shared memory to 1 GB. Browser profiles, screenshots, and session state remain in the AgentDock data volume.
 
-浏览器会话应使用独立 `profile_id`，不要挂载日常浏览器的完整用户目录。
+Use a dedicated `profile_id` for browser sessions. Do not mount the complete profile directory from your daily browser.
 
-## 修改本机端口
+## Change the local port
 
-默认 MCP 地址是 `http://127.0.0.1:18766/mcp`。端口冲突时，在 `.env` 中增加：
+The default MCP URL is `http://127.0.0.1:18766/mcp`. When that port conflicts, add this to `.env`:
 
 ```dotenv
 AGENTDOCK_PUBLISH_PORT=18767
 ```
 
-然后重新启动：
+Then restart:
 
 ```bash
 docker compose up -d --force-recreate
 ```
 
-新的 MCP 地址将变为 `http://127.0.0.1:18767/mcp`。
+The new MCP URL becomes `http://127.0.0.1:18767/mcp`.
 
-默认只监听本机回环地址。不要为了方便直接改成 `0.0.0.0`；需要局域网或公网访问时，先阅读 [安全模型](./security.md)。
+The default listener is bound only to the local loopback address. Do not change it directly to `0.0.0.0` for convenience. Read the [Security model](./security.md) before allowing LAN or public access.
 
-## 数据保存在哪里
+## Where data is stored
 
-默认 Compose 使用两个 Docker named volume：
+The default Compose file uses two Docker named volumes:
 
 ```text
 agentdock_home       -> /home/agentdock/.agentdock
 agentdock_workspace  -> /home/agentdock/AgentDock
 ```
 
-- `agentdock_home`：任务、Skill、动态 MCP、环境配置和运行产物。
-- `agentdock_workspace`：文件、命令和 Git 工具的默认工作目录。
+- `agentdock_home`: tasks, Skills, dynamic MCP, isolated environments, and runtime artifacts.
+- `agentdock_workspace`: the default working directory for file, command, and Git tools.
 
-查看实际卷名：
+Inspect the actual volume names:
 
 ```bash
 docker compose config --volumes
 ```
 
-`docker compose down` 不会删除这些数据。
+`docker compose down` does not delete this data.
 
-## 挂载宿主项目目录
+## Mount a host project directory
 
-需要让 AgentDock 直接操作宿主项目时，可以把工作目录改成 bind mount：
+To let AgentDock work directly with a host project, replace the workspace volume with a bind mount:
 
 ```yaml
 services:
@@ -105,20 +105,20 @@ services:
       - ./AgentDock:/home/agentdock/AgentDock
 ```
 
-Linux 主机应确保容器用户 UID/GID `10001` 可以写入该目录：
+On Linux, make sure container UID/GID `10001` can write to the directory:
 
 ```bash
 mkdir -p AgentDock
 sudo chown -R 10001:10001 AgentDock
 ```
 
-只挂载任务需要的目录。AgentDock 不把工作目录当成安全沙箱；容器能访问哪些文件，取决于你实际挂载了什么。
+Mount only the directories the task requires. AgentDock does not treat the working directory as a security sandbox; the container can access whatever you actually mount.
 
-## 固定版本
+## Pin a version
 
-从 GitHub Release 下载的 Compose 文件已经固定到对应版本，不会隐式切换到新的 `latest`。
+The Compose file attached to a GitHub Release is already pinned to that release and does not silently switch to a newer `latest` image.
 
-需要下载指定版本时：
+To download a specific version:
 
 ```bash
 VERSION=vX.Y.Z
@@ -128,11 +128,11 @@ curl -fL "https://github.com/uvwt/agentdock/releases/download/$VERSION/docker-co
   -o docker-compose.browser.yml
 ```
 
-Windows 用户可把 `curl -fL ... -o ...` 换成 `Invoke-WebRequest ... -OutFile ...`。
+Windows users can replace `curl -fL ... -o ...` with `Invoke-WebRequest ... -OutFile ...`.
 
-## 更新 AgentDock
+## Update AgentDock
 
-普通镜像：
+For the standard image:
 
 ```bash
 curl -fL https://github.com/uvwt/agentdock/releases/latest/download/docker-compose.yml \
@@ -141,21 +141,21 @@ docker compose pull
 docker compose up -d --force-recreate
 ```
 
-浏览器镜像还需要重新下载 `docker-compose.browser.yml`，随后继续同时传入两份 Compose 文件。
+For the browser image, download `docker-compose.browser.yml` again and continue passing both Compose files.
 
-更新后执行：
+After the update, run:
 
 ```bash
 docker compose ps
 ```
 
-确认状态重新变为 `healthy`。
+Confirm that the service returns to `healthy`.
 
-## 从 v0.4.1 或更早版本迁移
+## Migrate from v0.4.1 or earlier
 
-旧版 Compose 默认把 `./AgentDockHome` 和 `./AgentDock` 直接挂载到容器。已有数据时不要直接删除这两个目录。
+Older Compose files bind-mounted `./AgentDockHome` and `./AgentDock` directly into the container. Do not delete those directories when they contain existing data.
 
-可以继续使用原目录，但要把容器内路径改成新版位置：
+You can continue using them, but update the container paths to the new locations:
 
 ```yaml
 services:
@@ -165,34 +165,34 @@ services:
       - ./AgentDock:/home/agentdock/AgentDock
 ```
 
-Linux 主机还需要调整目录所有权：
+On Linux, update ownership as well:
 
 ```bash
 sudo chown -R 10001:10001 AgentDockHome AgentDock
 ```
 
-确认新容器能看到原任务、Skill、MCP 配置和项目文件后，再决定是否迁移到 named volume。不要让两个运行中的 AgentDock 实例同时使用同一份状态目录。
+After confirming that the new container can see the original tasks, Skills, MCP configuration, and project files, decide whether to migrate to named volumes. Never let two running AgentDock instances use the same state directory simultaneously.
 
-## 查看日志与停止服务
+## View logs and stop the service
 
 ```bash
-# 持续查看日志
+# Follow logs
 docker compose logs -f
 
-# 停止并移除容器，保留数据
+# Stop and remove containers while preserving data
 docker compose down
 ```
 
-浏览器部署执行这些命令时，应继续同时传入两份 Compose 文件。
+For a browser deployment, continue passing both Compose files when running these commands.
 
-## 删除全部 Docker 数据
+## Delete all Docker data
 
-只有确认不再需要任务、Skill、MCP 配置和项目文件后，才执行：
+Run this only after confirming that you no longer need the tasks, Skills, MCP configuration, or project files:
 
 ```bash
 docker compose down -v
 ```
 
 :::danger
-**不可恢复：**`-v` 会删除 Compose 创建的 named volume。执行前先备份需要保留的数据。
+**Irreversible:** `-v` deletes the named volumes created by Compose. Back up any data you need before running it.
 :::

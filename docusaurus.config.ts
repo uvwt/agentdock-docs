@@ -18,7 +18,7 @@ const algolia =
 
 const config: Config = {
   title: 'AgentDock',
-  tagline: '让 Agent 可控、可恢复地操作本地与远程环境',
+  tagline: 'A secure, recoverable runtime for local and remote AI agent work',
   favicon: 'img/favicon.svg',
   url: 'https://uvwt.github.io',
   baseUrl: '/agentdock-docs/',
@@ -34,8 +34,18 @@ const config: Config = {
   },
 
   i18n: {
-    defaultLocale: 'zh-Hans',
-    locales: ['zh-Hans'],
+    defaultLocale: 'en',
+    locales: ['en', 'zh-CN'],
+    localeConfigs: {
+      en: {
+        label: 'English',
+        htmlLang: 'en',
+      },
+      'zh-CN': {
+        label: '简体中文',
+        htmlLang: 'zh-CN',
+      },
+    },
   },
 
   presets: [
@@ -58,7 +68,8 @@ const config: Config = {
     metadata: [
       {
         name: 'keywords',
-        content: 'AgentDock, Agent, MCP, Skill, automation, documentation',
+        content:
+          'AgentDock, AI agent runtime, MCP server, Model Context Protocol, self-hosted, remote execution, automation, documentation',
       },
     ],
     colorMode: {
@@ -72,17 +83,21 @@ const config: Config = {
           type: 'docSidebar',
           sidebarId: 'docsSidebar',
           position: 'left',
-          label: '文档',
+          label: 'Documentation',
         },
         {
           to: '/docs/reference/configuration',
-          label: '配置参考',
+          label: 'Configuration',
           position: 'left',
         },
         {
           to: '/docs/reference/tools',
-          label: '工具目录',
+          label: 'Tools',
           position: 'left',
+        },
+        {
+          type: 'localeDropdown',
+          position: 'right',
         },
         {
           href: 'https://github.com/uvwt/agentdock',
@@ -95,26 +110,26 @@ const config: Config = {
       style: 'light',
       links: [
         {
-          title: '文档',
+          title: 'Documentation',
           items: [
-            {label: '安装 AgentDock', to: '/docs/getting-started/install'},
-            {label: '配置参考', to: '/docs/reference/configuration'},
-            {label: '工具目录', to: '/docs/reference/tools'},
+            {label: 'Install AgentDock', to: '/docs/getting-started/install'},
+            {label: 'Configuration', to: '/docs/reference/configuration'},
+            {label: 'Tools', to: '/docs/reference/tools'},
           ],
         },
         {
-          title: '能力',
+          title: 'Capabilities',
           items: [
-            {label: 'Skill', to: '/docs/concepts/skills'},
-            {label: '动态 MCP', to: '/docs/concepts/dynamic-mcp'},
-            {label: '可恢复任务', to: '/docs/concepts/tasks'},
+            {label: 'Skills', to: '/docs/concepts/skills'},
+            {label: 'Dynamic MCP', to: '/docs/concepts/dynamic-mcp'},
+            {label: 'Recoverable tasks', to: '/docs/concepts/tasks'},
           ],
         },
         {
-          title: '项目',
+          title: 'Project',
           items: [
-            {label: 'AgentDock 源码', href: 'https://github.com/uvwt/agentdock'},
-            {label: '文档源码', href: 'https://github.com/uvwt/agentdock-docs'},
+            {label: 'AgentDock source', href: 'https://github.com/uvwt/agentdock'},
+            {label: 'Documentation source', href: 'https://github.com/uvwt/agentdock-docs'},
           ],
         },
       ],

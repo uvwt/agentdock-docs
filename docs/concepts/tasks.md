@@ -1,61 +1,61 @@
-# 任务与进度
+# Tasks and progress
 
-遇到开发、部署、迁移或复杂排障时，AgentDock 可以把目标、步骤、完成条件和验证结果保存成一个可恢复任务。
+For development, deployment, migration, or complex troubleshooting, AgentDock can persist the goal, steps, completion conditions, and verification evidence as a recoverable task.
 
-这样即使会话中断，后续也能看到已经完成了什么、当前卡在哪里，以及还需要验证什么。
+After an interrupted conversation, the next session can see what was completed, where work stopped, and what still needs verification.
 
-## 什么时候会创建任务
+## When a task is created
 
-适合创建任务的情况：
+A task is appropriate when:
 
-- 需要多个步骤才能完成。
-- 会修改代码、配置或生产环境。
-- 需要等待构建、部署或外部设备恢复。
-- 完成后必须提供测试和真实验证证据。
+- Completion requires multiple steps.
+- Code, configuration, or production systems will change.
+- Work must wait for a build, deployment, or external device.
+- Tests and real verification evidence are required before completion.
 
-简单查询、读取一个文件或执行一条明确命令通常不需要任务。
+A simple query, one file read, or one explicit command usually does not need a task.
 
-## 你会看到什么
+## What a task contains
 
-一个任务通常包含：
+A task normally records:
 
-- **目标**：最终要完成什么。
-- **步骤**：检查、修改、测试、发布等阶段。
-- **完成条件**：怎样才算真正完成。
-- **当前进度**：待处理、进行中或已完成。
-- **验证证据**：测试结果、服务状态、页面检查或实际输出。
+- **Goal:** the final outcome.
+- **Steps:** stages such as inspection, modification, testing, and release.
+- **Completion conditions:** objective criteria for real completion.
+- **Current progress:** pending, in progress, or completed.
+- **Verification evidence:** tests, service state, page checks, or actual output.
 
-步骤状态只会向前推进，不会因为工具返回了结果就自动视为完成。
+A step moves forward only after the underlying work is complete. A tool returning a result does not complete the step automatically.
 
-## 阻塞与恢复
+## Blocking and resuming
 
-只有确实无法继续时才会标记为阻塞，例如目标电脑离线、缺少必要权限或外部服务持续不可用。
+A task is marked blocked only when work truly cannot continue, such as when a target computer is offline, required permissions are missing, or an external service remains unavailable.
 
-普通测试失败不算阻塞，Agent 应继续排查。阻塞解除后，可以直接说：
+An ordinary test failure is not a blocker; the agent should continue troubleshooting. After the blocker is resolved, say:
 
 ```text
-设备已经恢复，继续刚才的任务。
+The device is available again. Continue the previous task.
 ```
 
-## 怎样判断任务完成
+## How completion is determined
 
-任务完成前，Agent 应检查：
+Before completing a task, the agent should verify:
 
-1. 所有步骤是否真正完成。
-2. 完成条件是否有可验证证据。
-3. 是否仍有未说明的风险或临时处理。
-4. 修改后的服务、页面或程序是否真实可用。
+1. Every step is actually complete.
+2. Each completion condition has verifiable evidence.
+3. No remaining risk or temporary workaround is left unexplained.
+4. The modified service, page, or program works in the real environment.
 
-“代码已改”或“命令执行结束”不等于任务完成。
+“Code changed” and “command finished” do not mean the task is complete.
 
-## Workflow 模板
+## Workflow templates
 
-常见开发、部署和运维流程可以保存为模板。Agent 会先匹配模板，再根据当前任务删减、组合和调整步骤。
+Common development, deployment, and operations processes can be saved as templates. The agent matches templates first, then removes, combines, or adjusts steps for the current task.
 
-模板只是流程建议，不会自动执行命令，也不会替代当前环境检查。
+A template is workflow guidance. It does not execute commands automatically and does not replace inspection of the current environment.
 
-## 数据范围
+## Data scope
 
-任务状态保存在当前 AgentDock 实例中，不会自动跨设备同步。长期有价值的结论应整理到项目文档或 NexusDock Recall，而不是依赖旧任务记录。
+Task state belongs to the current AgentDock instance and is not synchronized across devices automatically. Long-term conclusions should be moved into project documentation or NexusDock Recall rather than left only in old task records.
 
-需要查看精确 action 和字段时，参阅 [工具介绍](../reference/tools.md#可恢复任务与-workflow)。
+See [Tools](../reference/tools.md#recoverable-tasks-and-workflows) for exact actions and fields.
