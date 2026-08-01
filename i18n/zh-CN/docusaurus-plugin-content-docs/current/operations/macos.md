@@ -52,11 +52,14 @@ curl -fsS http://127.0.0.1:8765/healthz
 
 ## 管理 Cloudflare Tunnel
 
-安装器传入 `--tunnel quick` 或 `--tunnel named` 后，会同时注册 AgentDock LaunchAgent 和独立的 `com.uvwt.agentdock.cloudflared` LaunchAgent。AgentDock 仍只监听配置的本机地址，只有 `cloudflared` 会读取 Tunnel Token。
+使用 `--register-service` 且没有显式指定 Tunnel 时，安装器只询问是否有已接入 Cloudflare 的域名。有域名进入固定 Named Tunnel，没有域名进入临时 Quick Tunnel。自动化仍可直接传入 `--tunnel quick`、`--tunnel named` 或 `--tunnel none` 作为高级覆盖。
 
-安装器管理的文件：
+两种公网模式都会自动创建或复用 Bearer Token、OAuth 登录密码和 OAuth 签名密钥。临时安装会先用 Bearer 认证启动 AgentDock，取得生成的 `trycloudflare.com` 地址后写入 `AGENTDOCK_SERVER_URL`、启用 OAuth，再重启 AgentDock。完成框会显示公网地址、MCP 地址、Bearer Token 和 OAuth 登录密码；签名密钥保持私密。
+
+安装器会把 AgentDock 与 `cloudflared` 注册为两个独立的用户级 LaunchAgent，只有 `cloudflared` 会读取 Named Tunnel Token。管理文件：
 
 ```text
+~/Library/Application Support/AgentDock/agentdock.env
 ~/Library/Application Support/AgentDock/cloudflared.env
 ~/Library/Application Support/AgentDock/start-cloudflared.sh
 ~/Library/LaunchAgents/com.uvwt.agentdock.cloudflared.plist
@@ -64,16 +67,16 @@ curl -fsS http://127.0.0.1:8765/healthz
 ~/Library/Logs/AgentDock/cloudflared.err.log
 ```
 
-`cloudflared.env` 权限为 `0600`。AgentDock LaunchAgent 不会加载它，Named Tunnel Token 也不会写入 `ProgramArguments`。
+`agentdock.env` 与 `cloudflared.env` 权限均为 `0600`。AgentDock LaunchAgent 不会加载 Tunnel Token，Token 也不会写入 `ProgramArguments`。
 
-查看 Tunnel 服务和日志：
+查看服务和日志：
 
 ```bash
 launchctl print "gui/$(id -u)/com.uvwt.agentdock.cloudflared"
 tail -f "$HOME/Library/Logs/AgentDock/cloudflared.err.log"
 ```
 
-Quick Tunnel 地址可以从日志中读取，但重启后会变化。Named Tunnel 会保留 `--server-url` 公网 Origin，后续重新运行安装器时也会复用已有 Token。需要停止并删除安装器管理的 Tunnel 配置时，重新运行安装器并传入 `--tunnel none`。
+临时地址变化后，重新运行同一个安装命令即可。安装器会保留 Bearer Token、OAuth 密码和签名密钥，写入新地址并重启 AgentDock。随后在客户端替换 MCP URL，并重新完成 OAuth 授权。固定模式后续重跑会复用已有公网地址与 Tunnel Token。
 
 ## 目录与权限
 

@@ -30,19 +30,26 @@ Keep the `binary` mode for a normal deployment. `source` and `auto` are only for
 
 ## Cloudflare Tunnel
 
-The full installer asks `Public access: none/quick/named`:
+Interactive installation does not expose the internal `none/quick/named` choices. It asks whether a Cloudflare-managed domain is available:
 
-| Mode | Use case |
-| --- | --- |
-| `none` | Keep only the local listener and remove an installer-managed Tunnel service |
-| `quick` | Create a temporary `trycloudflare.com` URL without a Cloudflare account or domain |
-| `named` | Reuse a Cloudflare Named Tunnel Token and fixed HTTPS Public Hostname |
+| User answer | Installer mode | Result |
+| --- | --- | --- |
+| Domain available | Fixed (`named`) | Stable HTTPS hostname for long-running clients and OAuth |
+| No domain | Temporary (`quick`) | Generated `trycloudflare.com` URL for immediate testing |
 
-Quick Tunnel prints the current public MCP URL during installation. The URL changes after `cloudflared` restarts and must not be used for OAuth callbacks or long-running clients.
+A fixed installation asks for the HTTPS public origin and Cloudflare Tunnel Token. Create the Named Tunnel and Public Hostname first, then point its Service to the local URL shown by the installer, normally `http://127.0.0.1:8765`.
 
-For Named Tunnel, create the Tunnel and Public Hostname in Cloudflare first. Use the HTTPS hostname as the public origin and point its Service to the local URL shown by the installer, normally `http://127.0.0.1:8765`. The token is written to root-only `/etc/agentdock/cloudflared.env`; it is not written to `agentdock.env`, passed to the AgentDock service, or placed in the `cloudflared` command line.
+A temporary installation starts `cloudflared`, reads the generated URL from the service log, writes it to `AGENTDOCK_SERVER_URL`, enables OAuth, and restarts AgentDock. Both modes generate or reuse these credentials:
 
-The default Tunnel service is `agentdock-cloudflared`. Inspect it with:
+- `AGENTDOCK_AUTH_TOKEN`
+- `AGENTDOCK_OAUTH_PASSWORD`
+- `AGENTDOCK_OAUTH_TOKEN_SECRET`
+
+The completion panel prints the public URL, MCP URL, Bearer Token, and OAuth login password. The OAuth signing secret is not printed. The Tunnel Token is written only to root-only `/etc/agentdock/cloudflared.env`; it is not written to `agentdock.env`, passed to AgentDock, or placed in the `cloudflared` command line.
+
+If a temporary URL changes, rerun the same installer. Existing host, port, advanced settings, Bearer Token, OAuth password, signing secret, and NexusDock configuration are preserved. The new URL is written back automatically and AgentDock is restarted. The client must replace the old MCP URL and authorize OAuth again.
+
+The default Tunnel service is `agentdock-cloudflared`:
 
 ```bash
 # systemd
@@ -55,7 +62,7 @@ sudo tail -n 100 /var/log/agentdock-cloudflared.log \
   /var/log/agentdock-cloudflared.err
 ```
 
-For non-interactive Quick Tunnel installation:
+Non-interactive installation remains private unless the mode is explicitly supplied. For a temporary Tunnel:
 
 ```bash
 sudo env \
@@ -64,7 +71,7 @@ sudo env \
   bash /tmp/install-agentdock.sh
 ```
 
-Named mode also accepts `AGENTDOCK_SERVER_URL` and `AGENTDOCK_CLOUDFLARE_TUNNEL_TOKEN`. Inject the token from a secret manager or protected environment; do not place it in a script, shell history, or Git repository.
+For fixed mode, set `AGENTDOCK_TUNNEL_MODE=named`, `AGENTDOCK_SERVER_URL`, and `AGENTDOCK_CLOUDFLARE_TUNNEL_TOKEN`. `AGENTDOCK_OAUTH_PASSWORD` and `AGENTDOCK_OAUTH_TOKEN_SECRET` are optional first-install overrides; otherwise the installer generates them. Inject secrets from a protected environment or secret manager.
 
 ## Default directories
 

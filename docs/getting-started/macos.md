@@ -61,33 +61,22 @@ Authentication may be disabled while listening only on `127.0.0.1`. LAN or publi
 
 ## Optional: publish with Cloudflare Tunnel
 
-The same installer can keep AgentDock on `127.0.0.1` and manage `cloudflared` as a separate user LaunchAgent. Public access always keeps AgentDock authentication enabled.
-
-For a temporary URL that does not require a Cloudflare account or domain:
+Install the background service and let the installer configure public access:
 
 ```bash
-zsh /tmp/install-agentdock-macos.sh --tunnel quick
+zsh /tmp/install-agentdock-macos.sh --register-service
 ```
 
-The installer prints the generated `https://...trycloudflare.com/mcp` URL. It changes whenever `cloudflared` restarts, so Quick Tunnel is not suitable for OAuth callbacks or long-running deployments.
+The installer asks only whether a Cloudflare-managed domain is available:
 
-For a fixed hostname, create a Named Tunnel and Public Hostname in Cloudflare, then run:
+- Choose **yes** for a fixed hostname. Enter the HTTPS public origin and paste the Tunnel Token at the hidden prompt.
+- Choose **no** for a temporary `trycloudflare.com` URL. It is ready immediately, but may change after `cloudflared` restarts.
 
-```bash
-zsh /tmp/install-agentdock-macos.sh \
-  --tunnel named \
-  --server-url https://agent.example.com
-```
+AgentDock remains bound to `127.0.0.1`, while `cloudflared` runs as a separate user LaunchAgent. Both fixed and temporary paths automatically enable Bearer Token and OAuth authentication. The completion panel shows the public URL, MCP URL, Bearer Token, and OAuth login password. The OAuth signing secret and Tunnel Token are stored privately and are not displayed.
 
-Paste the Tunnel Token at the hidden prompt. Configure the Cloudflare Public Hostname service as `http://127.0.0.1:8765`. The token is stored only in `~/Library/Application Support/AgentDock/cloudflared.env`, not in the AgentDock environment file or command line.
+When a temporary URL changes, rerun the same command. The installer refreshes the URL while preserving all authentication credentials. Update the MCP URL in the client and authorize OAuth again.
 
-To remove a Tunnel managed by the installer:
-
-```bash
-zsh /tmp/install-agentdock-macos.sh --tunnel none
-```
-
-See [Advanced macOS configuration](../operations/macos.md#manage-cloudflare-tunnel) for service files, status, and logs.
+Automation may still use `--tunnel quick`, `--tunnel named`, or `--tunnel none` as advanced overrides. See [Advanced macOS configuration](../operations/macos.md#manage-cloudflare-tunnel) for managed files, status, and logs.
 
 ## Update
 

@@ -65,13 +65,20 @@ Keep the SSH session open and let the local client connect to the same `http://1
 
 ## Optional: publish with Cloudflare Tunnel
 
-The non-interactive command above keeps public access disabled. To choose a Tunnel interactively, rerun the same full installer without `AGENTDOCK_NONINTERACTIVE`:
+The non-interactive command above keeps public access disabled. To configure public access, rerun the same installer interactively:
 
 ```bash
 sudo bash /tmp/install-agentdock.sh
 ```
 
-At `Public access: none/quick/named`, choose `quick` for a temporary `trycloudflare.com` URL or `named` for a fixed Cloudflare Public Hostname. Named mode asks for the HTTPS public origin and Tunnel Token through the terminal. See [Advanced Linux configuration](../operations/linux.md#cloudflare-tunnel) for bootstrap behavior, service names, secret storage, and automation variables.
+The installer asks one product-level question: **Do you have a domain already managed by Cloudflare?**
+
+- Choose **yes** for a fixed hostname. Enter the HTTPS public origin and paste the Tunnel Token at the hidden prompt.
+- Choose **no** for a temporary `trycloudflare.com` URL that works immediately but may change after `cloudflared` restarts.
+
+Both paths automatically generate or reuse a Bearer Token and AgentDock OAuth credentials. The completion panel shows the public URL, MCP URL, Bearer Token, and OAuth login password. The OAuth signing secret and Cloudflare Tunnel Token remain only in protected configuration files.
+
+When a temporary URL changes, rerun the same installer. It writes the new URL back to AgentDock and restarts the service while preserving the existing Bearer Token, OAuth password, and signing secret. Replace the MCP URL in the client and authorize OAuth again. See [Advanced Linux configuration](../operations/linux.md#cloudflare-tunnel) for service names, automation variables, and secret storage.
 
 ## Update
 

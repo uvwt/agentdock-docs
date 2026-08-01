@@ -30,19 +30,26 @@ bash /tmp/install-agentdock.sh
 
 ## Cloudflare Tunnel
 
-正式安装器会询问“公网访问：none/quick/named”：
+交互式安装不会把 `none/quick/named` 这些内部模式直接丢给普通用户，而是询问是否有已接入 Cloudflare 的域名：
 
-| 模式 | 适用场景 |
-| --- | --- |
-| `none` | 只保留本机监听，并删除安装器管理的 Tunnel 服务 |
-| `quick` | 不需要 Cloudflare 账号或域名，创建临时 `trycloudflare.com` 地址 |
-| `named` | 复用 Cloudflare Named Tunnel Token 和固定 HTTPS Public Hostname |
+| 用户回答 | 安装器内部模式 | 结果 |
+| --- | --- | --- |
+| 有域名 | 固定（`named`） | 稳定 HTTPS 地址，适合长期客户端和 OAuth |
+| 没有域名 | 临时（`quick`） | 自动生成 `trycloudflare.com` 地址，适合立即体验 |
 
-Quick Tunnel 会在安装完成时输出当前公网 MCP 地址。`cloudflared` 重启后地址会变化，不应把它用于 OAuth 回调或长期客户端。
+固定模式会询问 HTTPS 公网地址和 Cloudflare Tunnel Token。应先创建 Named Tunnel 与 Public Hostname，再把 Service 指向安装器输出的本机地址，通常是 `http://127.0.0.1:8765`。
 
-Named Tunnel 应先在 Cloudflare 创建 Tunnel 和 Public Hostname。HTTPS 域名作为公网 Origin，Public Hostname 的 Service 指向安装器输出的本机地址，默认是 `http://127.0.0.1:8765`。Token 只写入 root-only 的 `/etc/agentdock/cloudflared.env`，不会写入 `agentdock.env`、传给 AgentDock 服务，也不会出现在 `cloudflared` 命令行中。
+临时模式会启动 `cloudflared`，从服务日志读取生成的地址，写入 `AGENTDOCK_SERVER_URL`，启用 OAuth，然后重启 AgentDock。两种模式都会生成或复用：
 
-默认 Tunnel 服务名是 `agentdock-cloudflared`。查看状态和日志：
+- `AGENTDOCK_AUTH_TOKEN`
+- `AGENTDOCK_OAUTH_PASSWORD`
+- `AGENTDOCK_OAUTH_TOKEN_SECRET`
+
+完成框会显示公网地址、MCP 地址、Bearer Token 和 OAuth 登录密码。OAuth 签名密钥不会显示。Tunnel Token 只写入 root-only 的 `/etc/agentdock/cloudflared.env`，不会写入 `agentdock.env`、传给 AgentDock，也不会出现在 `cloudflared` 命令行中。
+
+临时地址变化后，重新运行同一个安装脚本即可。现有监听地址、端口、高级配置、Bearer Token、OAuth 密码、签名密钥和 NexusDock 配置都会保留；安装器会自动回写新地址并重启 AgentDock。客户端仍需替换旧 MCP URL，并重新完成 OAuth 授权。
+
+默认 Tunnel 服务名是 `agentdock-cloudflared`：
 
 ```bash
 # systemd
@@ -55,7 +62,7 @@ sudo tail -n 100 /var/log/agentdock-cloudflared.log \
   /var/log/agentdock-cloudflared.err
 ```
 
-非交互安装 Quick Tunnel：
+非交互安装默认保持本机访问；需要临时 Tunnel 时必须显式指定：
 
 ```bash
 sudo env \
@@ -64,7 +71,7 @@ sudo env \
   bash /tmp/install-agentdock.sh
 ```
 
-Named 模式还接受 `AGENTDOCK_SERVER_URL` 和 `AGENTDOCK_CLOUDFLARE_TUNNEL_TOKEN`。Token 应由密钥管理器或受保护环境注入，不要写进脚本、Shell 历史或 Git 仓库。
+固定模式设置 `AGENTDOCK_TUNNEL_MODE=named`、`AGENTDOCK_SERVER_URL` 和 `AGENTDOCK_CLOUDFLARE_TUNNEL_TOKEN`。`AGENTDOCK_OAUTH_PASSWORD` 与 `AGENTDOCK_OAUTH_TOKEN_SECRET` 只在需要覆盖首次生成值时提供；否则由安装器自动生成。密钥应来自受保护环境或密钥管理器。
 
 ## 默认目录
 

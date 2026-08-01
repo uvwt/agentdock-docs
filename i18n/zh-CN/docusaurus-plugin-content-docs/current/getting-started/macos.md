@@ -61,33 +61,22 @@ curl -fsS http://127.0.0.1:8765/healthz
 
 ## 可选：通过 Cloudflare Tunnel 提供公网入口
 
-同一个安装脚本可以让 AgentDock 继续只监听 `127.0.0.1`，并把 `cloudflared` 作为独立的用户级 LaunchAgent 管理。公网访问始终会保留 AgentDock 认证。
-
-临时体验、不要求 Cloudflare 账号或域名时：
+安装后台服务，并让安装器同时配置公网入口：
 
 ```bash
-zsh /tmp/install-agentdock-macos.sh --tunnel quick
+zsh /tmp/install-agentdock-macos.sh --register-service
 ```
 
-安装器会输出生成的 `https://...trycloudflare.com/mcp` 地址。`cloudflared` 每次重启后地址都会变化，因此 Quick Tunnel 不适合 OAuth 回调或长期部署。
+安装器只询问是否有已接入 Cloudflare 的域名：
 
-需要固定域名时，先在 Cloudflare 创建 Named Tunnel 和 Public Hostname，然后执行：
+- 选择“有”：使用固定地址，输入 HTTPS 公网地址，并在隐藏提示中粘贴 Tunnel Token。
+- 选择“没有”：自动生成可立即使用的 `trycloudflare.com` 临时地址；`cloudflared` 重启后地址可能变化。
 
-```bash
-zsh /tmp/install-agentdock-macos.sh \
-  --tunnel named \
-  --server-url https://agent.example.com
-```
+AgentDock 仍只监听 `127.0.0.1`，`cloudflared` 作为独立的用户级 LaunchAgent 运行。固定和临时两种方式都会自动启用 Bearer Token 与 OAuth。完成框会显示公网地址、MCP 地址、Bearer Token 和 OAuth 登录密码；OAuth 签名密钥与 Tunnel Token 会安全保存，不在终端显示。
 
-在隐藏输入提示中粘贴 Tunnel Token，并把 Cloudflare Public Hostname 的 Service 配置为 `http://127.0.0.1:8765`。Token 只保存在 `~/Library/Application Support/AgentDock/cloudflared.env`，不会进入 AgentDock 环境文件或命令行。
+临时地址变化后，重新运行同一个命令即可刷新。安装器会保留全部认证凭据；用户只需在客户端替换 MCP URL，并重新完成 OAuth 授权。
 
-停用安装器管理的 Tunnel：
-
-```bash
-zsh /tmp/install-agentdock-macos.sh --tunnel none
-```
-
-服务文件、状态和日志见 [macOS 进阶配置](../operations/macos.md#管理-cloudflare-tunnel)。
+自动化仍可把 `--tunnel quick`、`--tunnel named` 或 `--tunnel none` 作为高级覆盖。安装器管理的文件、状态和日志见 [macOS 进阶配置](../operations/macos.md#管理-cloudflare-tunnel)。
 
 ## 更新
 
