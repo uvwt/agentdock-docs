@@ -77,6 +77,28 @@ Get-Content .env
 **Installation is complete** when `docker compose ps` shows `healthy` and the client has the MCP URL and token.
 :::
 
+## Optional: create a temporary Cloudflare Tunnel
+
+Download the Compose overlay and start its Quick Tunnel profile:
+
+```bash
+curl -fL \
+  https://github.com/uvwt/agentdock/releases/latest/download/docker-compose.cloudflare-tunnel.yml \
+  -o docker-compose.cloudflare-tunnel.yml
+
+docker compose \
+  -f docker-compose.yml \
+  -f docker-compose.cloudflare-tunnel.yml \
+  --profile cloudflare-quick up -d
+
+docker compose \
+  -f docker-compose.yml \
+  -f docker-compose.cloudflare-tunnel.yml \
+  logs -f cloudflared-quick
+```
+
+The log prints a temporary `https://...trycloudflare.com` URL; append `/mcp` when configuring the client. Keep the Bearer Token from `.env`. The URL changes after restart and is not suitable for OAuth. See [Advanced Docker configuration](../operations/docker.md#cloudflare-tunnel) for a fixed Named Tunnel.
+
 ## Update
 
 Download the latest `docker-compose.yml` again, then run:
@@ -85,6 +107,8 @@ Download the latest `docker-compose.yml` again, then run:
 docker compose pull
 docker compose up -d --force-recreate
 ```
+
+When using Cloudflare Tunnel, download `docker-compose.cloudflare-tunnel.yml` again and continue passing both Compose files and the selected profile to `pull`, `up`, `logs`, and `down`.
 
 ## Continue when needed
 

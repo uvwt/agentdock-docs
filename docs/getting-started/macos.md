@@ -59,6 +59,36 @@ Authentication may be disabled while listening only on `127.0.0.1`. LAN or publi
 **Installation is complete** when the health check succeeds and the client connects. You can then use files, commands, Git, and Skills.
 :::
 
+## Optional: publish with Cloudflare Tunnel
+
+The same installer can keep AgentDock on `127.0.0.1` and manage `cloudflared` as a separate user LaunchAgent. Public access always keeps AgentDock authentication enabled.
+
+For a temporary URL that does not require a Cloudflare account or domain:
+
+```bash
+zsh /tmp/install-agentdock-macos.sh --tunnel quick
+```
+
+The installer prints the generated `https://...trycloudflare.com/mcp` URL. It changes whenever `cloudflared` restarts, so Quick Tunnel is not suitable for OAuth callbacks or long-running deployments.
+
+For a fixed hostname, create a Named Tunnel and Public Hostname in Cloudflare, then run:
+
+```bash
+zsh /tmp/install-agentdock-macos.sh \
+  --tunnel named \
+  --server-url https://agent.example.com
+```
+
+Paste the Tunnel Token at the hidden prompt. Configure the Cloudflare Public Hostname service as `http://127.0.0.1:8765`. The token is stored only in `~/Library/Application Support/AgentDock/cloudflared.env`, not in the AgentDock environment file or command line.
+
+To remove a Tunnel managed by the installer:
+
+```bash
+zsh /tmp/install-agentdock-macos.sh --tunnel none
+```
+
+See [Advanced macOS configuration](../operations/macos.md#manage-cloudflare-tunnel) for service files, status, and logs.
+
 ## Update
 
 Download and run the latest installer again. Tasks, Skills, configuration, and the working directory are preserved, and the previous binary is backed up first.

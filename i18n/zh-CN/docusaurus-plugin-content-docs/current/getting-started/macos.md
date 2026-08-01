@@ -59,6 +59,36 @@ curl -fsS http://127.0.0.1:8765/healthz
 **安装完成：** 健康检查通过并在客户端连接成功后，就可以开始使用文件、命令、Git 和 Skill。
 :::
 
+## 可选：通过 Cloudflare Tunnel 提供公网入口
+
+同一个安装脚本可以让 AgentDock 继续只监听 `127.0.0.1`，并把 `cloudflared` 作为独立的用户级 LaunchAgent 管理。公网访问始终会保留 AgentDock 认证。
+
+临时体验、不要求 Cloudflare 账号或域名时：
+
+```bash
+zsh /tmp/install-agentdock-macos.sh --tunnel quick
+```
+
+安装器会输出生成的 `https://...trycloudflare.com/mcp` 地址。`cloudflared` 每次重启后地址都会变化，因此 Quick Tunnel 不适合 OAuth 回调或长期部署。
+
+需要固定域名时，先在 Cloudflare 创建 Named Tunnel 和 Public Hostname，然后执行：
+
+```bash
+zsh /tmp/install-agentdock-macos.sh \
+  --tunnel named \
+  --server-url https://agent.example.com
+```
+
+在隐藏输入提示中粘贴 Tunnel Token，并把 Cloudflare Public Hostname 的 Service 配置为 `http://127.0.0.1:8765`。Token 只保存在 `~/Library/Application Support/AgentDock/cloudflared.env`，不会进入 AgentDock 环境文件或命令行。
+
+停用安装器管理的 Tunnel：
+
+```bash
+zsh /tmp/install-agentdock-macos.sh --tunnel none
+```
+
+服务文件、状态和日志见 [macOS 进阶配置](../operations/macos.md#管理-cloudflare-tunnel)。
+
 ## 更新
 
 重新下载并运行最新安装脚本即可。任务、Skill、配置和工作目录不会被删除，旧二进制会先备份。

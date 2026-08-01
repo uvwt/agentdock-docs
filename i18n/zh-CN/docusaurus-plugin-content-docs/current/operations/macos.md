@@ -50,6 +50,31 @@ zsh /tmp/install-agentdock-macos.sh --install-dir "$HOME/bin"
 curl -fsS http://127.0.0.1:8765/healthz
 ```
 
+## 管理 Cloudflare Tunnel
+
+安装器传入 `--tunnel quick` 或 `--tunnel named` 后，会同时注册 AgentDock LaunchAgent 和独立的 `com.uvwt.agentdock.cloudflared` LaunchAgent。AgentDock 仍只监听配置的本机地址，只有 `cloudflared` 会读取 Tunnel Token。
+
+安装器管理的文件：
+
+```text
+~/Library/Application Support/AgentDock/cloudflared.env
+~/Library/Application Support/AgentDock/start-cloudflared.sh
+~/Library/LaunchAgents/com.uvwt.agentdock.cloudflared.plist
+~/Library/Logs/AgentDock/cloudflared.out.log
+~/Library/Logs/AgentDock/cloudflared.err.log
+```
+
+`cloudflared.env` 权限为 `0600`。AgentDock LaunchAgent 不会加载它，Named Tunnel Token 也不会写入 `ProgramArguments`。
+
+查看 Tunnel 服务和日志：
+
+```bash
+launchctl print "gui/$(id -u)/com.uvwt.agentdock.cloudflared"
+tail -f "$HOME/Library/Logs/AgentDock/cloudflared.err.log"
+```
+
+Quick Tunnel 地址可以从日志中读取，但重启后会变化。Named Tunnel 会保留 `--server-url` 公网 Origin，后续重新运行安装器时也会复用已有 Token。需要停止并删除安装器管理的 Tunnel 配置时，重新运行安装器并传入 `--tunnel none`。
+
 ## 目录与权限
 
 ```text

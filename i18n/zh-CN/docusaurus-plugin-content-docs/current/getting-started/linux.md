@@ -63,6 +63,16 @@ ssh -L 8765:127.0.0.1:8765 <用户名>@<服务器地址>
 **安装完成：** 服务状态正常、健康检查通过，并把 MCP 地址与 Token 填入客户端后即可使用。
 :::
 
+## 可选：通过 Cloudflare Tunnel 提供公网入口
+
+上面的非交互安装默认关闭公网入口。需要选择 Tunnel 时，去掉 `AGENTDOCK_NONINTERACTIVE`，重新运行同一个正式安装器：
+
+```bash
+sudo bash /tmp/install-agentdock.sh
+```
+
+在“公网访问：none/quick/named”处，临时 `trycloudflare.com` 地址选择 `quick`；固定 Cloudflare Public Hostname 选择 `named`。Named 模式会在终端中询问 HTTPS 公网 Origin 和 Tunnel Token。bootstrap 调用关系、服务名、密钥存放和自动化变量见 [Linux 进阶配置](../operations/linux.md#cloudflare-tunnel)。
+
 ## 更新
 
 重新下载并运行第 1 步即可。任务、Skill、配置和工作目录会保留。

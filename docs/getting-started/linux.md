@@ -63,6 +63,16 @@ Keep the SSH session open and let the local client connect to the same `http://1
 **Installation is complete** when the service is running, the health check succeeds, and the client has the MCP URL and token.
 :::
 
+## Optional: publish with Cloudflare Tunnel
+
+The non-interactive command above keeps public access disabled. To choose a Tunnel interactively, rerun the same full installer without `AGENTDOCK_NONINTERACTIVE`:
+
+```bash
+sudo bash /tmp/install-agentdock.sh
+```
+
+At `Public access: none/quick/named`, choose `quick` for a temporary `trycloudflare.com` URL or `named` for a fixed Cloudflare Public Hostname. Named mode asks for the HTTPS public origin and Tunnel Token through the terminal. See [Advanced Linux configuration](../operations/linux.md#cloudflare-tunnel) for bootstrap behavior, service names, secret storage, and automation variables.
+
 ## Update
 
 Download and run step 1 again. Tasks, Skills, configuration, and the working directory are preserved.

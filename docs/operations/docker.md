@@ -55,6 +55,66 @@ This image enables the `browser_*` tools and increases browser shared memory to 
 
 Use a dedicated `profile_id` for browser sessions. Do not mount the complete profile directory from your daily browser.
 
+## Cloudflare Tunnel
+
+Download the Release overlay next to `docker-compose.yml`:
+
+```bash
+curl -fL \
+  https://github.com/uvwt/agentdock/releases/latest/download/docker-compose.cloudflare-tunnel.yml \
+  -o docker-compose.cloudflare-tunnel.yml
+curl -fL \
+  https://github.com/uvwt/agentdock/releases/latest/download/docker-compose.cloudflare-tunnel.env.example \
+  -o docker-compose.cloudflare-tunnel.env.example
+```
+
+### Quick Tunnel
+
+```bash
+docker compose \
+  -f docker-compose.yml \
+  -f docker-compose.cloudflare-tunnel.yml \
+  --profile cloudflare-quick up -d
+
+docker compose \
+  -f docker-compose.yml \
+  -f docker-compose.cloudflare-tunnel.yml \
+  logs -f cloudflared-quick
+```
+
+The URL in the log is temporary and changes after restart. Append `/mcp` and keep the Bearer Token from `.env` when configuring the client.
+
+### Named Tunnel
+
+Create a Cloudflare Named Tunnel and Public Hostname. Add these values to the existing deployment `.env`; use `docker-compose.cloudflare-tunnel.env.example` as a reference without overwriting the current AgentDock token:
+
+```dotenv
+AGENTDOCK_SERVER_URL=https://agent.example.com
+TUNNEL_TOKEN=replace-with-cloudflare-tunnel-token
+```
+
+Restrict `.env` to the current user and start the named profile:
+
+```bash
+chmod 600 .env
+docker compose \
+  -f docker-compose.yml \
+  -f docker-compose.cloudflare-tunnel.yml \
+  --profile cloudflare-named up -d
+```
+
+Set the Cloudflare Public Hostname service to `http://agentdock:8765`. Compose passes `TUNNEL_TOKEN` only to the `cloudflared-named` container; the AgentDock container receives `AGENTDOCK_SERVER_URL` and its own authentication token, but not the Tunnel Token. The token is provided through the container environment and does not appear in the `cloudflared` command arguments.
+
+Use only one Tunnel profile at a time. To stop the deployment and remove the Tunnel container while preserving AgentDock data:
+
+```bash
+docker compose \
+  -f docker-compose.yml \
+  -f docker-compose.cloudflare-tunnel.yml \
+  --profile cloudflare-quick \
+  --profile cloudflare-named down
+```
+
 ## Change the local port
 
 The default MCP URL is `http://127.0.0.1:18766/mcp`. When that port conflicts, add this to `.env`:

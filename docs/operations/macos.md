@@ -50,6 +50,31 @@ Do not place tokens, OAuth secrets, or third-party credentials directly in a pub
 curl -fsS http://127.0.0.1:8765/healthz
 ```
 
+## Manage Cloudflare Tunnel
+
+Passing `--tunnel quick` or `--tunnel named` to the installer automatically registers both the AgentDock LaunchAgent and a separate `com.uvwt.agentdock.cloudflared` LaunchAgent. AgentDock remains bound to the configured local address; only `cloudflared` receives the Tunnel Token.
+
+Managed files:
+
+```text
+~/Library/Application Support/AgentDock/cloudflared.env
+~/Library/Application Support/AgentDock/start-cloudflared.sh
+~/Library/LaunchAgents/com.uvwt.agentdock.cloudflared.plist
+~/Library/Logs/AgentDock/cloudflared.out.log
+~/Library/Logs/AgentDock/cloudflared.err.log
+```
+
+`cloudflared.env` is written with mode `0600`. The AgentDock LaunchAgent does not load it, and the Named Tunnel Token is not placed in `ProgramArguments`.
+
+Inspect the Tunnel service and logs:
+
+```bash
+launchctl print "gui/$(id -u)/com.uvwt.agentdock.cloudflared"
+tail -f "$HOME/Library/Logs/AgentDock/cloudflared.err.log"
+```
+
+A Quick Tunnel URL can be read from the log, but changes after restart. A Named Tunnel keeps the `--server-url` origin and reuses the existing token on later installer runs. To stop and remove the managed Tunnel configuration, rerun the installer with `--tunnel none`.
+
 ## Directories and permissions
 
 ```text
