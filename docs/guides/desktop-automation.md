@@ -13,11 +13,11 @@ Follow the [macOS installation](../getting-started/macos.md) and run AgentDock a
 Send this instruction to a client that is already connected to AgentDock:
 
 ```text
-Validate, install, and activate the official Desktop Skill:
-https://github.com/uvwt/agentdock/releases/latest/download/skill-desktop.zip
+Read the desktop entry from the official AgentDock Skills catalog, verify the package against its digest, then install and activate it:
+https://raw.githubusercontent.com/uvwt/agentdock-skills/main/catalog.json
 ```
 
-The official ZIP is published with each AgentDock release and has a matching SHA-256 checksum file. After installation, ask whether the `desktop` Skill is active.
+The Desktop Skill is versioned and released independently in [uvwt/agentdock-skills](https://github.com/uvwt/agentdock-skills). The catalog pins its download URL and SHA-256 digest. After installation, ask whether the `desktop` Skill is active.
 
 ## 3. Grant macOS permissions
 
