@@ -25,6 +25,35 @@ Request header Authorization: Bearer <token shown by the installer>
 
 This mode starts after the current user logs in. It is not a system service that runs before login.
 
+## Cloudflare Tunnel
+
+When `-RegisterStartup` is used for a new installation, the installer asks whether a Cloudflare-managed domain is available:
+
+- Answer **yes** for a fixed Named Tunnel. Enter the HTTPS public origin and paste the Tunnel Token at the hidden prompt.
+- Answer **no** for a temporary Quick Tunnel. The installer downloads `cloudflared.exe`, waits for the generated `trycloudflare.com` address, writes it back to AgentDock, and restarts AgentDock with OAuth enabled.
+
+Later installer runs reuse the stored mode. Automation can bypass the question with `-TunnelMode quick`, `-TunnelMode named`, or `-TunnelMode none`. Named mode also accepts `-ServerUrl`; inject `AGENTDOCK_CLOUDFLARE_TUNNEL_TOKEN` from a protected environment rather than putting a real token in shell history.
+
+AgentDock and `cloudflared` use separate current-user startup entries:
+
+```text
+HKCU\Software\Microsoft\Windows\CurrentVersion\Run\AgentDock
+HKCU\Software\Microsoft\Windows\CurrentVersion\Run\AgentDockCloudflared
+```
+
+Sensitive values are stored separately under `%LOCALAPPDATA%\AgentDock` and protected with current-user DPAPI:
+
+```text
+auth-token.dpapi
+oauth-password.dpapi
+oauth-token-secret.dpapi
+cloudflared-token.dpapi
+```
+
+The public origin and selected mode are non-secret text files. The Tunnel Token is decrypted only by the `cloudflared` launcher and is exported as `TUNNEL_TOKEN`; it is not placed in command arguments or passed to AgentDock.
+
+A Quick Tunnel address changes whenever `cloudflared` restarts. Rerun the same installer command to obtain and write back the new address. The Bearer Token, OAuth password, and OAuth signing secret remain unchanged. Then update the client MCP URL and authorize OAuth again.
+
 ## Install a specific version
 
 ```powershell

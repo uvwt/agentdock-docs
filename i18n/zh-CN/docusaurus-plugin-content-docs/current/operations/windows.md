@@ -25,6 +25,35 @@ powershell -ExecutionPolicy Bypass `
 
 该方式在当前用户登录后启动，不是未登录前运行的系统服务。
 
+## Cloudflare Tunnel
+
+新安装使用 `-RegisterStartup` 时，安装器会询问是否已有接入 Cloudflare 的域名：
+
+- 选择 **有域名**：使用固定 Named Tunnel，继续输入 HTTPS 公网地址，并在隐藏提示中粘贴 Tunnel Token。
+- 选择 **没有域名**：使用临时 Quick Tunnel。安装器会下载 `cloudflared.exe`、等待生成 `trycloudflare.com` 地址、回写 AgentDock，并重启 AgentDock 启用 OAuth。
+
+后续再次运行会沿用已保存的模式。自动化可以用 `-TunnelMode quick`、`-TunnelMode named` 或 `-TunnelMode none` 跳过询问。Named 模式还接受 `-ServerUrl`；真实 Tunnel Token 应通过受保护环境变量 `AGENTDOCK_CLOUDFLARE_TUNNEL_TOKEN` 注入，不要写进 Shell 历史。
+
+AgentDock 与 `cloudflared` 使用两个独立的当前用户登录启动项：
+
+```text
+HKCU\Software\Microsoft\Windows\CurrentVersion\Run\AgentDock
+HKCU\Software\Microsoft\Windows\CurrentVersion\Run\AgentDockCloudflared
+```
+
+敏感值分别保存在 `%LOCALAPPDATA%\AgentDock`，并使用当前用户 DPAPI 加密：
+
+```text
+auth-token.dpapi
+oauth-password.dpapi
+oauth-token-secret.dpapi
+cloudflared-token.dpapi
+```
+
+公网地址和所选模式属于非敏感文本。Tunnel Token 只由 `cloudflared` 启动脚本解密并写入 `TUNNEL_TOKEN` 环境变量，不会出现在命令参数中，也不会传给 AgentDock。
+
+Quick Tunnel 地址会在 `cloudflared` 重启后变化。重新运行同一安装命令即可获取并回写新地址；Bearer Token、OAuth 密码和 OAuth 签名密钥都保持不变。然后更新客户端 MCP 地址，并重新完成 OAuth 授权。
+
 ## 安装指定版本
 
 ```powershell

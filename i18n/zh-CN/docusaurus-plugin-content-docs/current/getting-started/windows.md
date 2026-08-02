@@ -50,6 +50,22 @@ Invoke-RestMethod http://127.0.0.1:8765/healthz
 **安装完成：** 健康检查通过并在客户端连接成功后，就可以开始使用。
 :::
 
+## 可选：通过 Cloudflare Tunnel 提供公网入口
+
+使用登录启动模式，让 AgentDock 与 `cloudflared` 在当前用户登录后一起运行：
+
+```powershell
+powershell -ExecutionPolicy Bypass `
+  -File $script `
+  -RegisterStartup
+```
+
+安装器只会询问你是否已有接入 Cloudflare 的域名。有域名时继续输入固定 HTTPS 公网地址和 Tunnel Token；没有域名时自动生成临时 `trycloudflare.com` 地址。
+
+两种方式都会同时启用 Bearer Token 和 OAuth。完成信息会显示公网 MCP 地址、Bearer Token 和 OAuth 登录密码。OAuth 与 Tunnel 密钥使用当前用户 DPAPI 加密保存，也不会写进 `cloudflared` 命令行。
+
+临时地址会在 `cloudflared` 重启后变化。重新运行同一安装命令即可生成并回写新地址；原 Bearer Token 和 OAuth 凭据保持不变。然后在客户端替换 MCP 地址，并重新完成 OAuth 授权。
+
 ## 更新
 
 重新下载最新安装脚本并再次运行即可。任务、Skill、配置和工作目录会保留。
