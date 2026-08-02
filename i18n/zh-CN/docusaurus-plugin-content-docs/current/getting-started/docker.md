@@ -77,6 +77,28 @@ Get-Content .env
 **安装完成：** `docker compose ps` 显示 `healthy`，并把 MCP 地址与 Token 填入客户端后即可使用。
 :::
 
+## 可选：创建临时 Cloudflare Tunnel
+
+下载 Compose 叠加文件并启动 Quick Tunnel profile：
+
+```bash
+curl -fL \
+  https://github.com/uvwt/agentdock/releases/latest/download/docker-compose.cloudflare-tunnel.yml \
+  -o docker-compose.cloudflare-tunnel.yml
+
+docker compose \
+  -f docker-compose.yml \
+  -f docker-compose.cloudflare-tunnel.yml \
+  --profile cloudflare-quick up -d
+
+docker compose \
+  -f docker-compose.yml \
+  -f docker-compose.cloudflare-tunnel.yml \
+  logs -f cloudflared-quick
+```
+
+日志会输出临时 `https://...trycloudflare.com` 地址，客户端配置时在后面追加 `/mcp`，认证继续使用 `.env` 中的 Bearer Token。该地址重启后会变化，不适合 OAuth。固定 Named Tunnel 见 [Docker 进阶配置](../operations/docker.md#cloudflare-tunnel)。
+
 ## 更新
 
 重新下载最新 `docker-compose.yml`，然后执行：
@@ -85,6 +107,8 @@ Get-Content .env
 docker compose pull
 docker compose up -d --force-recreate
 ```
+
+使用 Cloudflare Tunnel 时，还要重新下载 `docker-compose.cloudflare-tunnel.yml`，后续执行 `pull`、`up`、`logs` 和 `down` 都继续传入两份 Compose 文件和所选 profile。
 
 ## 按需继续
 

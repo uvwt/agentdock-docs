@@ -7,9 +7,9 @@ Use the native installation for local files and for macOS desktop automation tha
 ## 1. Install AgentDock
 
 ```bash
-curl -fL https://github.com/uvwt/agentdock/releases/latest/download/install-macos.sh \
-  -o /tmp/install-agentdock-macos.sh
-zsh /tmp/install-agentdock-macos.sh
+curl -fL https://github.com/uvwt/agentdock/releases/latest/download/install.sh \
+  -o /tmp/install-agentdock.sh
+sh /tmp/install-agentdock.sh
 ```
 
 The script detects the Mac architecture, verifies the download, and installs AgentDock at:
@@ -58,6 +58,25 @@ Authentication may be disabled while listening only on `127.0.0.1`. LAN or publi
 :::tip
 **Installation is complete** when the health check succeeds and the client connects. You can then use files, commands, Git, and Skills.
 :::
+
+## Optional: publish with Cloudflare Tunnel
+
+Install the background service and let the installer configure public access:
+
+```bash
+sh /tmp/install-agentdock.sh --register-service
+```
+
+The installer asks only whether a Cloudflare-managed domain is available:
+
+- Choose **yes** for a fixed hostname. Enter the HTTPS public origin and paste the Tunnel Token at the hidden prompt.
+- Choose **no** for a temporary `trycloudflare.com` URL. It is ready immediately, but may change after `cloudflared` restarts.
+
+AgentDock remains bound to `127.0.0.1`, while `cloudflared` runs as a separate user LaunchAgent. Both fixed and temporary paths automatically enable Bearer Token and OAuth authentication. The completion panel shows the public URL, MCP URL, Bearer Token, and OAuth login password. The OAuth signing secret and Tunnel Token are stored privately and are not displayed.
+
+When a temporary URL changes, rerun the same command. The installer refreshes the URL while preserving all authentication credentials. Update the MCP URL in the client and authorize OAuth again.
+
+Automation may still use `--tunnel quick`, `--tunnel named`, or `--tunnel none` as advanced overrides. See [Advanced macOS configuration](../operations/macos.md#manage-cloudflare-tunnel) for managed files, status, and logs.
 
 ## Update
 

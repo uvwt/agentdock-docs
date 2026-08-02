@@ -7,9 +7,9 @@ AgentDock provides prebuilt releases for Linux x64 and ARM64. A regular installa
 Run this in a terminal:
 
 ```bash
-curl -fsSL https://github.com/uvwt/agentdock/releases/latest/download/install-linux.sh \
+curl -fsSL https://github.com/uvwt/agentdock/releases/latest/download/install.sh \
   -o /tmp/install-agentdock.sh
-sudo env AGENTDOCK_NONINTERACTIVE=true bash /tmp/install-agentdock.sh
+sudo env AGENTDOCK_NONINTERACTIVE=true sh /tmp/install-agentdock.sh
 ```
 
 The installer uses safe defaults, selects systemd or OpenRC, creates a low-privilege service user, generates a connection token, and completes a health check.
@@ -62,6 +62,23 @@ Keep the SSH session open and let the local client connect to the same `http://1
 :::tip
 **Installation is complete** when the service is running, the health check succeeds, and the client has the MCP URL and token.
 :::
+
+## Optional: publish with Cloudflare Tunnel
+
+The non-interactive command above keeps public access disabled. To configure public access, rerun the same installer interactively:
+
+```bash
+sudo sh /tmp/install-agentdock.sh
+```
+
+The installer asks one product-level question: **Do you have a domain already managed by Cloudflare?**
+
+- Choose **yes** for a fixed hostname. Enter the HTTPS public origin and paste the Tunnel Token at the hidden prompt.
+- Choose **no** for a temporary `trycloudflare.com` URL that works immediately but may change after `cloudflared` restarts.
+
+Both paths automatically generate or reuse a Bearer Token and AgentDock OAuth credentials. The completion panel shows the public URL, MCP URL, Bearer Token, and OAuth login password. The OAuth signing secret and Cloudflare Tunnel Token remain only in protected configuration files.
+
+When a temporary URL changes, rerun the same installer. It writes the new URL back to AgentDock and restarts the service while preserving the existing Bearer Token, OAuth password, and signing secret. Replace the MCP URL in the client and authorize OAuth again. See [Advanced Linux configuration](../operations/linux.md#cloudflare-tunnel) for service names, automation variables, and secret storage.
 
 ## Update
 

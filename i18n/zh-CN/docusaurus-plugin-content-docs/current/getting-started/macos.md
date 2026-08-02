@@ -7,9 +7,9 @@ AgentDock 为 Apple Silicon 和 Intel Mac 提供预编译版本。普通安装�
 ## 1. 安装 AgentDock
 
 ```bash
-curl -fL https://github.com/uvwt/agentdock/releases/latest/download/install-macos.sh \
-  -o /tmp/install-agentdock-macos.sh
-zsh /tmp/install-agentdock-macos.sh
+curl -fL https://github.com/uvwt/agentdock/releases/latest/download/install.sh \
+  -o /tmp/install-agentdock.sh
+sh /tmp/install-agentdock.sh
 ```
 
 脚本会识别当前 Mac 架构、校验下载文件，并安装到：
@@ -58,6 +58,25 @@ curl -fsS http://127.0.0.1:8765/healthz
 :::tip
 **安装完成：** 健康检查通过并在客户端连接成功后，就可以开始使用文件、命令、Git 和 Skill。
 :::
+
+## 可选：通过 Cloudflare Tunnel 提供公网入口
+
+安装后台服务，并让安装器同时配置公网入口：
+
+```bash
+sh /tmp/install-agentdock.sh --register-service
+```
+
+安装器只询问是否有已接入 Cloudflare 的域名：
+
+- 选择“有”：使用固定地址，输入 HTTPS 公网地址，并在隐藏提示中粘贴 Tunnel Token。
+- 选择“没有”：自动生成可立即使用的 `trycloudflare.com` 临时地址；`cloudflared` 重启后地址可能变化。
+
+AgentDock 仍只监听 `127.0.0.1`，`cloudflared` 作为独立的用户级 LaunchAgent 运行。固定和临时两种方式都会自动启用 Bearer Token 与 OAuth。完成框会显示公网地址、MCP 地址、Bearer Token 和 OAuth 登录密码；OAuth 签名密钥与 Tunnel Token 会安全保存，不在终端显示。
+
+临时地址变化后，重新运行同一个命令即可刷新。安装器会保留全部认证凭据；用户只需在客户端替换 MCP URL，并重新完成 OAuth 授权。
+
+自动化仍可把 `--tunnel quick`、`--tunnel named` 或 `--tunnel none` 作为高级覆盖。安装器管理的文件、状态和日志见 [macOS 进阶配置](../operations/macos.md#管理-cloudflare-tunnel)。
 
 ## 更新
 

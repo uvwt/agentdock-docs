@@ -55,6 +55,66 @@ docker compose -f docker-compose.yml -f docker-compose.browser.yml up -d
 
 浏览器会话应使用独立 `profile_id`，不要挂载日常浏览器的完整用户目录。
 
+## Cloudflare Tunnel
+
+把 Release 中的叠加文件下载到 `docker-compose.yml` 同级目录：
+
+```bash
+curl -fL \
+  https://github.com/uvwt/agentdock/releases/latest/download/docker-compose.cloudflare-tunnel.yml \
+  -o docker-compose.cloudflare-tunnel.yml
+curl -fL \
+  https://github.com/uvwt/agentdock/releases/latest/download/docker-compose.cloudflare-tunnel.env.example \
+  -o docker-compose.cloudflare-tunnel.env.example
+```
+
+### Quick Tunnel
+
+```bash
+docker compose \
+  -f docker-compose.yml \
+  -f docker-compose.cloudflare-tunnel.yml \
+  --profile cloudflare-quick up -d
+
+docker compose \
+  -f docker-compose.yml \
+  -f docker-compose.cloudflare-tunnel.yml \
+  logs -f cloudflared-quick
+```
+
+日志中的地址是临时地址，重启后会变化。客户端配置时追加 `/mcp`，认证继续使用 `.env` 中的 Bearer Token。
+
+### Named Tunnel
+
+先创建 Cloudflare Named Tunnel 和 Public Hostname。把以下值补充到现有部署 `.env`；可以参考 `docker-compose.cloudflare-tunnel.env.example`，但不要覆盖当前 AgentDock Token：
+
+```dotenv
+AGENTDOCK_SERVER_URL=https://agent.example.com
+TUNNEL_TOKEN=replace-with-cloudflare-tunnel-token
+```
+
+限制 `.env` 权限后启动 named profile：
+
+```bash
+chmod 600 .env
+docker compose \
+  -f docker-compose.yml \
+  -f docker-compose.cloudflare-tunnel.yml \
+  --profile cloudflare-named up -d
+```
+
+Cloudflare Public Hostname 的 Service 设置为 `http://agentdock:8765`。Compose 只把 `TUNNEL_TOKEN` 传给 `cloudflared-named` 容器；AgentDock 容器只接收 `AGENTDOCK_SERVER_URL` 和自身认证 Token，不会接收 Tunnel Token。Token 通过容器环境提供，不会出现在 `cloudflared` 命令参数中。
+
+同一时间只启用一种 Tunnel profile。停止整个部署、移除 Tunnel 容器并保留 AgentDock 数据：
+
+```bash
+docker compose \
+  -f docker-compose.yml \
+  -f docker-compose.cloudflare-tunnel.yml \
+  --profile cloudflare-quick \
+  --profile cloudflare-named down
+```
+
 ## 修改本机端口
 
 默认 MCP 地址是 `http://127.0.0.1:18766/mcp`。端口冲突时，在 `.env` 中增加：
