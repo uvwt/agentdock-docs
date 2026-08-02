@@ -77,9 +77,9 @@ Get-Content .env
 **Installation is complete** when `docker compose ps` shows `healthy` and the client has the MCP URL and token.
 :::
 
-## Optional: create a temporary Cloudflare Tunnel
+## Optional: create a temporary public address
 
-Download the Compose overlay and start its Quick Tunnel profile:
+To let another computer or phone connect temporarily, download the public-access configuration and start it:
 
 ```bash
 curl -fL \
@@ -90,14 +90,20 @@ docker compose \
   -f docker-compose.yml \
   -f docker-compose.cloudflare-tunnel.yml \
   --profile cloudflare-quick up -d
+```
 
+Read the generated address:
+
+```bash
 docker compose \
   -f docker-compose.yml \
   -f docker-compose.cloudflare-tunnel.yml \
   logs -f cloudflared-quick
 ```
 
-The log prints a temporary `https://...trycloudflare.com` URL; append `/mcp` when configuring the client. Keep the Bearer Token from `.env`. The URL changes after restart and is not suitable for OAuth. See [Advanced Docker configuration](../operations/docker.md#cloudflare-tunnel) for a fixed Named Tunnel.
+The logs show an `https://…trycloudflare.com` address. Append `/mcp` and continue using the Bearer Token from `.env`.
+
+The temporary address may change after the container or Tunnel restarts. It is suitable for testing, but not for OAuth or long-running use. See [Advanced Docker configuration](../operations/docker.md#cloudflare-tunnel) for a fixed domain.
 
 ## Update
 

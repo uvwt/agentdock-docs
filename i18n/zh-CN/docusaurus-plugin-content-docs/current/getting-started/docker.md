@@ -77,9 +77,9 @@ Get-Content .env
 **安装完成：** `docker compose ps` 显示 `healthy`，并把 MCP 地址与 Token 填入客户端后即可使用。
 :::
 
-## 可选：创建临时 Cloudflare Tunnel
+## 可选：创建临时公网地址
 
-下载 Compose 叠加文件并启动 Quick Tunnel profile：
+需要让其他电脑或手机临时连接时，下载公网入口配置并启动：
 
 ```bash
 curl -fL \
@@ -90,14 +90,20 @@ docker compose \
   -f docker-compose.yml \
   -f docker-compose.cloudflare-tunnel.yml \
   --profile cloudflare-quick up -d
+```
 
+查看生成的地址：
+
+```bash
 docker compose \
   -f docker-compose.yml \
   -f docker-compose.cloudflare-tunnel.yml \
   logs -f cloudflared-quick
 ```
 
-日志会输出临时 `https://...trycloudflare.com` 地址，客户端配置时在后面追加 `/mcp`，认证继续使用 `.env` 中的 Bearer Token。该地址重启后会变化，不适合 OAuth。固定 Named Tunnel 见 [Docker 进阶配置](../operations/docker.md#cloudflare-tunnel)。
+日志中会出现 `https://…trycloudflare.com`。在地址后追加 `/mcp`，并继续使用 `.env` 中的 Bearer Token 认证。
+
+这个临时地址在容器或 Tunnel 重启后可能变化，适合测试，不适合 OAuth 或长期使用。固定域名配置见 [Docker 进阶配置](../operations/docker.md#cloudflare-tunnel)。
 
 ## 更新
 

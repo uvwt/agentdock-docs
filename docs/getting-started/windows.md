@@ -50,9 +50,9 @@ Authentication Not required
 **Installation is complete** when the health check succeeds and the client connects.
 :::
 
-## Optional: publish with Cloudflare Tunnel
+## Optional: create a public address
 
-Use login startup mode so AgentDock and `cloudflared` can run together after the current user signs in:
+To let another computer, phone, or ChatGPT connect, run in PowerShell:
 
 ```powershell
 powershell -ExecutionPolicy Bypass `
@@ -60,11 +60,16 @@ powershell -ExecutionPolicy Bypass `
   -RegisterStartup
 ```
 
-The installer asks only whether you already have a domain connected to Cloudflare. With a domain, it requests the fixed HTTPS public origin and a Tunnel Token. Without a domain, it creates a temporary `trycloudflare.com` address automatically.
+This command starts AgentDock automatically after the current user signs in and asks: **Do you already have a domain connected to Cloudflare?**
 
-Both paths enable Bearer Token and OAuth. The completion output shows the public MCP URL, Bearer Token, and OAuth login password. OAuth and Tunnel secrets are protected with current-user DPAPI and are not placed in the `cloudflared` command line.
+- Choose **no** to create a temporary `https://…trycloudflare.com` address automatically. No domain setup is required, so this is the easiest option for a first trial.
+- Choose **yes** to enter a fixed HTTPS address and Cloudflare Tunnel Token for long-running use.
 
-A temporary address changes after `cloudflared` restarts. Run the same installer command again to generate and write back the new address. Existing Bearer and OAuth credentials are preserved; replace the MCP URL in the client and complete OAuth again.
+When installation finishes, PowerShell shows the public address, MCP URL, Bearer Token, and OAuth login password. Copy the MCP URL and the required authentication details into the client. Other sensitive keys are stored securely by the installer and are not displayed.
+
+A temporary address may change after the computer or Tunnel restarts. Run the same command again and replace the MCP URL in the client. The existing Bearer Token and OAuth login details are preserved.
+
+See [Advanced Windows configuration](../operations/windows.md#cloudflare-tunnel) for login startup, automation parameters, logs, and secret storage.
 
 ## Update
 

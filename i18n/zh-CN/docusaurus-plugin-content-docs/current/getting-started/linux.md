@@ -63,22 +63,24 @@ ssh -L 8765:127.0.0.1:8765 <用户名>@<服务器地址>
 **安装完成：** 服务状态正常、健康检查通过，并把 MCP 地址与 Token 填入客户端后即可使用。
 :::
 
-## 可选：通过 Cloudflare Tunnel 提供公网入口
+## 可选：创建公网地址
 
-上面的非交互安装默认不开放公网。需要公网入口时，重新以交互方式运行同一个安装器：
+上面的非交互安装默认只允许本机连接。需要让其他电脑、手机或 ChatGPT 访问时，重新运行交互式安装：
 
 ```bash
 sudo sh /tmp/install-agentdock.sh
 ```
 
-安装器只问一个面向用户的问题：**你是否有已接入 Cloudflare 的域名？**
+安装器会询问：**你是否有已经接入 Cloudflare 的域名？**
 
-- 选择“有”：使用固定地址，输入 HTTPS 公网地址，并在隐藏提示中粘贴 Tunnel Token。
-- 选择“没有”：自动生成可立即使用的 `trycloudflare.com` 临时地址；`cloudflared` 重启后地址可能变化。
+- 选择“没有”：自动生成一个临时 `https://…trycloudflare.com` 地址，不需要配置域名，适合首次体验。
+- 选择“有”：填写固定 HTTPS 地址和 Cloudflare Tunnel Token，适合长期使用。
 
-两种方式都会自动生成或复用 Bearer Token 与 AgentDock OAuth 配置。完成框会显示公网地址、MCP 地址、Bearer Token 和 OAuth 登录密码；OAuth 签名密钥与 Cloudflare Tunnel Token 只保存在受限配置文件中。
+安装完成后，终端会显示公网地址、MCP 地址、Bearer Token 和 OAuth 登录密码。把 MCP 地址和所需认证信息填入客户端即可。
 
-临时地址变化后，重新运行同一个安装脚本即可。安装器会把新地址回写到 AgentDock、重启服务，并保留原 Bearer Token、OAuth 密码和签名密钥。随后只需在客户端替换 MCP URL，并重新完成 OAuth 授权。服务名、自动化变量和密钥存放位置见 [Linux 进阶配置](../operations/linux.md#cloudflare-tunnel)。
+临时地址可能在服务重启后变化。地址变化时重新运行同一个安装脚本，再替换客户端中的 MCP 地址；原有 Bearer Token 和 OAuth 登录信息会保留。
+
+自动化参数、服务名、日志和密钥保存位置见 [Linux 进阶配置](../operations/linux.md#cloudflare-tunnel)。
 
 ## 更新
 

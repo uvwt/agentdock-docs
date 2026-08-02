@@ -50,9 +50,9 @@ Invoke-RestMethod http://127.0.0.1:8765/healthz
 **安装完成：** 健康检查通过并在客户端连接成功后，就可以开始使用。
 :::
 
-## 可选：通过 Cloudflare Tunnel 提供公网入口
+## 可选：创建公网地址
 
-使用登录启动模式，让 AgentDock 与 `cloudflared` 在当前用户登录后一起运行：
+需要让其他电脑、手机或 ChatGPT 访问时，在 PowerShell 中运行：
 
 ```powershell
 powershell -ExecutionPolicy Bypass `
@@ -60,11 +60,16 @@ powershell -ExecutionPolicy Bypass `
   -RegisterStartup
 ```
 
-安装器只会询问你是否已有接入 Cloudflare 的域名。有域名时继续输入固定 HTTPS 公网地址和 Tunnel Token；没有域名时自动生成临时 `trycloudflare.com` 地址。
+这个命令会让 AgentDock 在当前用户登录后自动运行，并询问：**你是否有已经接入 Cloudflare 的域名？**
 
-两种方式都会同时启用 Bearer Token 和 OAuth。完成信息会显示公网 MCP 地址、Bearer Token 和 OAuth 登录密码。OAuth 与 Tunnel 密钥使用当前用户 DPAPI 加密保存，也不会写进 `cloudflared` 命令行。
+- 选择“没有”：自动生成一个临时 `https://…trycloudflare.com` 地址，不需要配置域名，适合首次体验。
+- 选择“有”：填写固定 HTTPS 地址和 Cloudflare Tunnel Token，适合长期使用。
 
-临时地址会在 `cloudflared` 重启后变化。重新运行同一安装命令即可生成并回写新地址；原 Bearer Token 和 OAuth 凭据保持不变。然后在客户端替换 MCP 地址，并重新完成 OAuth 授权。
+安装完成后，PowerShell 会显示公网地址、MCP 地址、Bearer Token 和 OAuth 登录密码。把 MCP 地址和所需认证信息填入客户端即可。其他敏感密钥由安装器安全保存，不会显示在终端中。
+
+临时地址可能在电脑或 Tunnel 重启后变化。地址变化时重新运行同一个命令，再替换客户端中的 MCP 地址；原有 Bearer Token 和 OAuth 登录信息会保留。
+
+登录启动、自动化参数、日志和密钥保存位置见 [Windows 进阶配置](../operations/windows.md#cloudflare-tunnel)。
 
 ## 更新
 
