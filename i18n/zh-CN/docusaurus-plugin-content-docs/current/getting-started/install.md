@@ -4,7 +4,7 @@
 
 | 当前环境 | 推荐方式 |
 | --- | --- |
-| macOS | [macOS 安装](./macos.md) |
+| macOS | [macOS 图形应用（推荐）](./macos.md) |
 | Windows 11 | [Windows 安装](./windows.md) |
 | Linux 服务器或桌面 | [Linux 安装](./linux.md) |
 | 已经安装 Docker | [Docker 安装](./docker.md) |
@@ -35,5 +35,6 @@ MCP 地址
 - 在自己的 Mac 或 Windows 电脑上使用：选原生安装。
 - 在 Linux 服务器上长期运行：选 Linux 安装。
 - 只想快速隔离体验，且电脑已经装好 Docker：选 Docker。
-- 希望直接使用浏览器自动化且不手动准备 runner：选 Docker，再[启用 browser 镜像](../operations/docker.md#启用浏览器自动化)。
-- 需要 macOS 屏幕和辅助功能自动化：必须使用 macOS 原生安装，Docker 无法控制宿主桌面。
+- 在 macOS 上使用浏览器自动化：图形应用可以在“高级设置”中自动安装浏览器支持。
+- 其他系统不想手动准备原生 Browser Runner：可以使用 Docker。
+- 需要控制 macOS 屏幕和辅助功能：使用 macOS 图形应用，Docker 无法控制宿主桌面。

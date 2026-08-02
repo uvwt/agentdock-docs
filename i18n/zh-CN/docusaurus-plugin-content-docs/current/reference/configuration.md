@@ -73,7 +73,8 @@ agentdock \
 | `AGENTDOCK_LOG_LEVEL` | `info` | 日志级别 |
 | `AGENTDOCK_STDIO` | `false` | 是否使用 stdio 模式 |
 | `AGENTDOCK_BROWSER_ENABLED` | `false` | 是否暴露 `browser_*` 工具 |
-| `AGENTDOCK_BROWSER_RUNNER_DIR` | `~/.agentdock/browser-runner` | browser runner 目录；Docker browser 镜像自动指向镜像内只读目录 |
+| `AGENTDOCK_BROWSER_RUNNER_DIR` | `~/.agentdock/browser-runner` | Browser Runner 目录；Docker browser 镜像自动指向镜像内只读目录 |
+| `AGENTDOCK_BROWSER_NODE_PATH` | 空 | Browser Runner 使用的 Node.js 绝对路径；macOS 图形应用安装托管运行环境时会自动填写 |
 | `AGENTDOCK_NEXUS_ENDPOINT` | 空 | NexusDock 服务根地址；配置后暴露 Recall、Workflow 和私密笔记能力 |
 | `AGENTDOCK_NEXUS_TOKEN` | 空 | NexusDock Bearer Token |
 
@@ -190,9 +191,10 @@ agentdock --browser-enabled
 | 环境变量 | 默认值 | 说明 |
 | --- | --- | --- |
 | `AGENTDOCK_BROWSER_RUNNER_DIR` | `~/.agentdock/browser-runner` | 包含 `browser-runner.js` 和 Node 依赖的目录 |
-| `AGENTDOCK_BROWSER_EXECUTABLE_PATH` | 空 | runner 使用的 Chromium 可执行文件；Docker browser 镜像自动设置为 `/usr/bin/chromium` |
+| `AGENTDOCK_BROWSER_NODE_PATH` | 空 | 用于运行 `browser-runner.js` 的 Node.js 绝对路径 |
+| `AGENTDOCK_BROWSER_EXECUTABLE_PATH` | 空 | Runner 使用的 Chromium 可执行文件；Docker browser 镜像自动设置为 `/usr/bin/chromium` |
 
-Docker browser 镜像会自动配置 runner 和 Chromium。macOS、Windows、Linux 原生 Release 当前不会安装 runner；启用前需要单独准备 Node.js、runner 和 `playwright-core`。具体选择见 [浏览器自动化](../guides/browser-control.md)。
+macOS 图形应用会在启用浏览器工具时自动安装并配置 Runner 与 Node.js。Docker browser 镜像也会自动配置 Runner 和 Chromium。Windows 与 Linux 原生安装仍需要单独准备 Runner。具体选择见 [浏览器自动化](../guides/browser-control.md)。
 
 ## Skill 与动态 MCP 的独立环境
 

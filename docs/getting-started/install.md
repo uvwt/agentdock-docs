@@ -4,7 +4,7 @@ Choose the system you are currently using. Most users should prefer a native ins
 
 | Current environment | Recommended option |
 | --- | --- |
-| macOS | [macOS installation](./macos.md) |
+| macOS | [Graphical macOS app (recommended)](./macos.md) |
 | Windows 11 | [Windows installation](./windows.md) |
 | Linux server or desktop | [Linux installation](./linux.md) |
 | Docker already installed | [Docker installation](./docker.md) |
@@ -35,5 +35,6 @@ For your first use, complete only the numbered steps on the page for your operat
 - For your own Mac or Windows computer, use the native installer.
 - For a long-running Linux server, use the Linux installer.
 - For a quick isolated trial on a machine that already has Docker, use Docker.
-- To use browser automation without preparing a runner manually, use Docker and then [enable the browser image](../operations/docker.md#enable-browser-automation).
-- To control the macOS screen and accessibility APIs, you must use the native macOS installation; Docker cannot control the host desktop.
+- On macOS, the graphical app can install browser support automatically from Advanced Settings.
+- On other systems, use Docker when you want browser automation without preparing a native runner manually.
+- To control the macOS screen and accessibility APIs, use the graphical macOS app; Docker cannot control the host desktop.

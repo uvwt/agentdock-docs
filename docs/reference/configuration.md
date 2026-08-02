@@ -74,6 +74,7 @@ agentdock \
 | `AGENTDOCK_STDIO` | `false` | Whether to use stdio mode |
 | `AGENTDOCK_BROWSER_ENABLED` | `false` | Whether to expose `browser_*` tools |
 | `AGENTDOCK_BROWSER_RUNNER_DIR` | `~/.agentdock/browser-runner` | Browser runner directory; the Docker browser image points this to a read-only directory inside the image |
+| `AGENTDOCK_BROWSER_NODE_PATH` | empty | Absolute Node.js executable used for the browser runner; the macOS app sets this when it installs a managed runtime |
 | `AGENTDOCK_NEXUS_ENDPOINT` | empty | NexusDock service root URL; enables Recall, Workflow, and Private Notes capabilities |
 | `AGENTDOCK_NEXUS_TOKEN` | empty | NexusDock Bearer Token |
 
@@ -190,9 +191,10 @@ The switch only exposes `browser_session`, `browser_act`, and `browser_snapshot`
 | Environment variable | Default | Description |
 | --- | --- | --- |
 | `AGENTDOCK_BROWSER_RUNNER_DIR` | `~/.agentdock/browser-runner` | Directory containing `browser-runner.js` and Node dependencies |
+| `AGENTDOCK_BROWSER_NODE_PATH` | empty | Absolute Node.js executable used to run `browser-runner.js` |
 | `AGENTDOCK_BROWSER_EXECUTABLE_PATH` | empty | Chromium executable used by the runner; the Docker browser image sets this to `/usr/bin/chromium` |
 
-The Docker browser image configures the runner and Chromium automatically. Native macOS, Windows, and Linux releases do not currently install the runner; prepare Node.js, the runner, and `playwright-core` separately before enabling the tools. See [Browser automation](../guides/browser-control.md) for the available choices.
+The macOS graphical app installs and configures the runner and Node.js automatically when browser tools are enabled. The Docker browser image also configures the runner and Chromium automatically. Native Windows and Linux installations still require a separately prepared runner. See [Browser automation](../guides/browser-control.md) for the available choices.
 
 ## Isolated environments for Skills and dynamic MCP
 

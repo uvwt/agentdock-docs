@@ -4,19 +4,29 @@ When browser capabilities are enabled, an agent can open pages, click, type, scr
 
 ## Before you start
 
-### Recommended: Docker browser image
+### macOS graphical app
 
-The complete build-free option for regular users is the Docker browser image. It already includes Chromium, the browser runner, and the required Node.js dependencies:
+For regular macOS users, the graphical app is the easiest option:
+
+1. Complete the [macOS installation](../getting-started/macos.md).
+2. Install Google Chrome or Chromium.
+3. Open **Advanced Settings (`高级设置`)** in AgentDock.
+4. Turn on **Enable browser tools (`启用浏览器工具`)** and wait for the automatic installation to finish.
+5. Click **Apply and Restart (`应用并重启`)**.
+
+The app installs and verifies the browser runner, `playwright-core`, and a compatible Node.js runtime. You do not need the source repository or a manual Node.js setup.
+
+### Docker
+
+Docker remains the easiest browser option on systems where the native installer does not manage a runner:
 
 1. Complete the [Docker installation](../getting-started/docker.md).
 2. Start the browser image as described in [Advanced Docker configuration](../operations/docker.md#enable-browser-automation).
 3. After connecting a client, confirm that the agent can see the `browser_*` tools.
 
-### Native macOS / Windows / Linux
+### Other native installations
 
-Native macOS, Windows, and Linux releases currently install only the AgentDock binary. They do not install the browser runner automatically. Native mode requires Node.js, the runner from the source repository, and `playwright-core`, so it is an advanced or contributor configuration.
-
-If you only want working browser automation, do not enable browser tools blindly after a native installation. Prefer the Docker browser image. See [Configuration](../reference/configuration.md#browser-tools) for native runner settings.
+Native Windows and Linux setups still require a separately prepared browser runner. Use Docker unless you intentionally want to manage Node.js, the runner, and browser paths yourself. See [Configuration](../reference/configuration.md#browser-tools) for the advanced settings.
 
 ## Describe the task directly
 

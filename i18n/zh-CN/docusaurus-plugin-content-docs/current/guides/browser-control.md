@@ -4,19 +4,29 @@
 
 ## 开始前
 
-### 推荐：Docker browser 镜像
+### macOS 图形应用
 
-当前面向普通用户的完整免构建方案是 Docker browser 镜像。它已经包含 Chromium、browser runner 和所需 Node.js 依赖：
+普通 macOS 用户使用图形应用最简单：
+
+1. 先完成 [macOS 安装](../getting-started/macos.md)。
+2. 安装 Google Chrome 或 Chromium。
+3. 在 AgentDock 中打开“高级设置”。
+4. 勾选“启用浏览器工具”，等待自动安装完成。
+5. 点击“应用并重启”。
+
+图形应用会自动安装并验证 Browser Runner、`playwright-core` 和兼容的 Node.js 运行环境，不需要源码仓库，也不需要手动配置 Node.js。
+
+### Docker
+
+在原生安装器不会管理 Browser Runner 的系统上，Docker 仍然是最省事的方案：
 
 1. 先完成 [Docker 安装](../getting-started/docker.md)。
 2. 按 [Docker 进阶配置](../operations/docker.md#启用浏览器自动化) 启动 browser 镜像。
 3. 连接客户端后，确认 Agent 可以看到 `browser_*` 工具。
 
-### 原生 macOS / Windows / Linux
+### 其他原生安装
 
-macOS、Windows 和 Linux Release 当前只安装 AgentDock 二进制，不会自动安装 browser runner。原生模式需要另外准备 Node.js、源码仓库中的 runner 及 `playwright-core`，属于进阶或开发者配置。
-
-只想直接使用浏览器自动化时，不要在原生安装后盲目打开浏览器开关，优先使用 Docker browser 镜像。原生 runner 的配置项见 [配置参考](../reference/configuration.md#浏览器工具)。
+Windows 和 Linux 原生安装仍需要单独准备 Browser Runner。除非你希望自己管理 Node.js、Runner 和浏览器路径，否则优先使用 Docker。进阶配置项见 [配置参考](../reference/configuration.md#浏览器工具)。
 
 ## 直接提出任务
 

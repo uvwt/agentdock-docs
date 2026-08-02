@@ -1,6 +1,22 @@
 # Advanced macOS configuration
 
-Regular users only need the [macOS installation](../getting-started/macos.md) for their first setup. This page covers fixed versions, custom installation directories, background operation, and desktop permissions.
+Regular users should install and manage AgentDock through the [macOS graphical app](../getting-started/macos.md). This page is for command-line installation, fixed versions, custom directories, managed files, service inspection, and removal.
+
+## Use the graphical app first
+
+The main window already provides status, connection addresses, credentials, start, stop, restart, core updates, and log access. **Advanced Settings** manages the port, log level, Nexus connection, browser tools, and two independent login-startup switches.
+
+Do not edit `agentdock.env` or LaunchAgent files for settings that the app already exposes. The app validates changes, writes the configuration atomically with private permissions, restarts AgentDock, and restores the previous configuration when the new one does not pass its health check.
+
+## Command-line installation
+
+The command-line installer remains available for automation and custom layouts:
+
+```bash
+curl -fL https://github.com/uvwt/agentdock/releases/latest/download/install.sh \
+  -o /tmp/agentdock-install.sh
+sh /tmp/agentdock-install.sh --register-service
+```
 
 ## Add AgentDock to PATH
 
@@ -20,20 +36,22 @@ agentdock
 ## Install a specific version
 
 ```bash
-zsh /tmp/install-agentdock-macos.sh --version vX.Y.Z
+sh /tmp/agentdock-install.sh --register-service --version vX.Y.Z
 ```
 
 ## Change the installation directory
 
 ```bash
-zsh /tmp/install-agentdock-macos.sh --install-dir "$HOME/bin"
+sh /tmp/agentdock-install.sh --register-service --install-dir "$HOME/bin"
 ```
 
 After changing the directory, add it to `PATH` or always use the full binary path.
 
 ## Run in the background
 
-For long-running background operation, use a LaunchAgent for the current logged-in user. When the Desktop Skill is involved, AgentDock must run in the logged-in user session and cannot use a system-level LaunchDaemon.
+The graphical app installs a current-user LaunchAgent automatically. In **Advanced Settings**, **Start AgentDock service after login** controls the core service, while **Show AgentDock in the menu bar after login** controls only the menu bar app. Disabling one does not silently change the other.
+
+For a manual setup, use a LaunchAgent for the current logged-in user. When the Desktop Skill is involved, AgentDock must run in the logged-in user session and cannot use a system-level LaunchDaemon.
 
 Keep these values stable:
 
@@ -52,7 +70,9 @@ curl -fsS http://127.0.0.1:8765/healthz
 
 ## Manage Cloudflare Tunnel
 
-Running the installer with `--register-service` and no explicit Tunnel override asks one question: whether a Cloudflare-managed domain is available. A domain selects a fixed Named Tunnel; no domain selects a temporary Quick Tunnel. Advanced automation may still pass `--tunnel quick`, `--tunnel named`, or `--tunnel none` directly.
+Regular users should switch between local-only, temporary public access, and a fixed domain in the graphical app. A fixed domain can reuse the existing Tunnel Token, so changing unrelated settings does not require pasting it again.
+
+The command-line installer with `--register-service` and no explicit Tunnel override asks whether a Cloudflare-managed domain is available. Internally, a domain selects a Named Tunnel and no domain selects a temporary Quick Tunnel. Automation may pass `--tunnel quick`, `--tunnel named`, or `--tunnel none` directly.
 
 For either public mode, the installer automatically creates or reuses a Bearer Token, OAuth login password, and OAuth signing secret. A temporary installation first starts AgentDock with Bearer authentication, obtains the generated `trycloudflare.com` URL, writes it to `AGENTDOCK_SERVER_URL`, enables OAuth, and restarts AgentDock. The completion panel displays the public URL, MCP URL, Bearer Token, and OAuth login password; the signing secret remains private.
 
@@ -77,6 +97,19 @@ tail -f "$HOME/Library/Logs/AgentDock/cloudflared.err.log"
 ```
 
 When a temporary URL changes, rerun the same installer command. It preserves the Bearer Token, OAuth password, and signing secret, writes the new URL, and restarts AgentDock. Update the MCP URL in the client and authorize OAuth again. A fixed installation reuses the existing public origin and Tunnel Token on later runs.
+
+## Browser runtime managed by the app
+
+When browser tools are enabled from Advanced Settings, the app installs the runner under:
+
+```text
+~/.agentdock/browser-runner
+~/.agentdock/browser-runtime
+```
+
+It writes `AGENTDOCK_BROWSER_ENABLED`, `AGENTDOCK_BROWSER_RUNNER_DIR`, and `AGENTDOCK_BROWSER_NODE_PATH` to the private service configuration. Disabling browser tools does not remove these directories; this avoids downloading the runtime again on the next enable.
+
+Do not move the managed Node.js executable or runner directory manually. Use the browser switch in the app to repair or reapply the configuration.
 
 ## Directories and permissions
 
@@ -107,3 +140,21 @@ Rerun the installer to upgrade. Previous binaries are backed up under:
 ```
 
 Runtime data and the default working directory are not deleted.
+
+## Remove AgentDock
+
+Before removing the app, open Advanced Settings, disable **Show AgentDock in the menu bar after login**, apply the change, and quit AgentDock.
+
+Download and run the official uninstaller:
+
+```bash
+curl -fL https://github.com/uvwt/agentdock/releases/latest/download/uninstall-macos.sh \
+  -o /tmp/uninstall-agentdock.sh
+zsh /tmp/uninstall-agentdock.sh
+```
+
+The default command removes the background services, support files, and logs while preserving the binary, `~/.agentdock`, and `~/AgentDock`.
+
+Use `--remove-binary` to remove the installed binaries too. Use `--purge-data` only when you intentionally want to delete the binary, all AgentDock state, installed browser support, and the default working directory.
+
+Finally, move `AgentDock.app` from Applications to the Trash.
