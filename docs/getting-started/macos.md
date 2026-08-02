@@ -14,14 +14,15 @@ AgentDock supports both Apple Silicon and Intel Macs. The app runs in the menu b
 ## 1. Download the app
 
 1. Open the [latest AgentDock release](https://github.com/uvwt/agentdock/releases/latest).
-2. Download `AgentDock-macos-universal.zip`.
-3. Double-click the ZIP file to extract `AgentDock.app`.
-4. Drag `AgentDock.app` into the **Applications** folder.
+2. Download `AgentDock-macos-universal.dmg`.
+3. Double-click the DMG to open the AgentDock disk image.
+4. Drag `AgentDock.app` onto the **Applications** shortcut in the DMG window.
+5. Eject the AgentDock disk image after copying finishes.
 
-The same download works on Apple Silicon and Intel Macs.
+The same DMG works on Apple Silicon and Intel Macs. The macOS Release provides only this DMG, so there is no separate ZIP package to choose from.
 
 :::note
-If `AgentDock-macos-universal.zip` is not listed, that release predates the graphical app. Use the [command-line installation](../operations/macos.md#command-line-installation) or wait for the next release that includes the app.
+If `AgentDock-macos-universal.dmg` is not listed, that release predates the graphical app. Use the [command-line installation](../operations/macos.md#command-line-installation) or wait for the next release that includes the app.
 :::
 
 ## 2. Open it for the first time

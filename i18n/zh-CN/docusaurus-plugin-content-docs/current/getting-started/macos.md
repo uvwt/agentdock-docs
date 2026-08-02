@@ -14,14 +14,15 @@ AgentDock 同时支持 Apple 芯片和 Intel Mac。安装后会常驻菜单栏�
 ## 1. 下载应用
 
 1. 打开 [AgentDock 最新版本](https://github.com/uvwt/agentdock/releases/latest)。
-2. 下载 `AgentDock-macos-universal.zip`。
-3. 双击 ZIP 文件，解压得到 `AgentDock.app`。
-4. 把 `AgentDock.app` 拖入“应用程序”文件夹。
+2. 下载 `AgentDock-macos-universal.dmg`。
+3. 双击 DMG，打开 AgentDock 磁盘映像。
+4. 把 `AgentDock.app` 拖到 DMG 窗口中的“应用程序”快捷入口。
+5. 复制完成后推出 AgentDock 磁盘映像。
 
-Apple 芯片和 Intel Mac 使用同一个安装包，不需要判断自己的处理器型号。
+Apple 芯片和 Intel Mac 使用同一个 DMG，不需要判断自己的处理器型号。macOS Release 只提供这一个 DMG，不需要在 ZIP 和 DMG 之间选择。
 
 :::note
-如果 Release 中没有 `AgentDock-macos-universal.zip`，说明该版本发布时还没有包含图形应用。可以先使用[命令行安装](../operations/macos.md#命令行安装)，或等待下一个包含图形应用的版本。
+如果 Release 中没有 `AgentDock-macos-universal.dmg`，说明该版本发布时还没有包含图形应用。可以先使用[命令行安装](../operations/macos.md#命令行安装)，或等待下一个包含图形应用的版本。
 :::
 
 ## 2. 第一次打开
