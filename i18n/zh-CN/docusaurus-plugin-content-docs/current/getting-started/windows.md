@@ -9,7 +9,7 @@ AgentDock 支持 Windows 11 x64 和 ARM64。可以直接使用 Windows 文件、
 ```powershell
 $script = Join-Path $env:TEMP 'install-agentdock.ps1'
 Invoke-WebRequest `
-  https://github.com/uvwt/agentdock/releases/latest/download/install-windows.ps1 `
+  https://github.com/uvwt/agentdock/releases/latest/download/install.ps1 `
   -OutFile $script
 powershell -ExecutionPolicy Bypass -File $script
 ```

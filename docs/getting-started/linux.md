@@ -7,9 +7,9 @@ AgentDock provides prebuilt releases for Linux x64 and ARM64. A regular installa
 Run this in a terminal:
 
 ```bash
-curl -fsSL https://github.com/uvwt/agentdock/releases/latest/download/install-linux.sh \
+curl -fsSL https://github.com/uvwt/agentdock/releases/latest/download/install.sh \
   -o /tmp/install-agentdock.sh
-sudo env AGENTDOCK_NONINTERACTIVE=true bash /tmp/install-agentdock.sh
+sudo env AGENTDOCK_NONINTERACTIVE=true sh /tmp/install-agentdock.sh
 ```
 
 The installer uses safe defaults, selects systemd or OpenRC, creates a low-privilege service user, generates a connection token, and completes a health check.
@@ -68,7 +68,7 @@ Keep the SSH session open and let the local client connect to the same `http://1
 The non-interactive command above keeps public access disabled. To configure public access, rerun the same installer interactively:
 
 ```bash
-sudo bash /tmp/install-agentdock.sh
+sudo sh /tmp/install-agentdock.sh
 ```
 
 The installer asks one product-level question: **Do you have a domain already managed by Cloudflare?**

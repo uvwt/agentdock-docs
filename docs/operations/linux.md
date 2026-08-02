@@ -4,26 +4,22 @@ Regular users only need the [Linux installation](../getting-started/linux.md) fo
 
 ## Alpine and minimal systems
 
-When Bash or curl is missing, run the bootstrap script first:
+The unified `install.sh` entry needs a POSIX shell, Bash, CA certificates, and either curl or wget. Install the missing tools first:
 
 ```sh
-wget -O /tmp/install-agentdock-bootstrap.sh \
-  https://github.com/uvwt/agentdock/releases/latest/download/install-linux-bootstrap.sh
-sudo sh /tmp/install-agentdock-bootstrap.sh
+apk add --no-cache bash curl ca-certificates
 ```
 
-The bootstrap script installs only the minimum dependencies and downloads the full installer. AgentDock itself still uses a prebuilt release.
-
-`install-linux-bootstrap.sh` is only a dependency bootstrapper. Its default `AGENTDOCK_INSTALL_URL` points to the current Release asset `install-linux.sh`; after downloading it, the bootstrapper runs `exec bash /tmp/agentdock-install.sh "$@"`. All installation questions and Cloudflare Tunnel behavior therefore come from `install-linux.sh`, and arguments passed to the bootstrap script are forwarded unchanged.
+Then run the same `install.sh` command shown below. There is no separate bootstrap installer.
 
 ## Interactive installation
 
 Without `AGENTDOCK_NONINTERACTIVE`, the installer asks for each setting:
 
 ```bash
-curl -fsSL https://github.com/uvwt/agentdock/releases/latest/download/install-linux.sh \
+curl -fsSL https://github.com/uvwt/agentdock/releases/latest/download/install.sh \
   -o /tmp/install-agentdock.sh
-bash /tmp/install-agentdock.sh
+sh /tmp/install-agentdock.sh
 ```
 
 Keep the `binary` mode for a normal deployment. `source` and `auto` are only for development or troubleshooting when prebuilt artifacts are unavailable.
@@ -68,7 +64,7 @@ Non-interactive installation remains private unless the mode is explicitly suppl
 sudo env \
   AGENTDOCK_NONINTERACTIVE=true \
   AGENTDOCK_TUNNEL_MODE=quick \
-  bash /tmp/install-agentdock.sh
+  sh /tmp/install-agentdock.sh
 ```
 
 For fixed mode, set `AGENTDOCK_TUNNEL_MODE=named`, `AGENTDOCK_SERVER_URL`, and `AGENTDOCK_CLOUDFLARE_TUNNEL_TOKEN`. `AGENTDOCK_OAUTH_PASSWORD` and `AGENTDOCK_OAUTH_TOKEN_SECRET` are optional first-install overrides; otherwise the installer generates them. Inject secrets from a protected environment or secret manager.
@@ -104,7 +100,7 @@ sudo env \
   AGENTDOCK_NONINTERACTIVE=true \
   AGENTDOCK_RELEASE_VERSION=latest \
   AGENTDOCK_PORT=8765 \
-  bash /tmp/install-agentdock.sh
+  sh /tmp/install-agentdock.sh
 ```
 
 Common variables:
@@ -138,7 +134,7 @@ To avoid registering a system service:
 sudo env \
   AGENTDOCK_NONINTERACTIVE=true \
   AGENTDOCK_SERVICE_MANAGER=none \
-  bash /tmp/install-agentdock.sh
+  sh /tmp/install-agentdock.sh
 ```
 
 This mode does not start AgentDock automatically. Run `/opt/agentdock/bin/agentdock` manually.
@@ -188,7 +184,7 @@ Rerun the installer to replace the binary. Runtime data and the environment file
 sudo env \
   AGENTDOCK_NONINTERACTIVE=true \
   AGENTDOCK_RELEASE_VERSION=vX.Y.Z \
-  bash /tmp/install-agentdock.sh
+  sh /tmp/install-agentdock.sh
 ```
 
 To maintain systemd, the environment file, reverse proxy, and OAuth entirely yourself, see [Manual Linux deployment](../getting-started/vps.md).

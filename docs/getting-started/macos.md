@@ -7,9 +7,9 @@ Use the native installation for local files and for macOS desktop automation tha
 ## 1. Install AgentDock
 
 ```bash
-curl -fL https://github.com/uvwt/agentdock/releases/latest/download/install-macos.sh \
-  -o /tmp/install-agentdock-macos.sh
-zsh /tmp/install-agentdock-macos.sh
+curl -fL https://github.com/uvwt/agentdock/releases/latest/download/install.sh \
+  -o /tmp/install-agentdock.sh
+sh /tmp/install-agentdock.sh
 ```
 
 The script detects the Mac architecture, verifies the download, and installs AgentDock at:
@@ -64,7 +64,7 @@ Authentication may be disabled while listening only on `127.0.0.1`. LAN or publi
 Install the background service and let the installer configure public access:
 
 ```bash
-zsh /tmp/install-agentdock-macos.sh --register-service
+sh /tmp/install-agentdock.sh --register-service
 ```
 
 The installer asks only whether a Cloudflare-managed domain is available:

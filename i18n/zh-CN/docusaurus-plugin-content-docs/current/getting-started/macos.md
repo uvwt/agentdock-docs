@@ -7,9 +7,9 @@ AgentDock 为 Apple Silicon 和 Intel Mac 提供预编译版本。普通安装�
 ## 1. 安装 AgentDock
 
 ```bash
-curl -fL https://github.com/uvwt/agentdock/releases/latest/download/install-macos.sh \
-  -o /tmp/install-agentdock-macos.sh
-zsh /tmp/install-agentdock-macos.sh
+curl -fL https://github.com/uvwt/agentdock/releases/latest/download/install.sh \
+  -o /tmp/install-agentdock.sh
+sh /tmp/install-agentdock.sh
 ```
 
 脚本会识别当前 Mac 架构、校验下载文件，并安装到：
@@ -64,7 +64,7 @@ curl -fsS http://127.0.0.1:8765/healthz
 安装后台服务，并让安装器同时配置公网入口：
 
 ```bash
-zsh /tmp/install-agentdock-macos.sh --register-service
+sh /tmp/install-agentdock.sh --register-service
 ```
 
 安装器只询问是否有已接入 Cloudflare 的域名：

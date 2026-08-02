@@ -73,8 +73,8 @@ $base = 'https://github.com/uvwt/agentdock/releases/latest/download'
 $script = Join-Path $env:TEMP 'install-agentdock.ps1'
 $checksum = "$script.sha256"
 
-Invoke-WebRequest "$base/install-windows.ps1" -OutFile $script
-Invoke-WebRequest "$base/install-windows.ps1.sha256" -OutFile $checksum
+Invoke-WebRequest "$base/install.ps1" -OutFile $script
+Invoke-WebRequest "$base/install.ps1.sha256" -OutFile $checksum
 
 $expected = ((Get-Content -LiteralPath $checksum -Raw) -split '\s+')[0].ToLowerInvariant()
 $actual = (Get-FileHash -LiteralPath $script -Algorithm SHA256).Hash.ToLowerInvariant()
@@ -116,7 +116,7 @@ Windows Release 不会自动安装 browser runner。原生模式需要另外准�
 ```powershell
 $uninstaller = Join-Path $env:TEMP 'uninstall-agentdock.ps1'
 Invoke-WebRequest `
-  https://github.com/uvwt/agentdock/releases/latest/download/uninstall-windows.ps1 `
+  https://github.com/uvwt/agentdock/releases/latest/download/uninstall.ps1 `
   -OutFile $uninstaller
 powershell -ExecutionPolicy Bypass -File $uninstaller
 ```

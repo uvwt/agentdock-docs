@@ -7,9 +7,9 @@ AgentDock 为 Linux x64 和 ARM64 提供预编译版本。普通安装不需要 
 在终端执行：
 
 ```bash
-curl -fsSL https://github.com/uvwt/agentdock/releases/latest/download/install-linux.sh \
+curl -fsSL https://github.com/uvwt/agentdock/releases/latest/download/install.sh \
   -o /tmp/install-agentdock.sh
-sudo env AGENTDOCK_NONINTERACTIVE=true bash /tmp/install-agentdock.sh
+sudo env AGENTDOCK_NONINTERACTIVE=true sh /tmp/install-agentdock.sh
 ```
 
 安装器会使用安全默认值，自动选择 systemd 或 OpenRC、创建低权限运行用户、生成连接 Token，并完成健康检查。
@@ -68,7 +68,7 @@ ssh -L 8765:127.0.0.1:8765 <用户名>@<服务器地址>
 上面的非交互安装默认不开放公网。需要公网入口时，重新以交互方式运行同一个安装器：
 
 ```bash
-sudo bash /tmp/install-agentdock.sh
+sudo sh /tmp/install-agentdock.sh
 ```
 
 安装器只问一个面向用户的问题：**你是否有已接入 Cloudflare 的域名？**

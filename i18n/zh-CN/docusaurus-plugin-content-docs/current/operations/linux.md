@@ -4,26 +4,22 @@
 
 ## Alpine 与极简系统
 
-系统缺少 Bash 或 curl 时，先运行引导脚本：
+统一入口 `install.sh` 需要 POSIX Shell、Bash、CA 证书，以及 curl 或 wget。缺少时先安装：
 
 ```sh
-wget -O /tmp/install-agentdock-bootstrap.sh \
-  https://github.com/uvwt/agentdock/releases/latest/download/install-linux-bootstrap.sh
-sudo sh /tmp/install-agentdock-bootstrap.sh
+apk add --no-cache bash curl ca-certificates
 ```
 
-引导脚本只负责安装最小依赖并下载正式安装器，后续仍使用预编译 AgentDock。
-
-`install-linux-bootstrap.sh` 只是依赖引导器。它的 `AGENTDOCK_INSTALL_URL` 默认指向当前 Release 中的 `install-linux.sh`；下载完成后执行 `exec bash /tmp/agentdock-install.sh "$@"`。因此所有安装问答和 Cloudflare Tunnel 行为都来自 `install-linux.sh`，传给 bootstrap 的参数也会原样转发。
+然后继续运行下方相同的 `install.sh` 命令，不再提供单独的 bootstrap 安装器。
 
 ## 交互式安装
 
 不设置 `AGENTDOCK_NONINTERACTIVE` 时，安装器会逐项询问配置：
 
 ```bash
-curl -fsSL https://github.com/uvwt/agentdock/releases/latest/download/install-linux.sh \
+curl -fsSL https://github.com/uvwt/agentdock/releases/latest/download/install.sh \
   -o /tmp/install-agentdock.sh
-bash /tmp/install-agentdock.sh
+sh /tmp/install-agentdock.sh
 ```
 
 普通部署保持 `binary` 即可。`source` 和 `auto` 只用于开发或预编译产物不可用的调试场景。
@@ -68,7 +64,7 @@ sudo tail -n 100 /var/log/agentdock-cloudflared.log \
 sudo env \
   AGENTDOCK_NONINTERACTIVE=true \
   AGENTDOCK_TUNNEL_MODE=quick \
-  bash /tmp/install-agentdock.sh
+  sh /tmp/install-agentdock.sh
 ```
 
 固定模式设置 `AGENTDOCK_TUNNEL_MODE=named`、`AGENTDOCK_SERVER_URL` 和 `AGENTDOCK_CLOUDFLARE_TUNNEL_TOKEN`。`AGENTDOCK_OAUTH_PASSWORD` 与 `AGENTDOCK_OAUTH_TOKEN_SECRET` 只在需要覆盖首次生成值时提供；否则由安装器自动生成。密钥应来自受保护环境或密钥管理器。
@@ -104,7 +100,7 @@ sudo env \
   AGENTDOCK_NONINTERACTIVE=true \
   AGENTDOCK_RELEASE_VERSION=latest \
   AGENTDOCK_PORT=8765 \
-  bash /tmp/install-agentdock.sh
+  sh /tmp/install-agentdock.sh
 ```
 
 常用变量：
@@ -138,7 +134,7 @@ sudo env \
 sudo env \
   AGENTDOCK_NONINTERACTIVE=true \
   AGENTDOCK_SERVICE_MANAGER=none \
-  bash /tmp/install-agentdock.sh
+  sh /tmp/install-agentdock.sh
 ```
 
 这种模式不会自动启动 AgentDock，需要手动运行 `/opt/agentdock/bin/agentdock`。
@@ -188,7 +184,7 @@ sudo tail -n 100 /var/log/agentdock.log /var/log/agentdock.err
 sudo env \
   AGENTDOCK_NONINTERACTIVE=true \
   AGENTDOCK_RELEASE_VERSION=vX.Y.Z \
-  bash /tmp/install-agentdock.sh
+  sh /tmp/install-agentdock.sh
 ```
 
 需要完全自行维护 systemd、环境文件、反向代理和 OAuth 时，阅读 [Linux 手动部署](../getting-started/vps.md)。
