@@ -1,40 +1,47 @@
 # Install AgentDock
 
-Choose the system you are currently using. Most users should prefer a native installation. Choose Docker when it is already part of your environment or when you want stronger runtime isolation.
+Regular users can install AgentDock from the official package for their operating system. You do not need the source code or Go.
 
-| Current environment | Recommended option |
+| Your environment | Recommended option |
 | --- | --- |
-| macOS | [Graphical macOS app (recommended)](./macos.md) |
-| Windows 11 | [Windows installation](./windows.md) |
-| Linux server or desktop | [Linux installation](./linux.md) |
+| Windows 11 | [Graphical Windows installation](./windows.md) |
+| macOS 13 or later | [Graphical macOS installation](./macos.md) |
+| Linux server or desktop | [Automated Linux installation](./linux.md) |
 | Docker already installed | [Docker installation](./docker.md) |
 
-All standard installation methods automatically install and activate AgentDock's official core Skills. Other user-installed Skills, existing versions, and isolated environments remain in the same Skill Store and are not erased when AgentDock is upgraded.
+For your own Windows PC or Mac, prefer the graphical installer. Choose Docker when it is already part of your environment or when you specifically need container isolation.
 
-When upgrading for the first time from a release that did not yet contain the core Skill bundle, rerun the installer for your platform. After that one-time upgrade, future `agentdock update` runs update both the binary and the official core Skills.
+## Choose who can connect
 
-You do not need to download source code, install Go, or build AgentDock yourself.
+The Windows and macOS installers offer three connection options:
+
+| Option | Best for | What you need |
+| --- | --- | --- |
+| Local only | The MCP client and AgentDock run on the same computer | Nothing else |
+| Temporary public address | ChatGPT, a phone, or another remote device; no domain is ready | Internet access |
+| Fixed domain | A stable address for long-term use | A Cloudflare-managed domain and Tunnel Token |
+
+For a first installation, start with **Local only**. You can enable public access later from the control panel.
+
+:::warning
+Public access must use a Bearer Token or OAuth. Do not include connection credentials in screenshots, issues, or public conversations.
+:::
 
 ## After installation
 
-Every installation page provides two pieces of information:
+Get these values from the control panel or terminal:
 
 ```text
 MCP URL
-Connection token (required only when authentication is enabled)
+Bearer Token or OAuth sign-in details
 ```
 
-Add them to the MCP, Tools, or Connectors settings in your client. Choose **Streamable HTTP** as the transport.
+Add them to the MCP, Tools, or Connectors settings in your client and choose **Streamable HTTP**.
+
+- Client and AgentDock on the same device: use the local MCP URL.
+- Client on another device or in the cloud: use the public MCP URL.
+- Temporary public URL changed: replace the old URL in the client and authorize OAuth again when prompted.
 
 :::tip
-For your first use, complete only the numbered steps on the page for your operating system. You can return to the advanced links at the end later.
+For your first use, complete only the numbered steps on the page for your operating system. Custom ports, pinned versions, automation flags, and manual service management can wait until later.
 :::
-
-## Choosing an option
-
-- For your own Mac or Windows computer, use the native installer.
-- For a long-running Linux server, use the Linux installer.
-- For a quick isolated trial on a machine that already has Docker, use Docker.
-- On macOS, the graphical app can install browser support automatically from Advanced Settings.
-- On other systems, use Docker when you want browser automation without preparing a native runner manually.
-- To control the macOS screen and accessibility APIs, use the graphical macOS app; Docker cannot control the host desktop.

@@ -1,40 +1,47 @@
 # 安装 AgentDock
 
-选择你正在使用的系统。普通用户优先使用原生安装；已经在使用 Docker，或希望隔离运行环境时再选择 Docker。
+普通用户直接使用对应系统的正式安装包即可，不需要下载源码，也不需要安装 Go。
 
-| 当前环境 | 推荐方式 |
+| 你正在使用的环境 | 推荐方式 |
 | --- | --- |
-| macOS | [macOS 图形应用（推荐）](./macos.md) |
-| Windows 11 | [Windows 安装](./windows.md) |
-| Linux 服务器或桌面 | [Linux 安装](./linux.md) |
+| Windows 11 | [Windows 图形安装](./windows.md) |
+| macOS 13 或更高版本 | [macOS 图形安装](./macos.md) |
+| Linux 服务器或桌面 | [Linux 自动安装](./linux.md) |
 | 已经安装 Docker | [Docker 安装](./docker.md) |
 
-以上标准安装方式都会自动安装并激活 AgentDock 官方核心 Skill。用户安装的其他 Skill、已有版本和独立环境仍保存在同一个 Skill Store 中，升级 AgentDock 时不会被清空。
+在自己的 Windows 或 Mac 上使用时，优先选择图形安装。只有已经在使用 Docker，或确实需要容器隔离时，才建议选择 Docker。
 
-从尚未包含核心 Skill Bundle 的旧版本首次升级时，需要重新运行对应平台的安装脚本；完成这次升级后，后续 `agentdock update` 会同步更新二进制和官方核心 Skill。
+## 安装时要做的选择
 
-不需要下载源码，也不需要安装 Go 或自己构建 AgentDock。
+Windows 和 macOS 安装界面会让你选择连接方式：
+
+| 连接方式 | 适合场景 | 需要准备 |
+| --- | --- | --- |
+| 仅本机 | MCP 客户端和 AgentDock 在同一台电脑上 | 无 |
+| 临时公网地址 | 从 ChatGPT、手机或其他设备连接，暂时没有域名 | 可访问互联网 |
+| 固定域名 | 长期使用稳定公网地址 | 已接入 Cloudflare 的域名和 Tunnel Token |
+
+第一次使用建议先选 **仅本机**。确认 AgentDock 正常运行后，再按需要开启公网访问。
+
+:::warning
+公网地址必须配合 Bearer Token 或 OAuth 使用。不要把连接凭据放进截图、Issue 或公开聊天。
+:::
 
 ## 安装完成后
 
-每个安装页面都会给出两项信息：
+安装完成后，需要从控制面板或终端取得：
 
 ```text
 MCP 地址
-连接 Token（仅启用认证时需要）
+Bearer Token 或 OAuth 登录信息
 ```
 
-把它们填入客户端的 MCP、Tools 或 Connectors 设置即可。传输方式选择 **Streamable HTTP**。
+把这些信息填入客户端的 MCP、Tools 或 Connectors 设置，并选择 **Streamable HTTP**。
+
+- 客户端和 AgentDock 在同一台设备上：使用本地 MCP 地址。
+- 客户端在其他设备或云端：使用公网 MCP 地址。
+- 临时公网地址变化后：在客户端中替换旧地址，并按提示重新授权 OAuth。
 
 :::tip
-第一次使用只需要完成对应系统页面中的编号步骤。页面末尾的进阶链接都可以以后再看。
+第一次使用只需要完成对应系统页面中的编号步骤。自定义端口、固定版本、自动化参数和手动服务管理都可以以后再看。
 :::
-
-## 不确定选哪个
-
-- 在自己的 Mac 或 Windows 电脑上使用：选原生安装。
-- 在 Linux 服务器上长期运行：选 Linux 安装。
-- 只想快速隔离体验，且电脑已经装好 Docker：选 Docker。
-- 在 macOS 上使用浏览器自动化：图形应用可以在“高级设置”中自动安装浏览器支持。
-- 其他系统不想手动准备原生 Browser Runner：可以使用 Docker。
-- 需要控制 macOS 屏幕和辅助功能：使用 macOS 图形应用，Docker 无法控制宿主桌面。

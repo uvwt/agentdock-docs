@@ -1,72 +1,79 @@
 # Windows 进阶配置
 
-普通用户首次安装只需要完成 [Windows 安装](../getting-started/windows.md)。本页用于登录后自动启动、固定版本、WSL、浏览器和卸载。
+普通用户首次安装和升级只需要使用 [Windows 图形安装](../getting-started/windows.md)。本页用于 PowerShell 自动化、固定版本、WSL、浏览器能力和手动卸载。
 
-## 登录后自动启动
+## 修改现有安装
 
-先按安装页下载 `$script`，再执行：
+重新运行最新版 Setup。检测到现有安装后：
+
+- 普通升级或修复：选择“直接升级并保留当前全部设置”。
+- 修改开机启动、核心权限或连接方式：选择“修改启动和连接设置”。
+
+控制面板中的“公网访问”和“高级设置”也可以修改大多数日常配置，不需要重新安装。
+
+## PowerShell 自动安装
+
+PowerShell 入口面向自动化和高级用户。普通用户优先使用签名 Setup。
 
 ```powershell
+$script = Join-Path $env:TEMP 'install-agentdock.ps1'
+Invoke-WebRequest `
+  https://github.com/uvwt/agentdock/releases/latest/download/install.ps1 `
+  -OutFile $script
+
 powershell -ExecutionPolicy Bypass `
   -File $script `
   -RegisterStartup `
   -Port 8765
 ```
 
-安装器会生成 Bearer Token、加密保存到当前用户 DPAPI，并立即启动 AgentDock。首次生成时 Token 只显示一次，请保存到你的密码管理器。
+默认安装目录是 `%LOCALAPPDATA%\AgentDock`。`-RegisterStartup` 会在当前用户登录后启动 AgentDock；它不是登录前运行的系统服务。
 
-连接信息：
+本地连接信息通常为：
 
 ```text
 传输方式    Streamable HTTP
 地址        http://127.0.0.1:8765/mcp
-请求头      Authorization: Bearer <安装器显示的 Token>
+请求头      Authorization: Bearer <Bearer Token>
 ```
 
-该方式在当前用户登录后启动，不是未登录前运行的系统服务。
+## Cloudflare Tunnel 自动化
 
-## Cloudflare Tunnel
-
-新安装使用 `-RegisterStartup` 时，安装器会询问是否已有接入 Cloudflare 的域名：
-
-- 选择 **有域名**：使用固定 Named Tunnel，继续输入 HTTPS 公网地址，并在隐藏提示中粘贴 Tunnel Token。
-- 选择 **没有域名**：使用临时 Quick Tunnel。安装器会下载 `cloudflared.exe`、等待生成 `trycloudflare.com` 地址、回写 AgentDock，并重启 AgentDock 启用 OAuth。
-
-后续再次运行会沿用已保存的模式。自动化可以用 `-TunnelMode quick`、`-TunnelMode named` 或 `-TunnelMode none` 跳过询问。Named 模式还接受 `-ServerUrl`；真实 Tunnel Token 应通过受保护环境变量 `AGENTDOCK_CLOUDFLARE_TUNNEL_TOKEN` 注入，不要写进 Shell 历史。
-
-AgentDock 与 `cloudflared` 使用两个独立的当前用户登录启动项：
+可以使用以下参数跳过交互选择：
 
 ```text
-HKCU\Software\Microsoft\Windows\CurrentVersion\Run\AgentDock
-HKCU\Software\Microsoft\Windows\CurrentVersion\Run\AgentDockCloudflared
+-TunnelMode none     仅本机
+-TunnelMode quick    临时公网地址
+-TunnelMode named    固定 Cloudflare 域名
 ```
 
-敏感值分别保存在 `%LOCALAPPDATA%\AgentDock`，并使用当前用户 DPAPI 加密：
+固定域名还需要 `-ServerUrl` 和 Tunnel Token。不要把真实 Token 直接写进 Shell 历史，优先使用受保护的环境变量或 `-TunnelTokenFile`。
 
-```text
-auth-token.dpapi
-oauth-password.dpapi
-oauth-token-secret.dpapi
-cloudflared-token.dpapi
+示例：
+
+```powershell
+powershell -ExecutionPolicy Bypass `
+  -File $script `
+  -RegisterStartup `
+  -TunnelMode named `
+  -ServerUrl 'https://mini.example.com' `
+  -TunnelTokenFile 'C:\secure\cloudflare-token.txt'
 ```
 
-公网地址和所选模式属于非敏感文本。Tunnel Token 只由 `cloudflared` 启动脚本解密并写入 `TUNNEL_TOKEN` 环境变量，不会出现在命令参数中，也不会传给 AgentDock。
-
-Quick Tunnel 地址会在 `cloudflared` 重启后变化。重新运行同一安装命令即可获取并回写新地址；Bearer Token、OAuth 密码和 OAuth 签名密钥都保持不变。然后更新客户端 MCP 地址，并重新完成 OAuth 授权。
+临时公网地址在 Tunnel 重启后可能变化。可以在控制面板或托盘中重新生成；Bearer Token 和 OAuth 凭据会保留，但客户端需要替换 MCP 地址，并按提示重新授权 OAuth。
 
 ## 安装指定版本
 
 ```powershell
 powershell -ExecutionPolicy Bypass `
   -File $script `
-  -Version vX.Y.Z
+  -Version vX.Y.Z `
+  -RegisterStartup
 ```
 
-再次运行安装器即可升级。已存在的运行数据和启动配置会保留。
+再次运行脚本或新版 Setup 即可升级。任务、Skill、配置和工作目录默认保留。
 
 ## 校验安装脚本
-
-需要在执行前额外校验安装脚本时：
 
 ```powershell
 $base = 'https://github.com/uvwt/agentdock/releases/latest/download'
@@ -81,7 +88,7 @@ $actual = (Get-FileHash -LiteralPath $script -Algorithm SHA256).Hash.ToLowerInva
 if ($actual -ne $expected) { throw 'AgentDock installer checksum mismatch.' }
 ```
 
-安装器还会校验实际下载的 AgentDock ZIP。
+安装脚本还会校验下载的 AgentDock Release 包。
 
 ## WSL 运行时
 
@@ -96,32 +103,35 @@ if ($actual -ne $expected) { throw 'AgentDock installer checksum mismatch.' }
 
 `wsl_distribution` 可以省略，此时使用系统默认发行版。WSL 文件工具要求目标发行版安装 `python3`，路径使用 `/home/...`、`/mnt/d/...` 等 Linux 绝对路径。
 
-WSL 写入拒绝软链接、设备文件和 `/proc`、`/sys`、`/dev`、`/run` 等特殊目录。跨文件系统移动和递归删除目录不在当前支持范围内。
-
 ## 浏览器能力
 
-Windows Release 不会自动安装 browser runner。原生模式需要另外准备 Node.js、源码仓库中的 runner 和 `playwright-core`；普通用户优先使用已经包含完整依赖的 Docker browser 镜像。具体选择见 [浏览器自动化](../guides/browser-control.md)。
+Windows 控制面板可以保存 Browser Runner、Node.js 和相关路径。原生浏览器能力仍需要这些运行文件已经存在；不想手动准备时，可以使用已经包含依赖的 Docker browser 镜像。具体选择见 [浏览器自动化](../guides/browser-control.md)。
 
-## 命令与 Skill
+## 文件与凭据位置
 
-- `exec_command` 优先使用 PowerShell 7，然后回退到 Windows PowerShell 或 `cmd.exe`。
-- `tty=true` 使用 ConPTY。
-- Skill 声明的 Python、Node.js 或其他平台依赖需要由用户安装。
-- macOS Desktop Skill 不支持 Windows。
+默认运行目录：
+
+```text
+%LOCALAPPDATA%\AgentDock
+```
+
+Bearer Token、OAuth 密码、OAuth 签名密钥和 Tunnel Token 使用当前用户凭据保护。不要复制或公开这些文件。
 
 ## 卸载
 
-下载并运行卸载脚本：
+普通用户从 Windows **设置 > 应用 > 已安装的应用** 卸载，或使用开始菜单中的“卸载 AgentDock”。
+
+自动化卸载可以运行 Release 中的脚本：
 
 ```powershell
 $uninstaller = Join-Path $env:TEMP 'uninstall-agentdock.ps1'
 Invoke-WebRequest `
-  https://github.com/uvwt/agentdock/releases/latest/download/uninstall.ps1 `
+  https://github.com/uvwt/agentdock/releases/latest/download/uninstall-windows.ps1 `
   -OutFile $uninstaller
 powershell -ExecutionPolicy Bypass -File $uninstaller
 ```
 
-同时删除 `%USERPROFILE%\.agentdock` 和 `%USERPROFILE%\AgentDock`：
+同时删除任务、Skill、配置和默认工作目录：
 
 ```powershell
 powershell -ExecutionPolicy Bypass `
@@ -130,5 +140,5 @@ powershell -ExecutionPolicy Bypass `
 ```
 
 :::danger
-`-PurgeState` 会删除任务、Skill 配置、运行数据和默认工作目录。执行前先备份需要保留的内容。
+`-PurgeState` 会删除用户数据和默认工作目录。执行前先备份需要保留的内容。
 :::

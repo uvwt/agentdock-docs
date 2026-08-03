@@ -1,83 +1,95 @@
 # Windows installation
 
-AgentDock supports Windows 11 x64 and ARM64. It can work directly with Windows files, PowerShell, Git, and Skills. WSL is optional, and no source compilation is required.
+The signed offline installer is the recommended option for regular users. You do not need PowerShell, WSL, Go, or the source code.
 
-## 1. Download and run the installer
+AgentDock supports Windows 11 x64 and ARM64.
 
-Open PowerShell:
+## 1. Download the installer
 
-```powershell
-$script = Join-Path $env:TEMP 'install-agentdock.ps1'
-Invoke-WebRequest `
-  https://github.com/uvwt/agentdock/releases/latest/download/install.ps1 `
-  -OutFile $script
-powershell -ExecutionPolicy Bypass -File $script
-```
+Open the [latest AgentDock release](https://github.com/uvwt/agentdock/releases/latest) and download the package for your computer:
 
-The installer downloads and verifies the prebuilt release for the current architecture, installs it under the current user's profile, and adds the installation directory to the user `PATH`. Close and reopen PowerShell after installation before continuing.
+- Most Intel or AMD PCs: `AgentDockSetup-amd64.exe`
+- Windows on ARM: `AgentDockSetup-arm64.exe`
 
-## 2. Start AgentDock
+Choose `amd64` unless you know that your PC runs Windows on ARM.
 
-```powershell
-& "$env:LOCALAPPDATA\AgentDock\bin\agentdock.exe" `
-  --host 127.0.0.1 `
-  --port 8765
-```
+The installer already contains the AgentDock core, control panel, core Skills, and Cloudflare component. Installation and upgrades do not download those components from GitHub.
 
-Keep this PowerShell window open. You do not need to register automatic startup for the first trial. A newly opened PowerShell window can usually use the `agentdock` command directly.
+## 2. Run it normally
 
-## 3. Verify startup
+Double-click the installer. Do not choose **Run as administrator**.
 
-Open another PowerShell window:
+Setup requests UAC only when it is needed, such as enabling administrator-enhanced mode. Before approving a UAC prompt, confirm the file name and publisher information.
 
-```powershell
-Invoke-RestMethod http://127.0.0.1:8765/healthz
-```
+## 3. Choose startup options
 
-A healthy response shows `ok` as `True`.
+The default options are suitable for most users:
 
-## 4. Connect an MCP client
+- Start AgentDock and the tray after signing in to Windows
+- Run the AgentDock core with administrator privileges
 
-For a client on the same computer, use:
+Administrator-enhanced mode applies only to the AgentDock core. The control panel and tray continue to run as the signed-in user. If the current account cannot elevate, clear that option and use standard-user mode.
 
-```text
-Transport      Streamable HTTP
-URL            http://127.0.0.1:8765/mcp
-Authentication Not required
-```
+## 4. Choose a connection option
+
+### Local access only
+
+Use this when the MCP client runs on the same PC. It is the simplest and safest first setup and needs no domain or Cloudflare account.
+
+### Temporary public address
+
+Use this for ChatGPT, a phone, or another remote device when you do not have a domain ready. AgentDock creates a `trycloudflare.com` address automatically.
+
+The address may change after Windows or the Tunnel restarts. When it changes, read the new address from the control panel and replace the old address in your client.
+
+### Your own Cloudflare domain
+
+Use this for a stable, long-term address. Enter:
+
+- The HTTPS public origin, for example `https://mini.example.com`
+- The matching Cloudflare Tunnel Token
+
+Enter only the origin. Do not add `/mcp`.
+
+## 5. Finish installation
+
+**Create a desktop shortcut** is selected by default. Clicking **Finish** opens AgentDock Control Panel. You can also open it later from the Start menu, desktop shortcut, or system tray.
+
+Wait until the top-right status says that AgentDock is running normally, then confirm that the version, local MCP URL, and selected public URL are visible.
 
 :::tip
-**Installation is complete** when the health check succeeds and the client connects.
+When an existing installation is detected, Setup defaults to upgrading while keeping all current settings. Keep that option for a normal upgrade. Choose the settings option only when you need to change startup or connection behavior.
 :::
 
-## Optional: create a public address
+## 6. Connect an MCP client
 
-To let another computer, phone, or ChatGPT connect, run in PowerShell:
+The **Overview** page shows:
 
-```powershell
-powershell -ExecutionPolicy Bypass `
-  -File $script `
-  -RegisterStartup
-```
+- Local MCP URL
+- Public MCP URL, when public access is enabled
+- Bearer Token
+- OAuth password, when public access is enabled
 
-This command starts AgentDock automatically after the current user signs in and asks: **Do you already have a domain connected to Cloudflare?**
+Credentials are masked by default. Select **Show** only when needed. Values in the text fields can be copied with the standard Windows copy command.
 
-- Choose **no** to create a temporary `https://…trycloudflare.com` address automatically. No domain setup is required, so this is the easiest option for a first trial.
-- Choose **yes** to enter a fixed HTTPS address and Cloudflare Tunnel Token for long-running use.
+A client on the same PC uses the local MCP URL. ChatGPT or another remote client uses the public MCP URL. Choose **Streamable HTTP** as the transport.
 
-When installation finishes, PowerShell shows the public address, MCP URL, Bearer Token, and OAuth login password. Copy the MCP URL and the required authentication details into the client. Other sensitive keys are stored securely by the installer and are not displayed.
+Do not include the Bearer Token or OAuth password in screenshots, issues, or public conversations.
 
-A temporary address may change after the computer or Tunnel restarts. Run the same command again and replace the MCP URL in the client. The existing Bearer Token and OAuth login details are preserved.
+## Daily use
 
-See [Advanced Windows configuration](../operations/windows.md#cloudflare-tunnel) for login startup, automation parameters, logs, and secret storage.
+Use the control panel to check status and version, start or stop the service, test public access, change connection mode, regenerate a temporary URL, and adjust port, logging, and startup settings.
 
-## Update
+Use the tray menu for quick status checks, service restart, temporary public URL regeneration, and log access.
 
-Download the latest installer and run it again. Tasks, Skills, configuration, and the working directory are preserved.
+## Update or repair
 
-## Continue when needed
+To update the complete Windows application, download and run the latest Setup again. It detects the existing installation and preserves tasks, Skills, configuration, connection settings, and the working directory by default.
 
-- For login startup, a fixed version, installer verification, WSL, or removal, see [Advanced Windows configuration](../operations/windows.md).
-- For browser automation, the current build-free option is the Docker browser image. See [Browser automation](../guides/browser-control.md).
-- If startup fails, see [Troubleshooting](../operations/troubleshooting.md).
-- Before allowing LAN or public access, read the [Security model](../operations/security.md).
+The **Update** button in the control panel updates the AgentDock core. A newer control panel and installer are delivered through the latest Setup.
+
+## Uninstall
+
+Remove AgentDock from **Settings > Apps > Installed apps**, or use **Uninstall AgentDock** in the Start menu. The uninstaller asks whether to remove tasks, Skills, configuration, and the default working directory as well.
+
+For PowerShell automation, pinned versions, WSL, and file locations, see [Advanced Windows configuration](../operations/windows.md). For startup failures, see [Troubleshooting](../operations/troubleshooting.md).

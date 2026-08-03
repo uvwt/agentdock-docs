@@ -1,10 +1,12 @@
 # Linux 安装
 
-AgentDock 为 Linux x64 和 ARM64 提供预编译版本。普通安装不需要 Go、Git 或源码。
+AgentDock 提供 Linux x64 和 ARM64 预编译版本。普通安装不需要 Go、Git 或源码。
+
+下面的默认流程只允许本机访问，适合第一次安装和服务器部署。
 
 ## 1. 安装
 
-在终端执行：
+在终端运行：
 
 ```bash
 curl -fsSL https://github.com/uvwt/agentdock/releases/latest/download/install.sh \
@@ -12,7 +14,7 @@ curl -fsSL https://github.com/uvwt/agentdock/releases/latest/download/install.sh
 sudo env AGENTDOCK_NONINTERACTIVE=true sh /tmp/install-agentdock.sh
 ```
 
-安装器会使用安全默认值，自动选择 systemd 或 OpenRC、创建低权限运行用户、生成连接 Token，并完成健康检查。
+安装器会自动选择 systemd 或 OpenRC，创建低权限运行用户，生成 Bearer Token，启动服务并完成健康检查。
 
 ## 2. 确认服务正常
 
@@ -30,20 +32,20 @@ sudo rc-service agentdock status
 curl -fsS http://127.0.0.1:8765/healthz
 ```
 
-健康接口正常时会返回包含 `ok: true` 的结果。
+正常响应中会包含 `"ok": true`。
 
-## 3. 查看连接 Token
+## 3. 查看 Bearer Token
 
 ```bash
 sudo awk -F= '/^AGENTDOCK_AUTH_TOKEN=/{print $2}' \
   /etc/agentdock/agentdock.env
 ```
 
-把输出保存到密码管理器，不要发到聊天记录或提交到 Git。
+把 Token 保存到密码管理器。不要把它写进 Git、截图或公开聊天。
 
 ## 4. 连接 MCP 客户端
 
-客户端就在这台 Linux 机器上时填写：
+客户端也在这台 Linux 机器上时，填写：
 
 ```text
 传输方式    Streamable HTTP
@@ -51,45 +53,37 @@ sudo awk -F= '/^AGENTDOCK_AUTH_TOKEN=/{print $2}' \
 请求头      Authorization: Bearer <你的 Token>
 ```
 
-AgentDock 在远程服务器上时，从自己的电脑建立 SSH 隧道：
+AgentDock 运行在远程服务器上时，可以先从自己的电脑建立 SSH 隧道：
 
 ```bash
 ssh -L 8765:127.0.0.1:8765 <用户名>@<服务器地址>
 ```
 
-保持 SSH 窗口打开，再让本机客户端连接同一个 `http://127.0.0.1:8765/mcp` 地址。
+保持 SSH 会话运行，然后让本地客户端连接 `http://127.0.0.1:8765/mcp`。
 
 :::tip
-**安装完成：** 服务状态正常、健康检查通过，并把 MCP 地址与 Token 填入客户端后即可使用。
+服务正常、健康检查通过，并且客户端已经填写 MCP 地址和 Token 后，安装就完成了。
 :::
 
 ## 可选：创建公网地址
 
-上面的非交互安装默认只允许本机连接。需要让其他电脑、手机或 ChatGPT 访问时，重新运行交互式安装：
+上面的默认安装只允许本机访问。需要从 ChatGPT、手机或其他设备连接时，重新运行交互安装：
 
 ```bash
 sudo sh /tmp/install-agentdock.sh
 ```
 
-安装器会询问：**你是否有已经接入 Cloudflare 的域名？**
+安装器会询问是否已有接入 Cloudflare 的域名：
 
-- 选择“没有”：自动生成一个临时 `https://…trycloudflare.com` 地址，不需要配置域名，适合首次体验。
-- 选择“有”：填写固定 HTTPS 地址和 Cloudflare Tunnel Token，适合长期使用。
+- 没有域名：自动创建临时 `trycloudflare.com` 地址，适合快速使用。
+- 已有域名：填写 HTTPS 公网地址和 Cloudflare Tunnel Token，获得稳定地址。
 
-安装完成后，终端会显示公网地址、MCP 地址、Bearer Token 和 OAuth 登录密码。把 MCP 地址和所需认证信息填入客户端即可。
+安装完成后，终端会显示公网 MCP 地址和连接凭据。临时地址可能在服务重启后变化；地址变化时重新运行安装器，并替换客户端中的旧地址。已有 Bearer Token 和 OAuth 凭据会保留。
 
-临时地址可能在服务重启后变化。地址变化时重新运行同一个安装脚本，再替换客户端中的 MCP 地址；原有 Bearer Token 和 OAuth 登录信息会保留。
-
-自动化参数、服务名、日志和密钥保存位置见 [Linux 进阶配置](../operations/linux.md#cloudflare-tunnel)。
+公网访问必须保留认证。详细参数和日志位置见 [Linux 进阶配置](../operations/linux.md#cloudflare-tunnel)。
 
 ## 更新
 
 重新下载并运行第 1 步即可。任务、Skill、配置和工作目录会保留。
 
-## 按需继续
-
-- Alpine、交互式安装、修改目录、端口或服务管理器：阅读 [Linux 进阶配置](../operations/linux.md)。
-- 使用浏览器自动化：当前免构建方案是 Docker browser 镜像，见 [浏览器自动化](../guides/browser-control.md)。
-- 需要完全自行维护 systemd、反向代理和 OAuth：阅读 [Linux 手动部署](./vps.md)。
-- 启动失败：查看 [故障排查](../operations/troubleshooting.md)。
-- 需要公网访问：先阅读 [安全模型](../operations/security.md)。
+Alpine、自定义目录或端口、手动服务管理和卸载见 [Linux 进阶配置](../operations/linux.md)。需要完全手动维护 systemd、反向代理和 OAuth 时，见 [Linux 手动部署](./vps.md)。

@@ -1,10 +1,12 @@
 # Linux installation
 
-AgentDock provides prebuilt releases for Linux x64 and ARM64. A regular installation does not require Go, Git, or the source repository.
+AgentDock provides prebuilt Linux x64 and ARM64 releases. A regular installation does not require Go, Git, or the source repository.
+
+The default flow below accepts only local connections. It is suitable for a first installation and for most server deployments.
 
 ## 1. Install
 
-Run this in a terminal:
+Run:
 
 ```bash
 curl -fsSL https://github.com/uvwt/agentdock/releases/latest/download/install.sh \
@@ -12,7 +14,7 @@ curl -fsSL https://github.com/uvwt/agentdock/releases/latest/download/install.sh
 sudo env AGENTDOCK_NONINTERACTIVE=true sh /tmp/install-agentdock.sh
 ```
 
-The installer uses safe defaults, selects systemd or OpenRC, creates a low-privilege service user, generates a connection token, and completes a health check.
+The installer selects systemd or OpenRC, creates a low-privilege service user, generates a Bearer Token, starts the service, and completes a health check.
 
 ## 2. Verify the service
 
@@ -30,16 +32,16 @@ sudo rc-service agentdock status
 curl -fsS http://127.0.0.1:8765/healthz
 ```
 
-A healthy response contains `ok: true`.
+A healthy response contains `"ok": true`.
 
-## 3. Read the connection token
+## 3. Read the Bearer Token
 
 ```bash
 sudo awk -F= '/^AGENTDOCK_AUTH_TOKEN=/{print $2}' \
   /etc/agentdock/agentdock.env
 ```
 
-Save the output in a password manager. Do not paste it into chat history or commit it to Git.
+Save the token in a password manager. Do not commit it to Git or include it in screenshots or public conversations.
 
 ## 4. Connect an MCP client
 
@@ -51,45 +53,37 @@ URL            http://127.0.0.1:8765/mcp
 Request header Authorization: Bearer <your token>
 ```
 
-When AgentDock runs on a remote server, create an SSH tunnel from your own computer:
+When AgentDock runs on a remote server, create an SSH tunnel from your computer:
 
 ```bash
 ssh -L 8765:127.0.0.1:8765 <username>@<server-address>
 ```
 
-Keep the SSH session open and let the local client connect to the same `http://127.0.0.1:8765/mcp` URL.
+Keep the SSH session open and let the local client connect to `http://127.0.0.1:8765/mcp`.
 
 :::tip
-**Installation is complete** when the service is running, the health check succeeds, and the client has the MCP URL and token.
+Installation is complete when the service is running, the health check succeeds, and the client has the MCP URL and token.
 :::
 
 ## Optional: create a public address
 
-The non-interactive installation above accepts only local connections by default. To let another computer, phone, or ChatGPT connect, rerun the installer interactively:
+The default installation accepts only local connections. To connect from ChatGPT, a phone, or another device, run the installer interactively:
 
 ```bash
 sudo sh /tmp/install-agentdock.sh
 ```
 
-The installer asks: **Do you already have a domain connected to Cloudflare?**
+The installer asks whether you already have a Cloudflare-managed domain:
 
-- Choose **no** to create a temporary `https://…trycloudflare.com` address automatically. No domain setup is required, so this is the easiest option for a first trial.
-- Choose **yes** to enter a fixed HTTPS address and Cloudflare Tunnel Token for long-running use.
+- No domain: create a temporary `trycloudflare.com` address for quick use.
+- Domain available: enter the HTTPS public origin and Cloudflare Tunnel Token for a stable address.
 
-When installation finishes, the terminal shows the public address, MCP URL, Bearer Token, and OAuth login password. Copy the MCP URL and the required authentication details into the client.
+The terminal shows the public MCP URL and connection credentials when installation finishes. A temporary address may change after the service restarts. Run the installer again and replace the old URL in the client. Existing Bearer and OAuth credentials are preserved.
 
-A temporary address may change after the service restarts. Run the same installer again and replace the MCP URL in the client. The existing Bearer Token and OAuth login details are preserved.
-
-See [Advanced Linux configuration](../operations/linux.md#cloudflare-tunnel) for automation parameters, service names, logs, and secret storage.
+Public access must keep authentication enabled. See [Advanced Linux configuration](../operations/linux.md#cloudflare-tunnel) for automation parameters and log locations.
 
 ## Update
 
 Download and run step 1 again. Tasks, Skills, configuration, and the working directory are preserved.
 
-## Continue when needed
-
-- For Alpine, interactive installation, custom directories, ports, or service managers, see [Advanced Linux configuration](../operations/linux.md).
-- For browser automation, the current build-free option is the Docker browser image. See [Browser automation](../guides/browser-control.md).
-- To maintain systemd, the reverse proxy, and OAuth entirely yourself, see [Manual Linux deployment](./vps.md).
-- If startup fails, see [Troubleshooting](../operations/troubleshooting.md).
-- Before public access, read the [Security model](../operations/security.md).
+For Alpine, custom directories or ports, manual service management, and removal, see [Advanced Linux configuration](../operations/linux.md). To maintain systemd, the reverse proxy, and OAuth entirely yourself, see [Manual Linux deployment](./vps.md).

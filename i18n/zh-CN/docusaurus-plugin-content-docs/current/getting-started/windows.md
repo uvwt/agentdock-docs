@@ -1,83 +1,95 @@
 # Windows 安装
 
-AgentDock 支持 Windows 11 x64 和 ARM64。可以直接使用 Windows 文件、PowerShell、Git 和 Skill，不要求安装 WSL，也不需要编译源码。
+普通用户推荐使用签名离线安装包。安装过程不需要 PowerShell、WSL、Go 或源码。
 
-## 1. 下载并运行安装脚本
+AgentDock 支持 Windows 11 x64 和 ARM64。
 
-打开 PowerShell：
+## 1. 下载安装包
 
-```powershell
-$script = Join-Path $env:TEMP 'install-agentdock.ps1'
-Invoke-WebRequest `
-  https://github.com/uvwt/agentdock/releases/latest/download/install.ps1 `
-  -OutFile $script
-powershell -ExecutionPolicy Bypass -File $script
-```
+打开 [AgentDock 最新版本](https://github.com/uvwt/agentdock/releases/latest)，根据电脑类型下载：
 
-安装器会下载并校验当前架构的预编译版本，安装到当前用户目录，并把安装目录加入用户 PATH。安装结束后关闭并重新打开 PowerShell，再继续下一步。
+- 大多数 Intel 或 AMD 电脑：`AgentDockSetup-amd64.exe`
+- Windows ARM 电脑：`AgentDockSetup-arm64.exe`
 
-## 2. 启动
+不确定时，通常选择 `amd64`。
 
-```powershell
-& "$env:LOCALAPPDATA\AgentDock\bin\agentdock.exe" `
-  --host 127.0.0.1 `
-  --port 8765
-```
+安装包已经包含 AgentDock 核心、控制面板、核心 Skill 和 Cloudflare 组件。安装和升级时不会再从 GitHub 下载这些组件。
 
-保持这个 PowerShell 窗口运行。第一次体验时不需要先注册自动启动。新打开的 PowerShell 通常也可以直接使用 `agentdock` 命令。
+## 2. 正常双击运行
 
-## 3. 确认启动成功
+直接双击安装包，不要右键选择“以管理员身份运行”。
 
-另开一个 PowerShell 窗口：
+安装程序只在确实需要时弹出 UAC，例如启用管理员增强模式。看到 UAC 提示时，确认发布者和文件名无误后再继续。
 
-```powershell
-Invoke-RestMethod http://127.0.0.1:8765/healthz
-```
+## 3. 选择启动方式
 
-正常结果中会显示 `ok` 为 `True`。
+普通用户建议保留默认选项：
 
-## 4. 连接 MCP 客户端
+- 登录 Windows 后自动启动 AgentDock 和托盘
+- 以管理员权限运行 AgentDock 核心
 
-在同一台电脑上填写：
+管理员增强模式只作用于 AgentDock 核心，控制面板和托盘仍按当前用户运行。当前账号无法提权时，可以取消管理员增强模式，AgentDock 会以普通用户模式运行。
 
-```text
-传输方式    Streamable HTTP
-地址        http://127.0.0.1:8765/mcp
-认证        不需要
-```
+## 4. 选择连接方式
+
+### 仅本机使用
+
+适合 MCP 客户端也在这台电脑上的情况。这是第一次安装最简单、最安全的选择，不需要域名或 Cloudflare 账号。
+
+### 临时公网地址
+
+适合从 ChatGPT、手机或其他设备连接，但暂时没有域名的情况。AgentDock 会自动生成 `trycloudflare.com` 地址。
+
+临时地址可能在 Windows 或 Tunnel 重启后变化。地址变化时，在控制面板中查看新地址，再替换客户端中的旧地址。
+
+### 使用自己的 Cloudflare 域名
+
+适合长期使用稳定地址。需要填写：
+
+- HTTPS 公网地址，例如 `https://mini.example.com`
+- 对应的 Cloudflare Tunnel Token
+
+公网地址只填写域名部分，不要添加 `/mcp`。
+
+## 5. 完成安装
+
+“添加桌面快捷方式”默认已勾选。点击“完成”后会打开 AgentDock 控制面板，以后也可以从开始菜单、桌面快捷方式或系统托盘打开。
+
+等待右上角显示“运行正常”，并确认版本、本地 MCP 地址和所选的公网地址已经显示。
 
 :::tip
-**安装完成：** 健康检查通过并在客户端连接成功后，就可以开始使用。
+检测到旧版本时，安装程序默认选择“直接升级并保留当前全部设置”。普通升级保持这个选项即可；只有需要更改启动或连接方式时，才选择“修改设置”。
 :::
 
-## 可选：创建公网地址
+## 6. 连接 MCP 客户端
 
-需要让其他电脑、手机或 ChatGPT 访问时，在 PowerShell 中运行：
+在控制面板的“概览”页查看：
 
-```powershell
-powershell -ExecutionPolicy Bypass `
-  -File $script `
-  -RegisterStartup
-```
+- 本地 MCP 地址
+- 公网 MCP 地址（已开启公网访问时）
+- Bearer Token
+- OAuth 密码（已开启公网访问时）
 
-这个命令会让 AgentDock 在当前用户登录后自动运行，并询问：**你是否有已经接入 Cloudflare 的域名？**
+凭据默认会被遮罩，需要时点击“显示”。文本框中的内容可以使用 Windows 的标准复制操作。
 
-- 选择“没有”：自动生成一个临时 `https://…trycloudflare.com` 地址，不需要配置域名，适合首次体验。
-- 选择“有”：填写固定 HTTPS 地址和 Cloudflare Tunnel Token，适合长期使用。
+同一台电脑上的客户端使用本地 MCP 地址；ChatGPT 或其他远程客户端使用公网 MCP 地址。传输方式选择 **Streamable HTTP**。
 
-安装完成后，PowerShell 会显示公网地址、MCP 地址、Bearer Token 和 OAuth 登录密码。把 MCP 地址和所需认证信息填入客户端即可。其他敏感密钥由安装器安全保存，不会显示在终端中。
+不要把 Bearer Token 或 OAuth 密码放进截图、Issue 或公开聊天。
 
-临时地址可能在电脑或 Tunnel 重启后变化。地址变化时重新运行同一个命令，再替换客户端中的 MCP 地址；原有 Bearer Token 和 OAuth 登录信息会保留。
+## 日常使用
 
-登录启动、自动化参数、日志和密钥保存位置见 [Windows 进阶配置](../operations/windows.md#cloudflare-tunnel)。
+控制面板可以查看状态和版本、启动或停止服务、测试公网地址、切换连接方式、重新生成临时地址，以及调整端口、日志和开机启动设置。
 
-## 更新
+托盘菜单适合快速查看状态、重启服务、重新生成临时公网地址和打开日志。
 
-重新下载最新安装脚本并再次运行即可。任务、Skill、配置和工作目录会保留。
+## 更新或修复
 
-## 按需继续
+需要更新完整的 Windows 应用时，重新下载最新安装包并运行。安装程序会识别现有安装，并默认保留任务、Skill、配置、连接方式和工作目录。
 
-- 登录后自动启动、指定版本、校验脚本、WSL 或卸载：阅读 [Windows 进阶配置](../operations/windows.md)。
-- 使用浏览器自动化：当前免构建方案是 Docker browser 镜像，见 [浏览器自动化](../guides/browser-control.md)。
-- 启动失败：查看 [故障排查](../operations/troubleshooting.md)。
-- 需要局域网或公网访问：先阅读 [安全模型](../operations/security.md)。
+控制面板中的“更新”用于更新 AgentDock 核心程序；新版控制面板和安装程序仍通过最新 Setup 更新。
+
+## 卸载
+
+可以从 Windows **设置 > 应用 > 已安装的应用** 中卸载 AgentDock，也可以使用开始菜单中的“卸载 AgentDock”。卸载时会询问是否同时删除任务、Skill、配置和默认工作目录。
+
+PowerShell 自动化、固定版本、WSL 和详细文件位置见 [Windows 进阶配置](../operations/windows.md)。启动失败时查看 [故障排查](../operations/troubleshooting.md)。

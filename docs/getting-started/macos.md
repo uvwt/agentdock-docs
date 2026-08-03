@@ -1,33 +1,29 @@
 # Install AgentDock on macOS
 
-The macOS app is the recommended installation method for regular users. You do not need Terminal, Go, Git, or the source code.
+The graphical macOS app is recommended for regular users. You do not need Terminal, Go, Git, or the source code.
 
-AgentDock supports both Apple Silicon and Intel Macs. The app runs in the menu bar and keeps the AgentDock service available in the background.
+The same package supports both Apple Silicon and Intel Macs.
 
 ## Before you begin
 
 - Use macOS 13 or later.
 - Download AgentDock only from the official [GitHub Releases page](https://github.com/uvwt/agentdock/releases/latest).
-- For browser automation, install Google Chrome or Chromium first. Safari is not used by the browser tools.
-- A fixed public address requires a domain already connected to Cloudflare and a Cloudflare Tunnel Token. Without those, choose a temporary public address instead.
+- A fixed public address requires a Cloudflare-managed domain and its Tunnel Token. Without those, start with a temporary public address.
+- Install Google Chrome or Chromium before enabling browser automation.
 
-## 1. Download the app
+## 1. Download and install the app
 
 1. Open the [latest AgentDock release](https://github.com/uvwt/agentdock/releases/latest).
 2. Download `AgentDock-macos-universal.dmg`.
-3. Double-click the DMG to open the AgentDock disk image.
-4. Drag `AgentDock.app` onto the **Applications** shortcut in the DMG window.
-5. Eject the AgentDock disk image after copying finishes.
+3. Double-click the DMG.
+4. Drag `AgentDock.app` to **Applications**.
+5. Eject the disk image after copying finishes.
 
-The same DMG works on Apple Silicon and Intel Macs. The macOS Release provides only this DMG, so there is no separate ZIP package to choose from.
-
-:::note
-If `AgentDock-macos-universal.dmg` is not listed, that release predates the graphical app. Use the [command-line installation](../operations/macos.md#command-line-installation) or wait for the next release that includes the app.
-:::
+Apple Silicon and Intel Macs use the same DMG. You do not need to identify the processor or download a ZIP package.
 
 ## 2. Open it for the first time
 
-The current free build uses an ad-hoc signature and is not notarized by Apple. macOS therefore requires one manual confirmation on first launch:
+The current free build is not notarized by Apple, so the first launch needs one manual confirmation:
 
 1. Open **Applications** in Finder.
 2. Right-click `AgentDock.app` and choose **Open**.
@@ -35,116 +31,101 @@ The current free build uses an ad-hoc signature and is not notarized by Apple. m
 
 Do not disable Gatekeeper or change system-wide security settings. After the first successful launch, you can open AgentDock normally.
 
-AgentDock appears in the menu bar. Click its icon and choose **Install AgentDock (`安装 AgentDock`)** or **Open AgentDock (`打开 AgentDock`)** to show the main window. The current app interface uses Chinese labels; this guide includes the matching label where needed.
+AgentDock appears in the menu bar. Click its icon and choose **Install AgentDock** or **Open AgentDock** to show the main window.
 
-## 3. Choose how you will connect
-
-For a first installation, choose one of the three options in the window.
+## 3. Choose a connection option
 
 ### Only this Mac
 
-Choose **Only this Mac (`仅本机`)** when the MCP client runs on the same Mac.
-
-This is the simplest and safest first setup. No domain or Cloudflare account is required.
+Choose **Only this Mac** when the MCP client runs on the same Mac. This is the simplest and safest first setup and requires no domain or Cloudflare account.
 
 ### Temporary public address
 
-Choose **Temporary address (`临时地址`)** when you need to connect from ChatGPT or another remote client but do not have a Cloudflare domain ready.
+Choose **Temporary address** when ChatGPT, a phone, or another remote device needs to connect and you do not have a domain ready. AgentDock creates a public HTTPS address automatically.
 
-AgentDock creates a public HTTPS address automatically. The address may change after the tunnel or Mac restarts. When it changes, copy the new public MCP address from the AgentDock window and update the client.
+The address may change after the Mac or Tunnel restarts. When it changes, copy the new address from the control panel and replace the old address in the client.
 
 ### Fixed domain
 
-Choose **Fixed domain (`固定域名`)** for a stable address that you plan to use long term.
+Choose **Fixed domain** for a stable, long-term address and enter:
 
-Enter:
+- The HTTPS public origin, for example `https://mini.example.com`
+- The matching Cloudflare Tunnel Token
 
-- The public HTTPS address, for example `https://mini.example.com`
-- The Cloudflare Tunnel Token for that hostname
+Enter only the origin. Do not add `/mcp`.
 
-The public address must contain only the origin. Do not add `/mcp` because AgentDock adds it automatically.
+Click **Install and Start** and keep the window open until the status reports that AgentDock is running normally.
 
-If you do not already have both a Cloudflare-managed domain and a Tunnel Token, use **Temporary address** instead.
-
-Click **Install and Start (`安装并启动`)**. Keep the window open until AgentDock reports that the service is running normally.
-
-## 4. Copy the connection information
+## 4. Connect an MCP client
 
 After installation, the main window shows:
 
 - Service status and version
-- Local MCP address
-- Public MCP address, when public access is enabled
+- Local MCP URL
+- Public MCP URL, when public access is enabled
 - Bearer Token
-- OAuth login password, when public access is enabled
+- OAuth sign-in password, when public access is enabled
 
-Use the **Copy** buttons instead of selecting long values manually. Credentials are hidden by default; use **Show** only when you need to inspect them.
+Credentials are masked by default. Select **Show** only when needed. Long URLs and credentials can be copied with the **Copy** buttons.
 
-For a client on the same Mac, use the local MCP address. For a remote client, use the public MCP address.
+A client on the same Mac uses the local MCP URL. ChatGPT or another remote client uses the public MCP URL. Choose **Streamable HTTP** as the transport.
 
-Do not send the Bearer Token or OAuth password in screenshots, issue reports, or public chat messages. Anyone who has a valid credential may be able to operate the AgentDock service.
+Do not include the Bearer Token or OAuth password in screenshots, issues, or public conversations.
 
-See [Connect an MCP client](./install.md#after-installation) for the next step.
+## 5. Daily use
 
-## 5. Use the control panel
+Use the AgentDock menu bar icon to:
 
-Open AgentDock from the menu bar whenever you need to:
-
-- Check whether the service is healthy
-- Copy the local or public MCP address
-- Copy the Bearer Token or OAuth password
+- Check service status and version
+- Open the control panel
 - Start, stop, or restart the service
-- Update the AgentDock core
-- Open the log folder
+- Check for updates
+- Open log and configuration folders
 
-Stopping the menu bar app does not automatically stop the AgentDock service. The two components have separate startup settings.
+The control panel can also test public access, change connection mode, and regenerate a temporary address. While regeneration is in progress, the previous address is hidden until the new one is ready.
+
+Quitting the menu bar app does not stop the AgentDock service. The menu bar app and core service have separate login-startup settings.
 
 ## Optional: enable browser tools
 
-1. Open **Advanced Settings (`高级设置`)**.
-2. Turn on **Enable browser tools (`启用浏览器工具`)**.
-3. Wait for the automatic installation to finish.
-4. Click **Apply and Restart (`应用并重启`)**.
+1. Open **Advanced Settings**.
+2. Enable **Browser tools**.
+3. Wait for automatic installation and verification to finish.
+4. Select **Apply and Restart**.
 
-On first enable, AgentDock installs and verifies the browser runner and a compatible Node.js runtime automatically. You do not need to install Node.js yourself. Disabling browser tools keeps the downloaded files, so enabling them again does not repeat the full installation.
+You do not need to install Node.js yourself. Use a dedicated browser profile for automation instead of your everyday browser profile.
 
-Use a dedicated browser profile for automation. Do not give an agent access to your everyday browser profile unless the task truly requires it.
+## Optional: start after login
 
-## Optional: choose what starts after login
+Advanced Settings provides two independent switches:
 
-Advanced Settings contains two independent switches:
+- Start the AgentDock service after login
+- Show AgentDock in the menu bar after login
 
-- **Start AgentDock service after login** keeps MCP available in the background.
-- **Show AgentDock in the menu bar after login** opens only the menu bar app.
+Most users should leave both enabled. You can hide the menu bar app while keeping the core service available in the background.
 
-For most users, leave both switches enabled. You may disable the menu bar switch while keeping the service running after login.
+## Update or repair
 
-## Update AgentDock
+Use **Check for Updates** in the main window to update the AgentDock core and official core Skills.
 
-Use **Check for Updates (`检查更新`)** in the main window to update the AgentDock core and official core Skills.
-
-The menu bar application itself is replaced separately. When a newer macOS app is released, download the latest ZIP and replace the old `AgentDock.app` in Applications. Your configuration, Skills, tasks, and working directory are preserved.
+To update the complete macOS app, download the latest DMG and replace the existing `AgentDock.app` in Applications. Configuration, Skills, tasks, and the working directory are preserved.
 
 ## Common problems
 
 ### macOS says the developer cannot be verified
 
-Right-click the app in Applications and choose **Open**. Do not double-click it for the first launch.
+Right-click AgentDock in Applications and choose **Open**. Do not double-click it for the first launch.
 
 ### The service shows an error
 
-Click **Restart**, then open the log folder. The latest error is usually in `agentdock.err.log`.
+Select **Restart**, then open the log folder. The latest error is usually in `agentdock.err.log`.
 
 ### The temporary public address changed
 
-Copy the new public MCP address from AgentDock, replace the old address in the client, and complete OAuth authorization again when prompted. Existing Bearer and OAuth credentials remain unchanged.
+Copy the new public MCP URL from the control panel, replace the old URL in the client, and authorize OAuth again when prompted. Existing Bearer and OAuth credentials remain unchanged.
 
-### Browser tools fail to start
+### Browser tools do not start
 
-Confirm that Google Chrome or Chromium is installed, then turn browser tools off and on again. The first installation also needs network access to download the managed runtime when no compatible Node.js is already available.
+Confirm that Google Chrome or Chromium is installed, then disable and enable browser tools again.
 
-## Advanced and command-line installation
-
-The graphical app is the normal installation path. Fixed versions, custom installation directories, managed files, manual service commands, and removal steps are documented in [Advanced macOS configuration](../operations/macos.md).
-
-For screen, keyboard, and mouse control, continue with [macOS desktop automation](../guides/desktop-automation.md).
+For pinned versions, custom installation directories, manual service commands, and removal, see [Advanced macOS configuration](../operations/macos.md). For screen, keyboard, and mouse control, continue with [macOS desktop automation](../guides/desktop-automation.md).
