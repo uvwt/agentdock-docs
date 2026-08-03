@@ -13,7 +13,7 @@
 
 ## PowerShell 自动安装
 
-PowerShell 入口面向自动化和高级用户。普通用户优先使用签名 Setup。
+PowerShell 入口面向自动化和高级用户。普通用户可以直接使用 Windows 图形安装程序。
 
 ```powershell
 $script = Join-Path $env:TEMP 'install-agentdock.ps1'

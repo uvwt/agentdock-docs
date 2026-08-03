@@ -21,7 +21,7 @@ The Windows and macOS installers offer three connection options:
 | Temporary public address | ChatGPT, a phone, or another remote device; no domain is ready | Internet access |
 | Fixed domain | A stable address for long-term use | A Cloudflare-managed domain and Tunnel Token |
 
-For a first installation, start with **Local only**. You can enable public access later from the control panel.
+Choose a connection option based on where the MCP client runs, whether public access is needed, and whether you already have a fixed domain. You can switch modes later from the control panel.
 
 :::warning
 Public access must use a Bearer Token or OAuth. Do not include connection credentials in screenshots, issues, or public conversations.

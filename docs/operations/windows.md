@@ -13,7 +13,7 @@ The **Public access** and **Advanced settings** pages in the control panel can c
 
 ## PowerShell installation
 
-The PowerShell entry point is intended for automation and advanced users. Regular users should prefer the signed Setup.
+The PowerShell entry point is intended for automation and advanced users. Regular users can use the graphical Windows installer.
 
 ```powershell
 $script = Join-Path $env:TEMP 'install-agentdock.ps1'

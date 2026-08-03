@@ -23,7 +23,7 @@ Apple Silicon and Intel Macs use the same DMG. You do not need to identify the p
 
 ## 2. Open it for the first time
 
-The current free build is not notarized by Apple, so the first launch needs one manual confirmation:
+The current version is not notarized by Apple, so the first launch needs one manual confirmation:
 
 1. Open **Applications** in Finder.
 2. Right-click `AgentDock.app` and choose **Open**.
@@ -37,7 +37,7 @@ AgentDock appears in the menu bar. Click its icon and choose **Install AgentDock
 
 ### Only this Mac
 
-Choose **Only this Mac** when the MCP client runs on the same Mac. This is the simplest and safest first setup and requires no domain or Cloudflare account.
+Choose **Only this Mac** when the MCP client runs on the same Mac. This mode does not require a domain or Cloudflare account.
 
 ### Temporary public address
 

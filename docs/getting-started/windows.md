@@ -1,6 +1,6 @@
 # Windows installation
 
-The signed offline installer is the recommended option for regular users. You do not need PowerShell, WSL, Go, or the source code.
+Regular users can use the graphical Windows installer. You do not need PowerShell, WSL, Go, or the source code.
 
 AgentDock supports Windows 11 x64 and ARM64.
 
@@ -15,15 +15,15 @@ Choose `amd64` unless you know that your PC runs Windows on ARM.
 
 The installer already contains the AgentDock core, control panel, core Skills, and Cloudflare component. Installation and upgrades do not download those components from GitHub.
 
-## 2. Run it normally
+## 2. Run the installer
 
-Double-click the installer. Do not choose **Run as administrator**.
+Double-click the installer and follow the on-screen instructions.
 
-Setup requests UAC only when it is needed, such as enabling administrator-enhanced mode. Before approving a UAC prompt, confirm the file name and publisher information.
+If a UAC prompt appears during installation, confirm the file name and publisher information before continuing.
 
 ## 3. Choose startup options
 
-The default options are suitable for most users:
+Setup provides these startup options:
 
 - Start AgentDock and the tray after signing in to Windows
 - Run the AgentDock core with administrator privileges
@@ -34,7 +34,7 @@ Administrator-enhanced mode applies only to the AgentDock core. The control pane
 
 ### Local access only
 
-Use this when the MCP client runs on the same PC. It is the simplest and safest first setup and needs no domain or Cloudflare account.
+Choose this when the MCP client runs on the same PC. This mode does not require a domain or Cloudflare account.
 
 ### Temporary public address
 
