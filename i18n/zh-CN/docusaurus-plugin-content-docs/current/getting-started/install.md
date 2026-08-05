@@ -45,3 +45,5 @@ Bearer Token 或 OAuth 登录信息
 :::tip
 第一次使用只需要完成对应系统页面中的编号步骤。自定义端口、固定版本、自动化参数和手动服务管理都可以以后再看。
 :::
+
+如果安装时开启了公网地址，想用网页版 ChatGPT 操控本机，请继续阅读 [使用 ChatGPT 连接 AgentDock](../guides/chatgpt.md)。

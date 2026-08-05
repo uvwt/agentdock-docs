@@ -31,9 +31,12 @@ AgentDock 让支持 MCP 的 AI 客户端可以在你的电脑或服务器上读�
 - “打开网页完成查询，并把结果整理成文件。”
 - “安装并使用一个 Skill。”
 - “接入一个外部 MCP 服务。”
+- “控制浏览器、桌面自动化，或调用 Codex、Claude、Grok 等编码工具。”
 - “把长任务拆成步骤，并持续更新进度。”
 
 Agent 会根据任务选择文件、命令、Git、浏览器、Skill 或外部 MCP 工具。普通用户通常不需要逐个手动调用工具。
+
+如果主要想用网页版 ChatGPT 操控自己的 Windows 电脑，安装时开启公网地址后，按 [使用 ChatGPT 连接 AgentDock](./guides/chatgpt.md) 继续即可。
 
 ## 数据保存在哪里
 

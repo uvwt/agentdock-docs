@@ -60,21 +60,24 @@ Claude Desktop 是否支持自定义 MCP，以及可添加的服务器数量，�
 
 ChatGPT 需要当前套餐和工作区支持自定义 MCP 插件；企业工作区还可能需要管理员先开放开发人员模式。
 
-1. 打开 ChatGPT，进入 **设置 > 插件 > 高级设置**。
-2. 开启 **开发人员模式**。
-3. 点击 **创建插件**。
-4. 插件名称填写 `AgentDock`。
-5. MCP Server URL 填写：
+在 Windows 或 macOS 桌面安装并已开启公网地址时，常见路径是：
+
+1. 从 AgentDock 控制面板复制公网 MCP 地址和 OAuth 密码。
+2. 打开 ChatGPT，进入 **设置 > 插件 > 高级设置**。
+3. 开启 **开发人员模式**。
+4. 在插件页面点击 **➕** / **创建插件**。
+5. 插件名称填写 `AgentDock`。
+6. MCP Server URL 填写公网地址，例如：
 
    ```text
    https://agentdock.example.com/mcp
    ```
 
-6. 保存插件并发起连接。
-7. 浏览器打开 AgentDock 授权页后，确认插件名称与回调域名，再输入 `AGENTDOCK_OAUTH_PASSWORD` 完成授权。
-8. 返回 ChatGPT，确认 AgentDock 插件已经可用。
+7. 创建插件并发起连接。
+8. 浏览器打开 AgentDock 授权页后，确认插件名称与回调域名，再输入 OAuth 密码完成授权。
+9. 返回 ChatGPT，确认 AgentDock 插件已经可用。
 
-更完整的端点检查和排障步骤见 [使用 ChatGPT 连接 AgentDock](./chatgpt.md)。
+完整的 Windows 安装器教程、端点检查和排障步骤见 [使用 ChatGPT 连接 AgentDock](./chatgpt.md)。
 
 ## Claude Code
 

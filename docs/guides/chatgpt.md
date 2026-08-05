@@ -1,23 +1,112 @@
 # Connect ChatGPT to AgentDock
 
-OAuth is recommended when ChatGPT connects to a remote AgentDock instance through a custom MCP plugin. During connection, ChatGPT discovers AgentDock's OAuth metadata, registers a client, and completes browser authorization automatically. You do not need to create a Client ID or Client Secret manually.
+ChatGPT can drive AgentDock through a custom MCP plugin. After you connect, the web ChatGPT client can read files, run commands, use Skills, call external MCP servers, control the browser, and operate coding tools such as Codex, Claude, or Grok on the computer where AgentDock is running.
 
-AgentDock currently supports OAuth 2.0 Authorization Code, PKCE S256, dynamic client registration, and Refresh Tokens.
+The fastest path for most people is the desktop installer: enable a public address, copy the MCP URL and OAuth password from the control panel, then create a plugin in ChatGPT. You do not need to create a Client ID or Client Secret manually.
 
-## Prerequisites
+AgentDock supports OAuth 2.0 Authorization Code, PKCE S256, dynamic client registration, and Refresh Tokens.
 
-Before you begin, confirm that:
+## Quick start on Windows
 
-- AgentDock is deployed at a public URL that ChatGPT can reach.
+This path uses the graphical Windows installer. The macOS app follows the same idea: enable a public address, copy the public MCP URL and OAuth password, then create the ChatGPT plugin.
+
+### 1. Install AgentDock
+
+1. Open the [latest AgentDock release](https://github.com/uvwt/agentdock/releases/latest).
+2. Download the Windows installer for your PC:
+   - Most Intel or AMD PCs: `AgentDockSetup-amd64.exe`
+   - Windows on ARM: `AgentDockSetup-arm64.exe`
+3. Run the installer and follow the on-screen steps.
+4. When the installer asks for a connection option:
+   - Choose **Temporary public address** for the first connection if you do not have a domain ready.
+   - Prefer **Your own Cloudflare domain** for a stable long-term address.
+
+![Installer connection options: temporary public address or fixed Cloudflare domain](/img/guides/chatgpt/01-install-connection-option.png)
+
+Full installer details are in [Windows installation](../getting-started/windows.md). macOS users can follow [macOS installation](../getting-started/macos.md).
+
+:::tip
+A temporary `trycloudflare.com` address is enough for learning and first-time setup. The address may change after Windows or the tunnel restarts. When it changes, copy the new public URL from the control panel and update the ChatGPT plugin.
+:::
+
+### 2. Copy the public URL and OAuth password
+
+Open the AgentDock control panel and wait until the status shows that AgentDock is running normally.
+
+On the **Overview** page, copy:
+
+- The **public MCP URL**, which ends with `/mcp`
+- The **OAuth password**
+
+![Control panel Overview with public MCP URL and OAuth password](/img/guides/chatgpt/02-copy-public-url-oauth.png)
+
+Credentials are masked by default. Select **Show** only when you need to copy them. Do not put the password into screenshots, issues, or public chats.
+
+:::warning
+Do not enter a loopback URL such as `http://127.0.0.1:8765/mcp` in ChatGPT. ChatGPT cannot reach a local address on your computer.
+:::
+
+### 3. Create the plugin in ChatGPT
+
+1. Open ChatGPT in the browser.
+2. Go to **Settings > Plugins > Advanced settings** and enable **Developer mode**.
+
+![ChatGPT Settings > Plugins with Developer mode enabled](/img/guides/chatgpt/03-chatgpt-developer-mode.png)
+
+3. Return to the plugins page on the ChatGPT home screen and select **+** / **Create plugin**.
+
+![ChatGPT plugins page with the add button highlighted](/img/guides/chatgpt/04-plugins-add-button.png)
+
+4. Enter a name such as `AgentDock`.
+5. Enter the public MCP URL you copied, for example:
+
+   ```text
+   https://your-public-host.example/mcp
+   ```
+
+![Create plugin dialog with name and public MCP URL filled in](/img/guides/chatgpt/05-fill-name-and-url.png)
+
+6. Create the plugin and start the connection.
+7. When the browser opens the AgentDock authorization page, enter the OAuth password and complete the connection.
+
+![AgentDock authorization page for entering the OAuth password](/img/guides/chatgpt/06-create-enter-password.png)
+
+8. Return to ChatGPT and confirm that the AgentDock plugin is available.
+
+ChatGPT discovers AgentDock's OAuth metadata, registers a client, and finishes browser authorization automatically. You do not need to fill in a Client ID, Client Secret, authorization URL, or token URL.
+
+### 4. Verify the connection
+
+Start a new ChatGPT conversation and try:
+
+```text
+Use AgentDock to inspect the current device.
+```
+
+A read-only check is also enough:
+
+```text
+Call AgentDock's server_info and tell me the service version, operating system, and current authentication mode.
+```
+
+Do not treat the OAuth redirect alone as success. Confirm that ChatGPT can list AgentDock tools and complete a real tool call.
+
+After the connection works, you can ask ChatGPT to install Skills, connect external MCP services, automate the browser, or drive local coding tools through AgentDock.
+
+## Prerequisites for remote or manual deployments
+
+If you deploy AgentDock yourself on a server, Docker host, or reverse proxy, confirm that:
+
+- AgentDock is available at a public URL that ChatGPT can reach.
 - The public endpoint uses a valid HTTPS certificate.
 - The MCP URL ends with `/mcp`, for example `https://agentdock.example.com/mcp`.
 - The reverse proxy forwards `/mcp`, `/register`, `/oauth/*`, and `/.well-known/*` without rewriting them incorrectly.
 
-:::warning
-Do not enter a loopback URL such as `http://127.0.0.1:8765/mcp` in ChatGPT. ChatGPT cannot reach a loopback address on your computer or server.
-:::
+Desktop installers that enable a temporary or fixed public address already satisfy these requirements for first use.
 
-## 1. Enable OAuth
+## Manual OAuth configuration
+
+Use this section when you run AgentDock outside the desktop installer, or when you need to set OAuth environment variables yourself.
 
 Add these values to the AgentDock environment file, Docker Compose `environment`, or service environment:
 
@@ -57,7 +146,7 @@ For Docker Compose:
 docker compose up -d
 ```
 
-## 2. Verify the OAuth endpoints
+## Verify the OAuth endpoints
 
 First verify the health endpoint and OAuth metadata:
 
@@ -77,41 +166,6 @@ registration_endpoint   https://agentdock.example.com/register
 
 Do not open `/oauth/authorize` manually. It requires the client, callback URL, and PKCE parameters generated by ChatGPT, so a direct request normally returns a parameter error.
 
-## 3. Create the plugin in ChatGPT
-
-1. Open ChatGPT and go to **Settings > Plugins > Advanced settings**.
-2. Enable **Developer mode**.
-3. Select **Create plugin**.
-4. Use `AgentDock` as the plugin name.
-5. Enter this MCP Server URL:
-
-   ```text
-   https://agentdock.example.com/mcp
-   ```
-
-6. Save the plugin and begin the connection. Choose OAuth authentication, or let ChatGPT discover it from the server metadata.
-7. When the browser opens the AgentDock authorization page, confirm that the plugin name and callback domain belong to the connection you just started.
-8. Enter `AGENTDOCK_OAUTH_PASSWORD` and select “Verify and connect.”
-9. After the browser returns to ChatGPT, confirm that the plugin is available.
-
-ChatGPT obtains a Client ID from AgentDock's dynamic registration endpoint. You do not need to enter a Client ID, Client Secret, authorization URL, or token URL manually.
-
-## 4. Complete a real verification
-
-Start a new ChatGPT conversation and try:
-
-```text
-Use AgentDock to inspect the current device.
-```
-
-A read-only verification is also suitable:
-
-```text
-Call AgentDock's server_info and tell me the service version, operating system, and current authentication mode.
-```
-
-Do not treat the OAuth redirect alone as proof of success. Confirm that ChatGPT can list AgentDock tools and complete a real tool call.
-
 ## Troubleshooting
 
 ### The authorization page does not open
@@ -119,7 +173,8 @@ Do not treat the OAuth redirect alone as proof of success. Confirm that ChatGPT 
 Check, in order:
 
 - The MCP URL ends exactly with `/mcp`.
-- `AGENTDOCK_OAUTH_ENABLED` is `true`.
+- Public access is enabled and the public URL shown in the control panel is the one you entered in ChatGPT.
+- `AGENTDOCK_OAUTH_ENABLED` is `true` for manual deployments.
 - `AGENTDOCK_SERVER_URL` exactly matches the HTTPS origin used in the browser.
 - `/.well-known/oauth-authorization-server` and `/.well-known/oauth-protected-resource/mcp` are reachable from the public internet.
 - The reverse proxy allows `/register`, `/oauth/authorize`, and `/oauth/token`.
@@ -130,18 +185,20 @@ A successful `POST /oauth/authorize` returns a `302` redirect to ChatGPT's callb
 
 ### The password is rejected
 
-Enter `AGENTDOCK_OAUTH_PASSWORD`, not the Bearer Token or `AGENTDOCK_OAUTH_TOKEN_SECRET`. Repeated failures trigger a short rate limit.
+Enter the OAuth password shown in the control panel, or `AGENTDOCK_OAUTH_PASSWORD` for a manual deployment. Do not enter the Bearer Token or `AGENTDOCK_OAUTH_TOKEN_SECRET`. Repeated failures trigger a short rate limit.
 
 ### Connection still fails after configuration changes
 
-Restart AgentDock and verify the three public endpoints again. Then remove the old plugin from ChatGPT and create it again so the client does not keep stale registration or authorization state.
+Restart AgentDock and verify the public endpoints again. Then remove the old plugin from ChatGPT and create it again so the client does not keep stale registration or authorization state.
+
+If you use a temporary public address and it changed, update the MCP URL in the ChatGPT plugin before reconnecting.
 
 ## Security recommendations
 
-- Use a dedicated domain and a valid HTTPS certificate for AgentDock.
+- Prefer a fixed domain and a valid HTTPS certificate for long-term use.
 - Keep the authorization password and token signing key in a permission-restricted environment file or secret manager.
 - Never publish real passwords or signing keys in a README, Compose file, chat, or screenshot.
 - Do not log Authorization headers, OAuth codes, or request bodies at the reverse proxy.
 - AgentDock operates real resources with its process or container permissions. Grant only the directories and commands required for the task.
 
-See [Configuration](../reference/configuration.md#oauth-configuration) for all environment variables and [Manual Linux deployment](../getting-started/vps.md) for a public deployment.
+See [Configuration](../reference/configuration.md#oauth-configuration) for all environment variables and [Manual Linux deployment](../getting-started/vps.md) for a public deployment without the desktop installer.

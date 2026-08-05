@@ -74,6 +74,14 @@ Credentials are masked by default. Select **Show** only when needed. Values in t
 
 A client on the same PC uses the local MCP URL. ChatGPT or another remote client uses the public MCP URL. Choose **Streamable HTTP** as the transport.
 
+To connect web ChatGPT after choosing a temporary or fixed public address:
+
+1. Copy the public MCP URL and OAuth password from the control panel.
+2. In ChatGPT, enable developer mode under **Settings > Plugins**.
+3. Create a plugin, paste the public MCP URL, and authorize with the OAuth password.
+
+The full walkthrough is in [Connect ChatGPT to AgentDock](../guides/chatgpt.md). For other clients, see [Connect AgentDock from different clients](../guides/mcp-clients.md).
+
 Do not include the Bearer Token or OAuth password in screenshots, issues, or public conversations.
 
 ## Daily use

@@ -60,21 +60,24 @@ Availability of custom MCP connections and the number of servers you can add dep
 
 The current plan and workspace must support custom MCP plugins. An enterprise workspace may also require an administrator to enable developer mode.
 
-1. Open ChatGPT and go to **Settings > Plugins > Advanced settings**.
-2. Enable **Developer mode**.
-3. Select **Create plugin**.
-4. Enter `AgentDock` as the plugin name.
-5. Enter this MCP Server URL:
+On a Windows or macOS desktop install with a public address enabled, the usual path is:
+
+1. Copy the public MCP URL and OAuth password from the AgentDock control panel.
+2. Open ChatGPT and go to **Settings > Plugins > Advanced settings**.
+3. Enable **Developer mode**.
+4. On the plugins page, select **+** / **Create plugin**.
+5. Enter `AgentDock` as the plugin name.
+6. Enter the public MCP URL, for example:
 
    ```text
    https://agentdock.example.com/mcp
    ```
 
-6. Save the plugin and begin the connection.
-7. When the browser opens the AgentDock authorization page, confirm the plugin name and callback domain, then enter `AGENTDOCK_OAUTH_PASSWORD`.
-8. Return to ChatGPT and confirm that the AgentDock plugin is available.
+7. Create the plugin and begin the connection.
+8. When the browser opens the AgentDock authorization page, confirm the plugin name and callback domain, then enter the OAuth password.
+9. Return to ChatGPT and confirm that the AgentDock plugin is available.
 
-See [Connect ChatGPT to AgentDock](./chatgpt.md) for complete endpoint checks and troubleshooting.
+For the full Windows installer walkthrough, endpoint checks, and troubleshooting, see [Connect ChatGPT to AgentDock](./chatgpt.md).
 
 ## Claude Code
 

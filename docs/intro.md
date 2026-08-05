@@ -31,9 +31,12 @@ After connecting, describe a goal directly, for example:
 - “Open a website, complete a lookup, and save the result as a file.”
 - “Install and use a Skill.”
 - “Connect an external MCP service.”
+- “Use the browser, desktop automation, or a coding tool such as Codex, Claude, or Grok.”
 - “Break this long task into steps and keep its progress updated.”
 
 The agent selects file, command, Git, browser, Skill, or external MCP tools based on the task. Regular users rarely need to call individual tools manually.
+
+If you mainly want web ChatGPT to operate your Windows PC, follow [Connect ChatGPT to AgentDock](./guides/chatgpt.md) after installing with a public address.
 
 ## Where data is stored
 

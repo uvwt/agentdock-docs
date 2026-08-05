@@ -74,6 +74,14 @@ MCP 客户端也在这台电脑上时选择。该模式不需要域名或 Cloudf
 
 同一台电脑上的客户端使用本地 MCP 地址；ChatGPT 或其他远程客户端使用公网 MCP 地址。传输方式选择 **Streamable HTTP**。
 
+如果安装时选择了临时或固定公网地址，并想连接网页版 ChatGPT：
+
+1. 从控制面板复制公网 MCP 地址和 OAuth 密码。
+2. 在 ChatGPT 中打开 **设置 > 插件**，开启开发人员模式。
+3. 创建插件，填入公网 MCP 地址，再用 OAuth 密码完成授权。
+
+完整步骤见 [使用 ChatGPT 连接 AgentDock](../guides/chatgpt.md)。其他客户端见 [在不同客户端中连接 AgentDock](../guides/mcp-clients.md)。
+
 不要把 Bearer Token 或 OAuth 密码放进截图、Issue 或公开聊天。
 
 ## 日常使用
