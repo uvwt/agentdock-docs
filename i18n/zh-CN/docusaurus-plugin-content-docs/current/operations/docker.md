@@ -2,6 +2,8 @@
 
 普通用户首次安装只需要完成 [Docker 安装](../getting-started/docker.md)。本页用于修改端口、选择其他镜像、挂载宿主目录、更新版本或迁移旧数据。
 
+AgentDock 只使用一份 `docker-compose.yml`。浏览器镜像和 Cloudflare Tunnel 等可选能力通过环境变量与 Compose profile 启用，不再需要额外的 Compose 叠加文件。
+
 ## 镜像类型
 
 AgentDock 发布三种 `linux/amd64` 和 `linux/arm64` 镜像：
@@ -28,65 +30,39 @@ docker compose up -d --force-recreate
 
 ## 启用浏览器自动化
 
-下载与当前 Release 配套的浏览器 Compose 文件：
+在 `.env` 中切换到浏览器镜像并打开浏览器工具：
 
-macOS / Linux：
+```dotenv
+AGENTDOCK_IMAGE=ghcr.io/uvwt/agentdock:browser-latest
+AGENTDOCK_BROWSER_ENABLED=true
+```
+
+然后重建：
 
 ```bash
-curl -fL https://github.com/uvwt/agentdock/releases/latest/download/docker-compose.browser.yml \
-  -o docker-compose.browser.yml
+docker compose up -d --force-recreate
 ```
 
-Windows PowerShell：
-
-```powershell
-Invoke-WebRequest `
-  https://github.com/uvwt/agentdock/releases/latest/download/docker-compose.browser.yml `
-  -OutFile docker-compose.browser.yml
-```
-
-启动浏览器镜像：
-
-```bash
-docker compose -f docker-compose.yml -f docker-compose.browser.yml up -d
-```
-
-该镜像会启用 `browser_*` 工具，并把浏览器共享内存提高到 1 GB。浏览器 profile、截图和会话状态仍保存在 AgentDock 数据卷中。
+Compose 已为 Chromium 配置 1 GB `shm_size`。浏览器 profile、截图和会话状态仍保存在 AgentDock 数据卷中。
 
 浏览器会话应使用独立 `profile_id`，不要挂载日常浏览器的完整用户目录。
 
 ## Cloudflare Tunnel
 
-把 Release 中的叠加文件下载到 `docker-compose.yml` 同级目录：
-
-```bash
-curl -fL \
-  https://github.com/uvwt/agentdock/releases/latest/download/docker-compose.cloudflare-tunnel.yml \
-  -o docker-compose.cloudflare-tunnel.yml
-curl -fL \
-  https://github.com/uvwt/agentdock/releases/latest/download/docker-compose.cloudflare-tunnel.env.example \
-  -o docker-compose.cloudflare-tunnel.env.example
-```
+Tunnel 服务写在同一份 `docker-compose.yml` 中，通过 Compose profile 启用。可选变量可参考仓库中的 [`.env.example`](https://raw.githubusercontent.com/uvwt/agentdock/main/.env.example)。
 
 ### Quick Tunnel
 
 ```bash
-docker compose \
-  -f docker-compose.yml \
-  -f docker-compose.cloudflare-tunnel.yml \
-  --profile cloudflare-quick up -d
-
-docker compose \
-  -f docker-compose.yml \
-  -f docker-compose.cloudflare-tunnel.yml \
-  logs -f cloudflared-quick
+docker compose --profile cloudflare-quick up -d
+docker compose logs -f cloudflared-quick
 ```
 
 日志中的地址是临时地址，重启后会变化。客户端配置时追加 `/mcp`，认证继续使用 `.env` 中的 Bearer Token。
 
 ### Named Tunnel
 
-先创建 Cloudflare Named Tunnel 和 Public Hostname。把以下值补充到现有部署 `.env`；可以参考 `docker-compose.cloudflare-tunnel.env.example`，但不要覆盖当前 AgentDock Token：
+先创建 Cloudflare Named Tunnel 和 Public Hostname。把以下值补充到现有部署 `.env`，不要覆盖当前 AgentDock Token：
 
 ```dotenv
 AGENTDOCK_SERVER_URL=https://agent.example.com
@@ -97,10 +73,7 @@ TUNNEL_TOKEN=replace-with-cloudflare-tunnel-token
 
 ```bash
 chmod 600 .env
-docker compose \
-  -f docker-compose.yml \
-  -f docker-compose.cloudflare-tunnel.yml \
-  --profile cloudflare-named up -d
+docker compose --profile cloudflare-named up -d
 ```
 
 Cloudflare Public Hostname 的 Service 设置为 `http://agentdock:8765`。Compose 只把 `TUNNEL_TOKEN` 传给 `cloudflared-named` 容器；AgentDock 容器只接收 `AGENTDOCK_SERVER_URL` 和自身认证 Token，不会接收 Tunnel Token。Token 通过容器环境提供，不会出现在 `cloudflared` 命令参数中。
@@ -109,15 +82,14 @@ Cloudflare Public Hostname 的 Service 设置为 `http://agentdock:8765`。Compo
 
 ```bash
 docker compose \
-  -f docker-compose.yml \
-  -f docker-compose.cloudflare-tunnel.yml \
   --profile cloudflare-quick \
-  --profile cloudflare-named down
+  --profile cloudflare-named \
+  down
 ```
 
 ## 修改本机端口
 
-默认 MCP 地址是 `http://127.0.0.1:18766/mcp`。端口冲突时，在 `.env` 中增加：
+默认 MCP 地址是 `http://127.0.0.1:8765/mcp`（宿主机与容器内都使用 `8765`）。端口冲突时，在 `.env` 中增加：
 
 ```dotenv
 AGENTDOCK_PUBLISH_PORT=18767
@@ -176,32 +148,37 @@ sudo chown -R 10001:10001 AgentDock
 
 ## 固定版本
 
-从 GitHub Release 下载的 Compose 文件已经固定到对应版本，不会隐式切换到新的 `latest`。
+Compose 维护在仓库中，默认镜像标签为 `latest`。需要可复现部署时，请同时固定 Compose 的 git 修订（tag）和镜像标签。
 
-需要下载指定版本时：
+从指定 git tag 下载 Compose：
 
 ```bash
 VERSION=vX.Y.Z
-curl -fL "https://github.com/uvwt/agentdock/releases/download/$VERSION/docker-compose.yml" \
+curl -fL "https://raw.githubusercontent.com/uvwt/agentdock/$VERSION/docker-compose.yml" \
   -o docker-compose.yml
-curl -fL "https://github.com/uvwt/agentdock/releases/download/$VERSION/docker-compose.browser.yml" \
-  -o docker-compose.browser.yml
 ```
 
 Windows 用户可把 `curl -fL ... -o ...` 换成 `Invoke-WebRequest ... -OutFile ...`。
 
+在 `.env` 中固定镜像标签（runtime 或 browser）：
+
+```dotenv
+AGENTDOCK_IMAGE=ghcr.io/uvwt/agentdock:vX.Y.Z
+# 浏览器镜像：
+# AGENTDOCK_IMAGE=ghcr.io/uvwt/agentdock:browser-vX.Y.Z
+# AGENTDOCK_BROWSER_ENABLED=true
+```
+
 ## 更新 AgentDock
 
-普通镜像：
-
 ```bash
-curl -fL https://github.com/uvwt/agentdock/releases/latest/download/docker-compose.yml \
+curl -fL https://raw.githubusercontent.com/uvwt/agentdock/main/docker-compose.yml \
   -o docker-compose.yml
 docker compose pull
 docker compose up -d --force-recreate
 ```
 
-浏览器镜像还需要重新下载 `docker-compose.browser.yml`，随后继续同时传入两份 Compose 文件。
+浏览器部署保留 `.env` 中的 `AGENTDOCK_IMAGE` 与 `AGENTDOCK_BROWSER_ENABLED`。Tunnel 部署在 `pull` 和 `up` 时继续带上同一 `--profile`。
 
 更新后执行：
 
@@ -243,7 +220,12 @@ docker compose logs -f
 docker compose down
 ```
 
-浏览器部署执行这些命令时，应继续同时传入两份 Compose 文件。
+若启用了 Tunnel profile，这些命令也要带上同一 profile，例如：
+
+```bash
+docker compose --profile cloudflare-named logs -f
+docker compose --profile cloudflare-named down
+```
 
 ## 删除全部 Docker 数据
 

@@ -2,6 +2,8 @@
 
 Regular users only need the [Docker installation](../getting-started/docker.md) for their first setup. This page covers custom ports, other images, host-directory mounts, upgrades, and old-data migration.
 
+AgentDock uses a single `docker-compose.yml`. Optional capabilities (browser image, Cloudflare Tunnel) are enabled with environment variables and Compose profiles—no extra Compose overlay files.
+
 ## Image variants
 
 AgentDock publishes three image variants for `linux/amd64` and `linux/arm64`:
@@ -28,65 +30,39 @@ The `dev` and `browser` images serve different purposes. The browser image does 
 
 ## Enable browser automation
 
-Download the browser Compose file that matches the current release.
+Point Compose at the browser image and enable browser tools in `.env`:
 
-macOS / Linux:
+```dotenv
+AGENTDOCK_IMAGE=ghcr.io/uvwt/agentdock:browser-latest
+AGENTDOCK_BROWSER_ENABLED=true
+```
+
+Then recreate:
 
 ```bash
-curl -fL https://github.com/uvwt/agentdock/releases/latest/download/docker-compose.browser.yml \
-  -o docker-compose.browser.yml
+docker compose up -d --force-recreate
 ```
 
-Windows PowerShell:
-
-```powershell
-Invoke-WebRequest `
-  https://github.com/uvwt/agentdock/releases/latest/download/docker-compose.browser.yml `
-  -OutFile docker-compose.browser.yml
-```
-
-Start the browser image:
-
-```bash
-docker compose -f docker-compose.yml -f docker-compose.browser.yml up -d
-```
-
-This image enables the `browser_*` tools and increases browser shared memory to 1 GB. Browser profiles, screenshots, and session state remain in the AgentDock data volume.
+The Compose file already sets `shm_size` to 1 GB for Chromium. Browser profiles, screenshots, and session state remain in the AgentDock data volume.
 
 Use a dedicated `profile_id` for browser sessions. Do not mount the complete profile directory from your daily browser.
 
 ## Cloudflare Tunnel
 
-Download the Release overlay next to `docker-compose.yml`:
-
-```bash
-curl -fL \
-  https://github.com/uvwt/agentdock/releases/latest/download/docker-compose.cloudflare-tunnel.yml \
-  -o docker-compose.cloudflare-tunnel.yml
-curl -fL \
-  https://github.com/uvwt/agentdock/releases/latest/download/docker-compose.cloudflare-tunnel.env.example \
-  -o docker-compose.cloudflare-tunnel.env.example
-```
+Tunnel services live in the same `docker-compose.yml` and are activated with Compose profiles. Optional sample variables are listed in [`.env.example`](https://raw.githubusercontent.com/uvwt/agentdock/main/.env.example) on the repository.
 
 ### Quick Tunnel
 
 ```bash
-docker compose \
-  -f docker-compose.yml \
-  -f docker-compose.cloudflare-tunnel.yml \
-  --profile cloudflare-quick up -d
-
-docker compose \
-  -f docker-compose.yml \
-  -f docker-compose.cloudflare-tunnel.yml \
-  logs -f cloudflared-quick
+docker compose --profile cloudflare-quick up -d
+docker compose logs -f cloudflared-quick
 ```
 
 The URL in the log is temporary and changes after restart. Append `/mcp` and keep the Bearer Token from `.env` when configuring the client.
 
 ### Named Tunnel
 
-Create a Cloudflare Named Tunnel and Public Hostname. Add these values to the existing deployment `.env`; use `docker-compose.cloudflare-tunnel.env.example` as a reference without overwriting the current AgentDock token:
+Create a Cloudflare Named Tunnel and Public Hostname. Add these values to the existing deployment `.env` without overwriting the current AgentDock token:
 
 ```dotenv
 AGENTDOCK_SERVER_URL=https://agent.example.com
@@ -97,10 +73,7 @@ Restrict `.env` to the current user and start the named profile:
 
 ```bash
 chmod 600 .env
-docker compose \
-  -f docker-compose.yml \
-  -f docker-compose.cloudflare-tunnel.yml \
-  --profile cloudflare-named up -d
+docker compose --profile cloudflare-named up -d
 ```
 
 Set the Cloudflare Public Hostname service to `http://agentdock:8765`. Compose passes `TUNNEL_TOKEN` only to the `cloudflared-named` container; the AgentDock container receives `AGENTDOCK_SERVER_URL` and its own authentication token, but not the Tunnel Token. The token is provided through the container environment and does not appear in the `cloudflared` command arguments.
@@ -109,15 +82,14 @@ Use only one Tunnel profile at a time. To stop the deployment and remove the Tun
 
 ```bash
 docker compose \
-  -f docker-compose.yml \
-  -f docker-compose.cloudflare-tunnel.yml \
   --profile cloudflare-quick \
-  --profile cloudflare-named down
+  --profile cloudflare-named \
+  down
 ```
 
 ## Change the local port
 
-The default MCP URL is `http://127.0.0.1:18766/mcp`. When that port conflicts, add this to `.env`:
+The default MCP URL is `http://127.0.0.1:8765/mcp` (host and container both use port `8765`). When that host port conflicts, add this to `.env`:
 
 ```dotenv
 AGENTDOCK_PUBLISH_PORT=18767
@@ -176,32 +148,37 @@ Mount only the directories the task requires. AgentDock does not treat the worki
 
 ## Pin a version
 
-The Compose file attached to a GitHub Release is already pinned to that release and does not silently switch to a newer `latest` image.
+Compose is maintained in the repository. The default image tag is `latest`. For a reproducible deploy, pin both the Compose revision (git tag) and the image tag.
 
-To download a specific version:
+To download Compose from a specific git tag:
 
 ```bash
 VERSION=vX.Y.Z
-curl -fL "https://github.com/uvwt/agentdock/releases/download/$VERSION/docker-compose.yml" \
+curl -fL "https://raw.githubusercontent.com/uvwt/agentdock/$VERSION/docker-compose.yml" \
   -o docker-compose.yml
-curl -fL "https://github.com/uvwt/agentdock/releases/download/$VERSION/docker-compose.browser.yml" \
-  -o docker-compose.browser.yml
 ```
 
 Windows users can replace `curl -fL ... -o ...` with `Invoke-WebRequest ... -OutFile ...`.
 
+Pin the image in `.env` (runtime or browser):
+
+```dotenv
+AGENTDOCK_IMAGE=ghcr.io/uvwt/agentdock:vX.Y.Z
+# or browser:
+# AGENTDOCK_IMAGE=ghcr.io/uvwt/agentdock:browser-vX.Y.Z
+# AGENTDOCK_BROWSER_ENABLED=true
+```
+
 ## Update AgentDock
 
-For the standard image:
-
 ```bash
-curl -fL https://github.com/uvwt/agentdock/releases/latest/download/docker-compose.yml \
+curl -fL https://raw.githubusercontent.com/uvwt/agentdock/main/docker-compose.yml \
   -o docker-compose.yml
 docker compose pull
 docker compose up -d --force-recreate
 ```
 
-For the browser image, download `docker-compose.browser.yml` again and continue passing both Compose files.
+For browser deployments, keep `AGENTDOCK_IMAGE` and `AGENTDOCK_BROWSER_ENABLED` in `.env`. For Tunnel deployments, keep the same `--profile` on `pull` and `up`.
 
 After the update, run:
 
@@ -243,7 +220,12 @@ docker compose logs -f
 docker compose down
 ```
 
-For a browser deployment, continue passing both Compose files when running these commands.
+When a Tunnel profile is active, pass the same profile to these commands, for example:
+
+```bash
+docker compose --profile cloudflare-named logs -f
+docker compose --profile cloudflare-named down
+```
 
 ## Delete all Docker data
 

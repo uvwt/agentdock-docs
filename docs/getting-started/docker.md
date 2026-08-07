@@ -21,7 +21,7 @@ Choose the command set for your current system.
 
 ```bash
 mkdir -p agentdock && cd agentdock
-curl -fL https://github.com/uvwt/agentdock/releases/latest/download/docker-compose.yml \
+curl -fL https://raw.githubusercontent.com/uvwt/agentdock/main/docker-compose.yml \
   -o docker-compose.yml
 printf 'AGENTDOCK_AUTH_TOKEN=%s\n' "$(openssl rand -hex 32)" > .env
 ```
@@ -32,13 +32,15 @@ printf 'AGENTDOCK_AUTH_TOKEN=%s\n' "$(openssl rand -hex 32)" > .env
 New-Item -ItemType Directory -Force agentdock | Out-Null
 Set-Location agentdock
 Invoke-WebRequest `
-  https://github.com/uvwt/agentdock/releases/latest/download/docker-compose.yml `
+  https://raw.githubusercontent.com/uvwt/agentdock/main/docker-compose.yml `
   -OutFile docker-compose.yml
 $token = [guid]::NewGuid().ToString("N") + [guid]::NewGuid().ToString("N")
 "AGENTDOCK_AUTH_TOKEN=$token" | Set-Content -Encoding ascii .env
 ```
 
 The `.env` file contains the connection token. Do not commit it to Git or share it with other people.
+
+Optional sample variables (browser image, Tunnel, custom port) are in [`.env.example`](https://raw.githubusercontent.com/uvwt/agentdock/main/.env.example) on the repository.
 
 ## 3. Start and inspect the service
 
@@ -55,7 +57,7 @@ Create a connection in your client's MCP, Tools, or Connectors settings:
 
 ```text
 Transport     Streamable HTTP
-URL           http://127.0.0.1:18766/mcp
+URL           http://127.0.0.1:8765/mcp
 Request header Authorization: Bearer <your token>
 ```
 
@@ -79,26 +81,16 @@ Get-Content .env
 
 ## Optional: create a temporary public address
 
-To let another computer or phone connect temporarily, download the public-access configuration and start it:
+To let another computer or phone connect temporarily, start the Quick Tunnel profile from the same Compose file:
 
 ```bash
-curl -fL \
-  https://github.com/uvwt/agentdock/releases/latest/download/docker-compose.cloudflare-tunnel.yml \
-  -o docker-compose.cloudflare-tunnel.yml
-
-docker compose \
-  -f docker-compose.yml \
-  -f docker-compose.cloudflare-tunnel.yml \
-  --profile cloudflare-quick up -d
+docker compose --profile cloudflare-quick up -d
 ```
 
 Read the generated address:
 
 ```bash
-docker compose \
-  -f docker-compose.yml \
-  -f docker-compose.cloudflare-tunnel.yml \
-  logs -f cloudflared-quick
+docker compose logs -f cloudflared-quick
 ```
 
 The logs show an `https://…trycloudflare.com` address. Append `/mcp` and continue using the Bearer Token from `.env`.
@@ -107,14 +99,19 @@ The temporary address may change after the container or Tunnel restarts. It is s
 
 ## Update
 
-Download the latest `docker-compose.yml` again, then run:
+Download the latest `docker-compose.yml` from `main` again, then run:
 
 ```bash
 docker compose pull
 docker compose up -d --force-recreate
 ```
 
-When using Cloudflare Tunnel, download `docker-compose.cloudflare-tunnel.yml` again and continue passing both Compose files and the selected profile to `pull`, `up`, `logs`, and `down`.
+When using Cloudflare Tunnel, keep the same profile on `pull`, `up`, `logs`, and `down`:
+
+```bash
+docker compose --profile cloudflare-quick pull
+docker compose --profile cloudflare-quick up -d --force-recreate
+```
 
 ## Continue when needed
 

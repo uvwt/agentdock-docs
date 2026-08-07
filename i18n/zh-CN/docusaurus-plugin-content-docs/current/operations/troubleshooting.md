@@ -42,16 +42,16 @@ curl -fsS http://127.0.0.1:8765/healthz
 
 ## Docker 仍运行旧镜像
 
-Release Compose 默认固定版本。先重新下载最新 Compose 文件，再拉取和重建容器：
+从 `main` 重新下载最新 Compose 文件，再拉取和重建容器：
 
 ```bash
-curl -fL https://github.com/uvwt/agentdock/releases/latest/download/docker-compose.yml \
+curl -fL https://raw.githubusercontent.com/uvwt/agentdock/main/docker-compose.yml \
   -o docker-compose.yml
 docker compose pull
 docker compose up -d --force-recreate
 ```
 
-浏览器部署同时更新 `docker-compose.browser.yml`。再检查 `docker compose ps`、`docker compose images` 和容器日志，确认镜像标签、摘要和健康状态符合预期。
+浏览器部署保留 `.env` 中的 `AGENTDOCK_IMAGE` 与 `AGENTDOCK_BROWSER_ENABLED`。再检查 `docker compose ps`、`docker compose images` 和容器日志，确认镜像标签、摘要和健康状态符合预期。
 
 ## 动态 MCP 无法调用
 
@@ -70,7 +70,7 @@ docker compose up -d --force-recreate
 - macOS 优先选择系统 `browser=chrome`。
 - Windows 可选择 Chrome 或 Edge。
 - 确认 browser runner 和 `playwright-core` 已安装。
-- Docker 使用 browser 镜像和 overlay 配置。
+- Docker 通过 `AGENTDOCK_IMAGE` 使用 browser 镜像，并设置 `AGENTDOCK_BROWSER_ENABLED=true`。
 - CDP 模式确认调试端口只监听回环地址且浏览器已按调试模式启动。
 
 ## 桌面操作没有效果

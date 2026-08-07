@@ -42,16 +42,16 @@ A successful `/healthz` request proves only that the process is alive. It does n
 
 ## Docker still runs an old image
 
-Release Compose files pin a version by default. Download the latest Compose file again, then pull and recreate the container:
+Download the latest Compose file from `main`, then pull and recreate the container:
 
 ```bash
-curl -fL https://github.com/uvwt/agentdock/releases/latest/download/docker-compose.yml \
+curl -fL https://raw.githubusercontent.com/uvwt/agentdock/main/docker-compose.yml \
   -o docker-compose.yml
 docker compose pull
 docker compose up -d --force-recreate
 ```
 
-For a browser deployment, update `docker-compose.browser.yml` as well. Then inspect `docker compose ps`, `docker compose images`, and the container logs to confirm that the image tag, digest, and health state are correct.
+For a browser deployment, keep `AGENTDOCK_IMAGE` and `AGENTDOCK_BROWSER_ENABLED` in `.env`, then inspect `docker compose ps`, `docker compose images`, and the container logs to confirm that the image tag, digest, and health state are correct.
 
 ## A dynamic MCP server cannot be called
 
@@ -70,7 +70,7 @@ Do not echo complete tokens, cookies, or headers in error messages.
 - On macOS, prefer system `browser=chrome`.
 - On Windows, choose Chrome or Edge.
 - Confirm that the browser runner and `playwright-core` are installed.
-- With Docker, use the browser image and overlay configuration.
+- With Docker, use the browser image via `AGENTDOCK_IMAGE` and set `AGENTDOCK_BROWSER_ENABLED=true`.
 - In CDP mode, confirm that the debugging port listens only on a loopback address and that the browser was started in debugging mode.
 
 ## Desktop actions have no effect

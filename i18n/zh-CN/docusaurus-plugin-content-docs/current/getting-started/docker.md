@@ -21,7 +21,7 @@ docker compose version
 
 ```bash
 mkdir -p agentdock && cd agentdock
-curl -fL https://github.com/uvwt/agentdock/releases/latest/download/docker-compose.yml \
+curl -fL https://raw.githubusercontent.com/uvwt/agentdock/main/docker-compose.yml \
   -o docker-compose.yml
 printf 'AGENTDOCK_AUTH_TOKEN=%s\n' "$(openssl rand -hex 32)" > .env
 ```
@@ -32,13 +32,15 @@ printf 'AGENTDOCK_AUTH_TOKEN=%s\n' "$(openssl rand -hex 32)" > .env
 New-Item -ItemType Directory -Force agentdock | Out-Null
 Set-Location agentdock
 Invoke-WebRequest `
-  https://github.com/uvwt/agentdock/releases/latest/download/docker-compose.yml `
+  https://raw.githubusercontent.com/uvwt/agentdock/main/docker-compose.yml `
   -OutFile docker-compose.yml
 $token = [guid]::NewGuid().ToString("N") + [guid]::NewGuid().ToString("N")
 "AGENTDOCK_AUTH_TOKEN=$token" | Set-Content -Encoding ascii .env
 ```
 
 `.env` 中保存的是连接 Token。不要把它提交到 Git 或发给别人。
+
+浏览器镜像、Tunnel、自定义端口等可选变量，可参考仓库中的 [`.env.example`](https://raw.githubusercontent.com/uvwt/agentdock/main/.env.example)。
 
 ## 3. 启动并检查
 
@@ -55,7 +57,7 @@ docker compose ps
 
 ```text
 传输方式    Streamable HTTP
-地址        http://127.0.0.1:18766/mcp
+地址        http://127.0.0.1:8765/mcp
 请求头      Authorization: Bearer <你的 Token>
 ```
 
@@ -79,26 +81,16 @@ Get-Content .env
 
 ## 可选：创建临时公网地址
 
-需要让其他电脑或手机临时连接时，下载公网入口配置并启动：
+需要让其他电脑或手机临时连接时，用同一份 Compose 启动 Quick Tunnel profile：
 
 ```bash
-curl -fL \
-  https://github.com/uvwt/agentdock/releases/latest/download/docker-compose.cloudflare-tunnel.yml \
-  -o docker-compose.cloudflare-tunnel.yml
-
-docker compose \
-  -f docker-compose.yml \
-  -f docker-compose.cloudflare-tunnel.yml \
-  --profile cloudflare-quick up -d
+docker compose --profile cloudflare-quick up -d
 ```
 
 查看生成的地址：
 
 ```bash
-docker compose \
-  -f docker-compose.yml \
-  -f docker-compose.cloudflare-tunnel.yml \
-  logs -f cloudflared-quick
+docker compose logs -f cloudflared-quick
 ```
 
 日志中会出现 `https://…trycloudflare.com`。在地址后追加 `/mcp`，并继续使用 `.env` 中的 Bearer Token 认证。
@@ -107,14 +99,19 @@ docker compose \
 
 ## 更新
 
-重新下载最新 `docker-compose.yml`，然后执行：
+从 `main` 重新下载最新 `docker-compose.yml`，然后执行：
 
 ```bash
 docker compose pull
 docker compose up -d --force-recreate
 ```
 
-使用 Cloudflare Tunnel 时，还要重新下载 `docker-compose.cloudflare-tunnel.yml`，后续执行 `pull`、`up`、`logs` 和 `down` 都继续传入两份 Compose 文件和所选 profile。
+使用 Cloudflare Tunnel 时，`pull`、`up`、`logs` 和 `down` 都带上同一 profile：
+
+```bash
+docker compose --profile cloudflare-quick pull
+docker compose --profile cloudflare-quick up -d --force-recreate
+```
 
 ## 按需继续
 
