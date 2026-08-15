@@ -98,18 +98,11 @@ tail -f "$HOME/Library/Logs/AgentDock/cloudflared.err.log"
 
 临时地址变化后，重新运行同一个安装命令即可。安装器会保留 Bearer Token、OAuth 密码和签名密钥，写入新地址并重启 AgentDock。随后在客户端替换 MCP URL，并重新完成 OAuth 授权。固定模式后续重跑会复用已有公网地址与 Tunnel Token。
 
-## 图形应用管理的浏览器运行环境
+## 浏览器自动化
 
-在“高级设置”中启用浏览器工具后，应用会把 Runner 安装到：
+macOS 图形应用不再安装 Browser Runner 或 Node.js 运行环境。启用浏览器工具时，应用会确认本机已经安装 Google Chrome、Chromium 或 Microsoft Edge，并把浏览器启用状态写入私有服务配置。
 
-```text
-~/.agentdock/browser-runner
-~/.agentdock/browser-runtime
-```
-
-应用会把 `AGENTDOCK_BROWSER_ENABLED`、`AGENTDOCK_BROWSER_RUNNER_DIR` 和 `AGENTDOCK_BROWSER_NODE_PATH` 写入私有服务配置。关闭浏览器工具不会删除这些目录，下一次启用时无需重新下载完整运行环境。
-
-不要手工移动托管的 Node.js 可执行文件或 Runner 目录。需要修复时，使用应用中的浏览器开关重新应用配置。
+之后由 AgentDock 的 Go 原生 CDP 运行时启动独立浏览器进程。浏览器本身按正常的 macOS 安装方式维护，不存在需要单独修复的 AgentDock Browser Runner。
 
 ## 目录与权限
 

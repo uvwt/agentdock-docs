@@ -56,6 +56,7 @@ Docker stores both categories in Docker volumes by default. Removing the program
 - [Use Skills](./concepts/skills.md)
 - [Tasks and progress](./concepts/tasks.md)
 - [Browser automation](./guides/browser-control.md)
+- [Use a local Coding Agent](./guides/coding-agents.md)
 - [Connect external MCP servers](./concepts/dynamic-mcp.md)
 - [Complete configuration reference](./reference/configuration.md)
 - [Troubleshooting](./operations/troubleshooting.md)

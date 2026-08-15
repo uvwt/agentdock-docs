@@ -12,7 +12,7 @@ AgentDock 发布三种 `linux/amd64` 和 `linux/arm64` 镜像：
 | --- | --- |
 | `latest` / `vX.Y.Z` | 默认运行镜像，包含 Node.js、Python、Git、pnpm 等常用工具 |
 | `dev-latest` / `dev-vX.Y.Z` | 额外包含 Go、C、C++ 和 `pkg-config` 构建链 |
-| `browser-latest` / `browser-vX.Y.Z` | 额外包含 Chromium 和 browser runner |
+| `browser-latest` / `browser-vX.Y.Z` | 额外包含用于 Go 原生 CDP 自动化的 Chromium |
 
 默认 Compose 使用正式运行镜像。需要在容器内编译 Go 或原生扩展时，可以在 `.env` 中增加：
 

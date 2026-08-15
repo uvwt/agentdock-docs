@@ -56,6 +56,7 @@ Docker 安装默认把这两类数据保存到 Docker volume。删除程序或�
 - [使用 Skill](./concepts/skills.md)
 - [任务与进度](./concepts/tasks.md)
 - [浏览器自动化](./guides/browser-control.md)
+- [使用本地 Coding Agent](./guides/coding-agents.md)
 - [连接外部 MCP](./concepts/dynamic-mcp.md)
 - [完整配置参考](./reference/configuration.md)
 - [故障排查](./operations/troubleshooting.md)

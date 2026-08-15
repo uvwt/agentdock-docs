@@ -13,11 +13,12 @@ AgentDock 通过 MCP 向上层 Agent 暴露一组稳定的内置工具。工具�
 - 管理复杂任务的步骤与验证。
 - 接入外部 MCP、浏览器和 NexusDock Recall。
 
-AgentDock 当前定义 30 个内置工具，实际可见数量由配置决定：
+客户端实际能看到哪些工具取决于宿主机配置：
 
 - 不依赖外部集成的基础工具始终可用。
 - 配置 `AGENTDOCK_NEXUS_ENDPOINT` 后，额外暴露 `workflow_template_manage`、`recall_*` 和 `private_note_manage`。
 - 启用 `AGENTDOCK_BROWSER_ENABLED` 或 `--browser-enabled` 后，额外暴露 `browser_*` 工具。
+- 启用 `AGENTDOCK_ACP_ENABLED` 后，额外暴露 `acp_session`、`acp_prompt` 和 `acp_interaction`。
 - 动态 MCP 的上游工具不会直接混入 AgentDock 的 `tools/list`，而是通过固定的发现和调用入口访问。
 
 调用 `server_info` 可以查看当前实例真正暴露的工具清单。
@@ -61,6 +62,20 @@ Windows 版 AgentDock 的文件工具可以通过 `runtime=wsl` 使用 WSL 原�
 
 Windows 版 `exec_command` 可以显式选择 `runtime=windows` 或 `runtime=wsl`。
 
+## Coding Agent（ACP）
+
+这些工具只有在宿主机启用 ACP 后才会暴露。普通用户通常只需要直接描述编码任务，由上游 Agent 管理 ACP 会话和进度读取。
+
+| 工具 | 用途 | 主要动作 |
+| --- | --- | --- |
+| `acp_session` | 检查当前 Coding Agent，并创建、恢复、配置、查看或关闭持久会话 | `info`、`authenticate`、`new`、`load`、`resume`、`fork`、`set_mode`、`set_config`、`list`、`inspect`、`close`、`delete` |
+| `acp_prompt` | 启动编码轮次，并读取进度、steering 或取消任务 | `start`、`events`、`steer`、`cancel` |
+| `acp_interaction` | 处理 Coding Agent 发起的显式权限交互 | `list`、`inspect`、`respond`、`cancel` |
+
+`acp_prompt start` 会很快返回 `run_id`，后续通过 `events` 读取进度，而不是让一次工具调用一直等待完整编码轮次。权限响应只能选择 Coding Agent 当前明确提供、且本地 AgentDock 策略允许的选项。
+
+安装方式和项目访问边界见 [使用本地 Coding Agent](../guides/coding-agents.md)。
+
 ## 可恢复任务与 Workflow
 
 | 工具 | 用途 | action |
@@ -76,7 +91,7 @@ Windows 版 `exec_command` 可以显式选择 `runtime=windows` 或 `runtime=wsl
 
 | 工具 | 用途 | action |
 | --- | --- | --- |
-| `skill_package` | 校验、安装、回滚 Skill，并管理每个 Skill 的独立环境 | `validate`、`install`、`rollback`、`env_set`、`env_unset`、`env_list` |
+| `skill_package` | 校验、安装、激活和回滚 Skill，并管理每个 Skill 的独立环境 | `validate`、`install`、`activate`、`rollback`、`env_set`、`env_unset`、`env_list` |
 
 Skill 是模型读取的文档型工作方法，不是隐藏执行器。常见调用顺序：
 
@@ -179,7 +194,7 @@ AgentDock 把只读操作和会修改仓库的操作分开。
 | `browser_act` | 在指定页面中导航、点击、输入、滚动并等待页面条件 | `page_id`、`goto`、`click`、`fill`、`wait_for_url`、`wait_for_text`、`wait_for_response` |
 | `browser_snapshot` | 获取指定页面及全部页面元数据、文本、截图和错误 | `session_id`、`page_id`、`full_page` |
 
-`browser_session` 支持 Playwright 和 CDP 后端、无头模式、独立 Profile、Cookie、localStorage 和 storage state 文件。会话返回 `page_id` 和 `pages`；网页打开新标签页后，可以把目标 `page_id` 传给 `browser_act` 或 `browser_snapshot`。默认不要接管用户日常浏览器 Profile。
+`browser_session` 通过 Go 原生 CDP 运行时启动由 AgentDock 管理的 Chrome、Chromium 或 Edge 进程，支持无头模式、独立 `profile_id`、Cookie 和 localStorage 注入。会话返回 `page_id` 和 `pages`；网页打开新标签页后，可以把目标 `page_id` 传给 `browser_act` 或 `browser_snapshot`。AgentDock 不会通过外部 CDP 地址接管已经打开的个人浏览器。
 
 AgentDock 默认不开放任意页面脚本执行动作。优先使用可观察的点击、输入、滚动和截图完成操作。详细说明见 [浏览器自动化](../guides/browser-control.md)。
 

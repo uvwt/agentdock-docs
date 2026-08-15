@@ -9,7 +9,7 @@ The same package supports both Apple Silicon and Intel Macs.
 - Use macOS 13 or later.
 - Download AgentDock only from the official [GitHub Releases page](https://github.com/uvwt/agentdock/releases/latest).
 - A fixed public address requires a Cloudflare-managed domain and its Tunnel Token. Without those, start with a temporary public address.
-- Install Google Chrome or Chromium before enabling browser automation.
+- Install Google Chrome, Chromium, or Microsoft Edge before enabling browser automation.
 
 ## 1. Download and install the app
 
@@ -88,12 +88,15 @@ Quitting the menu bar app does not stop the AgentDock service. The menu bar app 
 
 ## Optional: enable browser tools
 
-1. Open **Advanced Settings**.
-2. Enable **Browser tools**.
-3. Wait for automatic installation and verification to finish.
-4. Select **Apply and Restart**.
+1. Install Google Chrome, Chromium, or Microsoft Edge if none is installed yet.
+2. Open **Advanced Settings**.
+3. Enable **Browser tools**.
+4. Confirm that AgentDock detects a supported browser.
+5. Select **Apply and Restart**.
 
-You do not need to install Node.js yourself. Use a dedicated browser profile for automation instead of your everyday browser profile.
+Browser automation uses AgentDock's native Go CDP runtime. Node.js, Playwright, and a separate Browser Runner are not required. AgentDock uses its own browser sessions and profiles instead of taking over your everyday browser profile.
+
+See [Browser automation](../guides/browser-control.md) for login profiles and safety boundaries.
 
 ## Optional: start after login
 
@@ -106,9 +109,9 @@ Most users should leave both enabled. You can hide the menu bar app while keepin
 
 ## Update or repair
 
-Use **Check for Updates** in the main window to update the AgentDock core and official core Skills.
+Use **Check for Updates** in the main window. Current releases update the AgentDock core, macOS app, and official core Skills as one coordinated update, then restore the managed service and reopen the app when required.
 
-To update the complete macOS app, download the latest DMG and replace the existing `AgentDock.app` in Applications. Configuration, Skills, tasks, and the working directory are preserved.
+Configuration, Skills, tasks, and the working directory are preserved. If you are upgrading from an older release that predates the integrated desktop updater, install the latest DMG once and continue using in-app updates afterward.
 
 ## Common problems
 
@@ -126,6 +129,6 @@ Copy the new public MCP URL from the control panel, replace the old URL in the c
 
 ### Browser tools do not start
 
-Confirm that Google Chrome or Chromium is installed, then disable and enable browser tools again.
+Confirm that Google Chrome, Chromium, or Microsoft Edge is installed, then disable and enable browser tools again.
 
 For pinned versions, custom installation directories, manual service commands, and removal, see [Advanced macOS configuration](../operations/macos.md). For screen, keyboard, and mouse control, continue with [macOS desktop automation](../guides/desktop-automation.md).

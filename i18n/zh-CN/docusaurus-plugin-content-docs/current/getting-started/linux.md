@@ -86,4 +86,6 @@ sudo sh /tmp/install-agentdock.sh
 
 重新下载并运行第 1 步即可。任务、Skill、配置和工作目录会保留。
 
+使用浏览器自动化时，在宿主机安装 Chrome、Chromium 或 Microsoft Edge 并启用浏览器工具；自动检测不到时可设置 `AGENTDOCK_BROWSER_EXECUTABLE_PATH`。只有希望容器直接包含 Chromium 时才需要 Docker browser 镜像。见 [浏览器自动化](../guides/browser-control.md)。
+
 Alpine、自定义目录或端口、手动服务管理和卸载见 [Linux 进阶配置](../operations/linux.md)。需要完全手动维护 systemd、反向代理和 OAuth 时，见 [Linux 手动部署](./vps.md)。

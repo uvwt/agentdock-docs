@@ -71,7 +71,7 @@ powershell -ExecutionPolicy Bypass `
   -RegisterStartup
 ```
 
-Run the script or a newer Setup again to upgrade. Tasks, Skills, configuration, and the working directory are preserved by default.
+For normal upgrades, use **Update** in the AgentDock control panel. Re-run Setup or the installer script when you need to recover an older installation or explicitly install a pinned version. Tasks, Skills, configuration, and the working directory are preserved by default.
 
 ## Verify the installer script
 
@@ -105,7 +105,9 @@ You may omit `wsl_distribution` to use the default distribution. WSL file tools 
 
 ## Browser capabilities
 
-The Windows control panel can save Browser Runner, Node.js, and related paths. Native browser capabilities still require those runtime files to exist. To avoid preparing them manually, use the Docker browser image, which already includes its dependencies. See [Browser automation](../guides/browser-control.md).
+Install Google Chrome, Chromium, or Microsoft Edge, then enable browser tools from the AgentDock control panel. The Windows app detects a supported browser and the AgentDock core launches it through the native Go CDP runtime.
+
+Node.js, Playwright, and a separate Browser Runner are not required. See [Browser automation](../guides/browser-control.md).
 
 ## Files and credentials
 

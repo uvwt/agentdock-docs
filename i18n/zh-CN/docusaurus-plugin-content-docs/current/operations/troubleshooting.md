@@ -67,11 +67,11 @@ docker compose up -d --force-recreate
 
 ## 浏览器会话启动失败
 
-- macOS 优先选择系统 `browser=chrome`。
-- Windows 可选择 Chrome 或 Edge。
-- 确认 browser runner 和 `playwright-core` 已安装。
-- Docker 通过 `AGENTDOCK_IMAGE` 使用 browser 镜像，并设置 `AGENTDOCK_BROWSER_ENABLED=true`。
-- CDP 模式确认调试端口只监听回环地址且浏览器已按调试模式启动。
+- 确认 AgentDock 所在主机已经安装 Chrome、Chromium 或 Microsoft Edge。
+- macOS 或 Windows 上重新打开 AgentDock 设置，确认界面能检测到受支持的浏览器。
+- Linux 或其他无图形界面的原生部署如果自动检测失败，可以设置 `AGENTDOCK_BROWSER_EXECUTABLE_PATH`。
+- Docker 环境通过 `AGENTDOCK_IMAGE` 选择 browser 镜像，并设置 `AGENTDOCK_BROWSER_ENABLED=true`。
+- 持久 Profile 损坏或不再需要时，换一个新的 `profile_id` 重试，不要把 AgentDock 指向日常浏览器主 Profile。
 
 ## 桌面操作没有效果
 

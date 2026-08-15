@@ -32,6 +32,7 @@ const sidebars: SidebarsConfig = {
         'concepts/skills',
         'concepts/tasks',
         'guides/browser-control',
+        'guides/coding-agents',
         'guides/desktop-automation',
         'concepts/dynamic-mcp',
         'concepts/recalldock',

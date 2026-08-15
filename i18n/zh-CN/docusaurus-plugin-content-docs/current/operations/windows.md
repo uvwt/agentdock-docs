@@ -71,7 +71,7 @@ powershell -ExecutionPolicy Bypass `
   -RegisterStartup
 ```
 
-再次运行脚本或新版 Setup 即可升级。任务、Skill、配置和工作目录默认保留。
+普通升级直接使用 AgentDock 控制面板中的“更新”。只有需要恢复旧安装或明确安装固定版本时，才重新运行 Setup 或安装脚本。任务、Skill、配置和工作目录默认都会保留。
 
 ## 校验安装脚本
 
@@ -105,7 +105,9 @@ if ($actual -ne $expected) { throw 'AgentDock installer checksum mismatch.' }
 
 ## 浏览器能力
 
-Windows 控制面板可以保存 Browser Runner、Node.js 和相关路径。原生浏览器能力仍需要这些运行文件已经存在；不想手动准备时，可以使用已经包含依赖的 Docker browser 镜像。具体选择见 [浏览器自动化](../guides/browser-control.md)。
+先安装 Google Chrome、Chromium 或 Microsoft Edge，再在 AgentDock 控制面板中启用浏览器工具。Windows 应用会检测受支持的浏览器，AgentDock Core 通过 Go 原生 CDP 运行时启动独立浏览器进程。
+
+不需要 Node.js、Playwright 或额外的 Browser Runner。具体使用方式见 [浏览器自动化](../guides/browser-control.md)。
 
 ## 文件与凭据位置
 

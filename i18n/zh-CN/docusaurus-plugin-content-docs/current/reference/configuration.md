@@ -42,7 +42,7 @@ AgentDock 的两个主要目录由运行它的操作系统用户决定：
 ~/AgentDock    文件、命令和 Git 工具的默认工作目录
 ```
 
-当前 CLI 不提供修改这两个目录的公共参数。需要隔离数据时，应使用独立操作系统用户、容器 volume 或独立用户主目录。
+需要修改目录时，可以把 `AGENTDOCK_HOME` 或 `AGENTDOCK_DEFAULT_DIR` 设置为绝对路径。需要更强的数据隔离时，仍应使用独立系统用户或明确的容器挂载。
 
 ## CLI 参数
 
@@ -53,6 +53,7 @@ AgentDock 的两个主要目录由运行它的操作系统用户决定：
 | `--log-level` | `AGENTDOCK_LOG_LEVEL` | `info` | `debug`、`info`、`warn` 或 `error` |
 | `--nexus-endpoint` | `AGENTDOCK_NEXUS_ENDPOINT` | 空 | NexusDock 服务根地址 |
 | `--browser-enabled` | `AGENTDOCK_BROWSER_ENABLED` | `false` | 暴露浏览器自动化工具 |
+| `--browser-executable-path` | `AGENTDOCK_BROWSER_EXECUTABLE_PATH` | 空 | 指定 Chrome、Chromium 或 Edge 可执行文件 |
 | `--stdio` | `AGENTDOCK_STDIO` | `false` | 通过标准输入输出提供 JSON-RPC，不启动 HTTP 服务 |
 
 示例：
@@ -68,17 +69,19 @@ agentdock \
 
 | 环境变量 | 默认值 | 说明 |
 | --- | --- | --- |
-| `AGENTDOCK_HOST` | `127.0.0.1` | HTTP 监听地址。非回环地址必须启用 Bearer Token 或 OAuth |
+| `AGENTDOCK_HOME` | `~/.agentdock` | AgentDock 内部状态目录；手工设置时必须解析为绝对目录 |
+| `AGENTDOCK_DEFAULT_DIR` | `~/AgentDock` | 相对文件、命令和 Git 操作的默认工作目录；手工设置时必须解析为绝对目录 |
+| `AGENTDOCK_HOST` | `127.0.0.1` | HTTP 监听地址；非回环地址必须启用 Bearer Token 或 OAuth |
 | `AGENTDOCK_PORT` | `8765` | HTTP 监听端口 |
 | `AGENTDOCK_LOG_LEVEL` | `info` | 日志级别 |
 | `AGENTDOCK_STDIO` | `false` | 是否使用 stdio 模式 |
 | `AGENTDOCK_BROWSER_ENABLED` | `false` | 是否暴露 `browser_*` 工具 |
-| `AGENTDOCK_BROWSER_RUNNER_DIR` | `~/.agentdock/browser-runner` | Browser Runner 目录；Docker browser 镜像自动指向镜像内只读目录 |
-| `AGENTDOCK_BROWSER_NODE_PATH` | 空 | Browser Runner 使用的 Node.js 绝对路径；macOS 图形应用安装托管运行环境时会自动填写 |
-| `AGENTDOCK_NEXUS_ENDPOINT` | 空 | NexusDock 服务根地址；配置后暴露 Recall、Workflow 和私密笔记能力 |
+| `AGENTDOCK_BROWSER_EXECUTABLE_PATH` | 空 | 可选的 Chrome、Chromium 或 Edge 可执行文件绝对路径 |
+| `AGENTDOCK_NEXUS_ENDPOINT` | 空 | NexusDock 服务根地址；启用 Recall、Workflow 和私密笔记能力 |
 | `AGENTDOCK_NEXUS_TOKEN` | 空 | NexusDock Bearer Token |
+| `AGENTDOCK_INSTRUCTIONS_FILE` | 空 | 可选 UTF-8 文本文件，在 MCP 初始化时作为 Server Instructions 下发给兼容客户端 |
 
-布尔值建议只使用 `true` 或 `false`，避免不同服务管理器对其他写法的处理差异。
+布尔值统一使用 `true` 或 `false`，避免不同服务管理器产生解析差异。
 
 ## Bearer Token 认证
 
@@ -117,6 +120,8 @@ OAuth 适合 ChatGPT 等需要浏览器授权流程的远程 MCP 客户端。Age
 | `AGENTDOCK_SERVER_URL` | 必填 | AgentDock 对客户端公开的 Origin，例如 `https://agentdock.example.com` |
 | `AGENTDOCK_OAUTH_PASSWORD` | 至少 12 个字符 | 用户在授权页面输入的连接密码 |
 | `AGENTDOCK_OAUTH_TOKEN_SECRET` | 至少 32 字节 | OAuth 状态和 Token 的签名密钥；应稳定保存，不要在每次重启时重新生成 |
+
+可选的 `AGENTDOCK_OAUTH_ACCESS_TOKEN_TTL` 用于控制 Access Token 有效期，默认 `1h`；支持 `12h` 这类 Go duration、`90d` 这类整数天数以及 `never`。
 
 示例：
 
@@ -172,9 +177,47 @@ AGENTDOCK_NEXUS_TOKEN=<nexus-token>
 - 本地 `task_manage` 仍可管理普通可恢复任务。
 - `recall_*`、`workflow_template_manage` 和 `private_note_manage` 不会出现在 `tools/list`。
 
+## Coding Agent（ACP）
+
+ACP 默认关闭。macOS 和 Windows 用户通常直接在 AgentDock 高级设置中启用即可，完整流程见 [使用本地 Coding Agent](../guides/coding-agents.md)。
+
+无图形界面的部署可以使用这些宿主机配置：
+
+| 环境变量 | 默认值 | 说明 |
+| --- | --- | --- |
+| `AGENTDOCK_ACP_ENABLED` | `false` | 是否暴露内置 ACP 工具 |
+| `AGENTDOCK_ACP_AGENT` | `claude` | 当前 Coding Agent 的简短配置名称 |
+| `AGENTDOCK_ACP_COMMAND` | 空 | 启用 ACP 时必填的 Adapter 可执行文件绝对路径 |
+| `AGENTDOCK_ACP_ARGS_JSON` | 空 | 可选的 Adapter 参数 JSON 字符串数组 |
+| `AGENTDOCK_ACP_ENV_FROM_ENV_JSON` | 空 | 可选 JSON 对象，把子进程变量名映射到已有宿主机变量名 |
+| `AGENTDOCK_ACP_MAX_CONCURRENT_PROMPTS` | `2` | 同时运行的 Prompt 上限，范围 `1` 到 `8` |
+| `AGENTDOCK_ACP_INTERACTION_TIMEOUT_MS` | `300000` | 权限交互超时毫秒数，范围 `1000` 到 `3600000` |
+
+环境变量映射示例：
+
+```bash
+AGENTDOCK_ACP_ENV_FROM_ENV_JSON='{"OPENAI_API_KEY":"OPENAI_API_KEY"}'
+```
+
+映射只保存变量名；AgentDock 启动时再把宿主机中的当前值传给子进程。凭据应保存在宿主机环境中，不要直接写进 `AGENTDOCK_ACP_ARGS_JSON`。
+
+AgentDock 不再维护 ACP 项目根目录白名单。会话可以使用运行用户有权限访问的任意宿主机目录；需要更严格边界时，应使用操作系统权限或容器挂载限制 Coding Agent。
+
+## 静态 MCP Server Instructions
+
+需要在 MCP 初始化时给兼容客户端下发一段简短、静态的说明时，可以设置 `AGENTDOCK_INSTRUCTIONS_FILE`：
+
+```bash
+AGENTDOCK_INSTRUCTIONS_FILE=/absolute/path/to/agentdock-instructions.md
+```
+
+文件必须是非空的普通 UTF-8 文件，大小不超过 64 KiB，并且路径必须是绝对路径。AgentDock 启动时读取文件，并通过 MCP Server `instructions` 字段返回内容。
+
+它用于给客户端提供静态启动说明，不是动态 Recall 记忆，也不替代 `agentdock_context`。客户端最终是否把 MCP Server Instructions 放进自己的提示词或界面，由客户端自身决定。
+
 ## 浏览器工具
 
-浏览器自动化默认关闭。启用：
+浏览器自动化默认关闭，可以这样启用：
 
 ```bash
 AGENTDOCK_BROWSER_ENABLED=true
@@ -186,15 +229,14 @@ AGENTDOCK_BROWSER_ENABLED=true
 agentdock --browser-enabled
 ```
 
-启用开关只负责暴露 `browser_session`、`browser_act` 和 `browser_snapshot`。运行环境还需要 browser runner 及其 Node.js、`playwright-core` 依赖。
+AgentDock 通过 Go 原生 CDP 运行时启动 Chrome、Chromium 或 Microsoft Edge，不需要 Node.js、Playwright 或额外的 Browser Runner。
 
 | 环境变量 | 默认值 | 说明 |
 | --- | --- | --- |
-| `AGENTDOCK_BROWSER_RUNNER_DIR` | `~/.agentdock/browser-runner` | 包含 `browser-runner.js` 和 Node 依赖的目录 |
-| `AGENTDOCK_BROWSER_NODE_PATH` | 空 | 用于运行 `browser-runner.js` 的 Node.js 绝对路径 |
-| `AGENTDOCK_BROWSER_EXECUTABLE_PATH` | 空 | Runner 使用的 Chromium 可执行文件；Docker browser 镜像自动设置为 `/usr/bin/chromium` |
+| `AGENTDOCK_BROWSER_ENABLED` | `false` | 暴露 `browser_session`、`browser_act` 和 `browser_snapshot` |
+| `AGENTDOCK_BROWSER_EXECUTABLE_PATH` | 空 | 自动检测不合适时，可指定浏览器可执行文件绝对路径 |
 
-macOS 图形应用会在启用浏览器工具时自动安装并配置 Runner 与 Node.js。Docker browser 镜像也会自动配置 Runner 和 Chromium。Windows 与 Linux 原生安装仍需要单独准备 Runner。具体选择见 [浏览器自动化](../guides/browser-control.md)。
+macOS 和 Windows 图形应用会在启用前检测已经安装的受支持浏览器。Docker browser 镜像直接包含 Chromium，并自动配置可执行文件路径。普通用户使用方式见 [浏览器自动化](../guides/browser-control.md)。
 
 ## Skill 与动态 MCP 的独立环境
 

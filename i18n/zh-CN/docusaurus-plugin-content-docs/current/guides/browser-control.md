@@ -1,32 +1,36 @@
 # 浏览器自动化
 
-启用浏览器能力后，Agent 可以打开网页、点击、输入、滚动、截图，并检查页面控制台和网络错误。
+启用浏览器能力后，Agent 可以打开网页、点击、输入、滚动、截图，并检查页面控制台、网络和页面错误。
+
+AgentDock 的浏览器工具使用 Go 原生 CDP 运行时，并启动独立的 Chrome、Chromium 或 Microsoft Edge 进程。浏览器自动化**不需要** Node.js、Playwright 或额外的 Browser Runner。
 
 ## 开始前
 
 ### macOS 图形应用
 
-普通 macOS 用户使用图形应用最简单：
-
-1. 先完成 [macOS 安装](../getting-started/macos.md)。
-2. 安装 Google Chrome 或 Chromium。
-3. 在 AgentDock 中打开“高级设置”。
-4. 勾选“启用浏览器工具”，等待自动安装完成。
+1. 安装 Google Chrome、Chromium 或 Microsoft Edge。
+2. 完成 [macOS 安装](../getting-started/macos.md)。
+3. 打开“高级设置”。
+4. 勾选“启用浏览器工具”。
 5. 点击“应用并重启”。
 
-图形应用会自动安装并验证 Browser Runner、`playwright-core` 和兼容的 Node.js 运行环境，不需要源码仓库，也不需要手动配置 Node.js。
+应用会在保存前检查本机是否已经安装受支持的浏览器；AgentDock 不会替你下载浏览器。
+
+### Windows 图形应用
+
+先安装 Chrome、Chromium 或 Microsoft Edge，再在 AgentDock 控制面板中启用浏览器工具并保存配置。AgentDock 会自动检测已经安装的受支持浏览器。
+
+### Linux 或其他原生部署
+
+在宿主机安装 Chrome、Chromium 或 Microsoft Edge，然后通过 `AGENTDOCK_BROWSER_ENABLED=true` 或 `--browser-enabled` 启用浏览器工具。自动检测不到浏览器时，可以用 `AGENTDOCK_BROWSER_EXECUTABLE_PATH` 指定浏览器可执行文件的绝对路径。
 
 ### Docker
 
-在原生安装器不会管理 Browser Runner 的系统上，Docker 仍然是最省事的方案：
+如果希望容器直接包含 Chromium，使用 browser 镜像：
 
-1. 先完成 [Docker 安装](../getting-started/docker.md)。
+1. 完成 [Docker 安装](../getting-started/docker.md)。
 2. 按 [Docker 进阶配置](../operations/docker.md#启用浏览器自动化) 启动 browser 镜像。
 3. 连接客户端后，确认 Agent 可以看到 `browser_*` 工具。
-
-### 其他原生安装
-
-Windows 和 Linux 原生安装仍需要单独准备 Browser Runner。除非你希望自己管理 Node.js、Runner 和浏览器路径，否则优先使用 Docker。进阶配置项见 [配置参考](../reference/configuration.md#浏览器工具)。
 
 ## 直接提出任务
 
@@ -54,13 +58,11 @@ Agent 应先观察页面，再执行动作，最后重新检查页面状态。
 
 ## 登录态与 Profile
 
-需要保持登录时，使用 AgentDock 专用的独立浏览器 Profile。不要直接复用日常浏览器主 Profile，避免自动化访问不必要的账号或污染个人数据。
+需要保持登录时，使用 AgentDock 自己的浏览器 Profile。指定 `profile_id` 后，Profile 会保存在 AgentDock 的浏览器数据目录中，后续会话可以继续复用登录态。
 
-首次登录通常需要你手动完成验证码、扫码或安全确认。不要让 Agent 在聊天或日志中回显密码、Cookie 或 Authorization Header。
+不要把 AgentDock 指向日常浏览器主 Profile。当前浏览器工具只管理 AgentDock 自己启动的浏览器，不会通过外部 CDP 调试端口接管已经打开的个人浏览器。
 
-## 连接已经打开的浏览器
-
-高级用户可以通过 CDP 连接一个已开启调试端口的浏览器。调试端口必须只监听 `127.0.0.1`；公开 CDP 端口相当于向外部开放完整浏览器控制权限。
+首次登录仍可能需要你手动完成验证码、扫码或安全确认。不要让 Agent 在聊天或日志中回显密码、Cookie 或 Authorization Header。
 
 ## 截图与故障判断
 
@@ -74,8 +76,8 @@ Agent 应先观察页面，再执行动作，最后重新检查页面状态。
 ## 安全边界
 
 - 上传文件、发送消息、提交表单、删除内容和授权前要确认目标与副作用。
-- 使用独立 Profile，不挂载日常浏览器完整用户目录。
+- 使用 AgentDock 专用 Profile，不要复用日常浏览器主 Profile。
 - 只给自动化访问任务需要的网站和文件。
-- 用完持久会话后，根据需要保存或清理登录态。
+- 不再需要登录态时，及时清理持久 Profile。
 
-精确工具参数见 [工具介绍](../reference/tools.md#浏览器自动化)。
+浏览器工具边界见 [工具介绍](../reference/tools.md#浏览器自动化)，宿主机配置见 [配置参考](../reference/configuration.md#浏览器工具)。

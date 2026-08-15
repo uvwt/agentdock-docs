@@ -67,11 +67,11 @@ Do not echo complete tokens, cookies, or headers in error messages.
 
 ## A browser session fails to start
 
-- On macOS, prefer system `browser=chrome`.
-- On Windows, choose Chrome or Edge.
-- Confirm that the browser runner and `playwright-core` are installed.
-- With Docker, use the browser image via `AGENTDOCK_IMAGE` and set `AGENTDOCK_BROWSER_ENABLED=true`.
-- In CDP mode, confirm that the debugging port listens only on a loopback address and that the browser was started in debugging mode.
+- Confirm that Chrome, Chromium, or Microsoft Edge is installed on the AgentDock host.
+- On macOS or Windows, reopen the AgentDock settings and confirm that a supported browser is detected.
+- On Linux or another headless native deployment, set `AGENTDOCK_BROWSER_EXECUTABLE_PATH` when automatic discovery cannot find the browser.
+- With Docker, select the browser image through `AGENTDOCK_IMAGE` and set `AGENTDOCK_BROWSER_ENABLED=true`.
+- If a persistent profile is corrupted or no longer needed, retry with a new `profile_id` instead of pointing AgentDock at your personal browser profile.
 
 ## Desktop actions have no effect
 

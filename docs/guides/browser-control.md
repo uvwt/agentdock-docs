@@ -1,32 +1,36 @@
 # Browser automation
 
-When browser capabilities are enabled, an agent can open pages, click, type, scroll, capture screenshots, and inspect console and network errors.
+When browser capabilities are enabled, an agent can open pages, click, type, scroll, capture screenshots, and inspect console, network, and page errors.
+
+AgentDock's browser tools use a native Go CDP runtime and launch a dedicated Chrome, Chromium, or Microsoft Edge process. Browser automation does **not** require Node.js, Playwright, or a separate Browser Runner.
 
 ## Before you start
 
-### macOS graphical app
+### macOS app
 
-For regular macOS users, the graphical app is the easiest option:
-
-1. Complete the [macOS installation](../getting-started/macos.md).
-2. Install Google Chrome or Chromium.
-3. Open **Advanced Settings (`高级设置`)** in AgentDock.
-4. Turn on **Enable browser tools (`启用浏览器工具`)** and wait for the automatic installation to finish.
+1. Install Google Chrome, Chromium, or Microsoft Edge.
+2. Complete the [macOS installation](../getting-started/macos.md).
+3. Open **Advanced Settings (`高级设置`)**.
+4. Turn on **Enable browser tools (`启用浏览器工具`)**.
 5. Click **Apply and Restart (`应用并重启`)**.
 
-The app installs and verifies the browser runner, `playwright-core`, and a compatible Node.js runtime. You do not need the source repository or a manual Node.js setup.
+The app checks whether a supported browser is installed before saving the setting. It does not download a browser for you.
+
+### Windows app
+
+Install Chrome, Chromium, or Microsoft Edge, then enable browser tools from the AgentDock control panel and save the configuration. AgentDock detects a supported installed browser automatically.
+
+### Linux or other native deployments
+
+Install Chrome, Chromium, or Microsoft Edge on the host, then enable browser tools with `AGENTDOCK_BROWSER_ENABLED=true` or `--browser-enabled`. If automatic discovery does not find the browser, set `AGENTDOCK_BROWSER_EXECUTABLE_PATH` to its absolute executable path.
 
 ### Docker
 
-Docker remains the easiest browser option on systems where the native installer does not manage a runner:
+Use the browser image when you want Chromium to be included in the container:
 
 1. Complete the [Docker installation](../getting-started/docker.md).
 2. Start the browser image as described in [Advanced Docker configuration](../operations/docker.md#enable-browser-automation).
 3. After connecting a client, confirm that the agent can see the `browser_*` tools.
-
-### Other native installations
-
-Native Windows and Linux setups still require a separately prepared browser runner. Use Docker unless you intentionally want to manage Node.js, the runner, and browser paths yourself. See [Configuration](../reference/configuration.md#browser-tools) for the advanced settings.
 
 ## Describe the task directly
 
@@ -54,13 +58,11 @@ This is more reliable than an arbitrary delay and makes failures easier to diagn
 
 ## Login state and profiles
 
-Use a dedicated AgentDock browser profile when login state must persist. Do not reuse your daily browser profile, which may expose unrelated accounts or personal data to automation.
+Use an AgentDock profile when login state must persist. A `profile_id` creates a profile under AgentDock's own browser data directory so later sessions can reuse the same login state.
 
-The first login often requires manual CAPTCHA, QR-code, or security confirmation. Do not let the agent reveal passwords, cookies, or Authorization headers in chat or logs.
+Do not point AgentDock at your everyday browser profile. The current browser tools manage browsers launched by AgentDock; they do not attach to an already-open personal browser through an external CDP port.
 
-## Connect to an existing browser
-
-Advanced users can connect to a browser that was started with a CDP debugging port. The debugging port must listen only on `127.0.0.1`; a public CDP port provides complete browser control to anyone who can reach it.
+The first login may still require manual CAPTCHA, QR-code, or security confirmation. Do not let the agent reveal passwords, cookies, or Authorization headers in chat or logs.
 
 ## Screenshots and failure diagnosis
 
@@ -74,8 +76,8 @@ A screenshot proves only the visual state. To determine whether the page actuall
 ## Security boundaries
 
 - Confirm the target and side effects before uploading files, sending messages, submitting forms, deleting content, or authorizing access.
-- Use a dedicated profile and do not mount the complete daily browser profile.
+- Use a dedicated AgentDock profile instead of your daily browser profile.
 - Allow automation to access only the websites and files required by the task.
-- Save or clean up persistent login state as appropriate after the session.
+- Clean up persistent profiles when their login state is no longer needed.
 
-See [Tools](../reference/tools.md#browser-automation) for exact parameters.
+See [Tools](../reference/tools.md#browser-automation) for the browser tool boundaries and [Configuration](../reference/configuration.md#browser-tools) for host settings.

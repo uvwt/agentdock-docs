@@ -42,7 +42,7 @@ The operating-system user that runs AgentDock determines its two primary directo
 ~/AgentDock    Default working directory for file, command, and Git tools
 ```
 
-The current CLI does not expose public flags for changing these directories. Use a separate operating-system user, container volumes, or a separate home directory when data isolation is required.
+Set `AGENTDOCK_HOME` or `AGENTDOCK_DEFAULT_DIR` to absolute paths when you need different locations. For stronger data isolation, use a separate operating-system user or explicit container volumes.
 
 ## CLI flags
 
@@ -53,6 +53,7 @@ The current CLI does not expose public flags for changing these directories. Use
 | `--log-level` | `AGENTDOCK_LOG_LEVEL` | `info` | `debug`, `info`, `warn`, or `error` |
 | `--nexus-endpoint` | `AGENTDOCK_NEXUS_ENDPOINT` | empty | NexusDock service root URL |
 | `--browser-enabled` | `AGENTDOCK_BROWSER_ENABLED` | `false` | Expose browser automation tools |
+| `--browser-executable-path` | `AGENTDOCK_BROWSER_EXECUTABLE_PATH` | empty | Use a specific Chrome, Chromium, or Edge executable |
 | `--stdio` | `AGENTDOCK_STDIO` | `false` | Serve JSON-RPC over standard input and output instead of starting HTTP |
 
 Example:
@@ -68,15 +69,17 @@ agentdock \
 
 | Environment variable | Default | Description |
 | --- | --- | --- |
+| `AGENTDOCK_HOME` | `~/.agentdock` | Internal state directory; when set, it must resolve to an absolute directory |
+| `AGENTDOCK_DEFAULT_DIR` | `~/AgentDock` | Default working directory for relative file, command, and Git operations; when set, it must resolve to an absolute directory |
 | `AGENTDOCK_HOST` | `127.0.0.1` | HTTP listen address. A non-loopback address requires Bearer Token or OAuth authentication |
 | `AGENTDOCK_PORT` | `8765` | HTTP listen port |
 | `AGENTDOCK_LOG_LEVEL` | `info` | Log level |
 | `AGENTDOCK_STDIO` | `false` | Whether to use stdio mode |
 | `AGENTDOCK_BROWSER_ENABLED` | `false` | Whether to expose `browser_*` tools |
-| `AGENTDOCK_BROWSER_RUNNER_DIR` | `~/.agentdock/browser-runner` | Browser runner directory; the Docker browser image points this to a read-only directory inside the image |
-| `AGENTDOCK_BROWSER_NODE_PATH` | empty | Absolute Node.js executable used for the browser runner; the macOS app sets this when it installs a managed runtime |
+| `AGENTDOCK_BROWSER_EXECUTABLE_PATH` | empty | Optional absolute Chrome, Chromium, or Edge executable path |
 | `AGENTDOCK_NEXUS_ENDPOINT` | empty | NexusDock service root URL; enables Recall, Workflow, and Private Notes capabilities |
 | `AGENTDOCK_NEXUS_TOKEN` | empty | NexusDock Bearer Token |
+| `AGENTDOCK_INSTRUCTIONS_FILE` | empty | Optional UTF-8 text file sent to compatible MCP clients as server instructions during initialization |
 
 Use only `true` or `false` for boolean values to avoid differences between service managers.
 
@@ -117,6 +120,8 @@ All of these variables are required when OAuth is enabled:
 | `AGENTDOCK_SERVER_URL` | required | Public AgentDock origin, for example `https://agentdock.example.com` |
 | `AGENTDOCK_OAUTH_PASSWORD` | at least 12 characters | Connection password entered on the authorization page |
 | `AGENTDOCK_OAUTH_TOKEN_SECRET` | at least 32 bytes | Signing key for OAuth state and tokens; store it persistently instead of regenerating it on each restart |
+
+Optional: `AGENTDOCK_OAUTH_ACCESS_TOKEN_TTL` controls Access Token lifetime. The default is `1h`; Go duration values such as `12h`, integer day values such as `90d`, and `never` are supported.
 
 Example:
 
@@ -172,6 +177,44 @@ AGENTDOCK_NEXUS_TOKEN=<nexus-token>
 - Local `task_manage` still manages ordinary recoverable tasks.
 - `recall_*`, `workflow_template_manage`, and `private_note_manage` do not appear in `tools/list`.
 
+## Coding Agents (ACP)
+
+ACP is disabled by default. Desktop users should normally enable it from AgentDock Advanced Settings; see [Use local Coding Agents](../guides/coding-agents.md).
+
+Headless deployments can use these host settings:
+
+| Environment variable | Default | Description |
+| --- | --- | --- |
+| `AGENTDOCK_ACP_ENABLED` | `false` | Expose the built-in ACP tools |
+| `AGENTDOCK_ACP_AGENT` | `claude` | Short profile name reported for the configured Coding Agent |
+| `AGENTDOCK_ACP_COMMAND` | empty | Required absolute executable path when ACP is enabled |
+| `AGENTDOCK_ACP_ARGS_JSON` | empty | Optional JSON string array of adapter arguments |
+| `AGENTDOCK_ACP_ENV_FROM_ENV_JSON` | empty | Optional JSON object mapping child variable names to existing host variable names |
+| `AGENTDOCK_ACP_MAX_CONCURRENT_PROMPTS` | `2` | Maximum concurrent prompt runs, from `1` to `8` |
+| `AGENTDOCK_ACP_INTERACTION_TIMEOUT_MS` | `300000` | Permission-interaction timeout in milliseconds, from `1000` to `3600000` |
+
+Example environment mapping:
+
+```bash
+AGENTDOCK_ACP_ENV_FROM_ENV_JSON='{"OPENAI_API_KEY":"OPENAI_API_KEY"}'
+```
+
+Only the variable names are stored in the mapping; the child process receives the current host value when AgentDock starts. Keep secrets in the host environment and avoid embedding them directly in `AGENTDOCK_ACP_ARGS_JSON`.
+
+AgentDock does not maintain an ACP project-root whitelist. Session workspaces may use any host-accessible directory, so use operating-system permissions or container mounts when a Coding Agent needs a stricter boundary.
+
+## Static MCP server instructions
+
+Set `AGENTDOCK_INSTRUCTIONS_FILE` when you want compatible MCP clients to receive a short, static instruction block during MCP initialization:
+
+```bash
+AGENTDOCK_INSTRUCTIONS_FILE=/absolute/path/to/agentdock-instructions.md
+```
+
+The file must be a non-empty regular UTF-8 file, no larger than 64 KiB, and its path must be absolute. AgentDock reads it at startup and returns the text as MCP server `instructions`.
+
+This is bootstrap guidance for the client, not dynamic Recall memory and not a replacement for `agentdock_context`. Whether a client incorporates MCP server instructions into its own prompt or UI is controlled by that client.
+
 ## Browser tools
 
 Browser automation is disabled by default. Enable it with:
@@ -186,15 +229,14 @@ or:
 agentdock --browser-enabled
 ```
 
-The switch only exposes `browser_session`, `browser_act`, and `browser_snapshot`. The runtime still needs the browser runner together with Node.js and `playwright-core`.
+AgentDock launches Chrome, Chromium, or Microsoft Edge through its native Go CDP runtime. Node.js, Playwright, and a separate Browser Runner are not required.
 
 | Environment variable | Default | Description |
 | --- | --- | --- |
-| `AGENTDOCK_BROWSER_RUNNER_DIR` | `~/.agentdock/browser-runner` | Directory containing `browser-runner.js` and Node dependencies |
-| `AGENTDOCK_BROWSER_NODE_PATH` | empty | Absolute Node.js executable used to run `browser-runner.js` |
-| `AGENTDOCK_BROWSER_EXECUTABLE_PATH` | empty | Chromium executable used by the runner; the Docker browser image sets this to `/usr/bin/chromium` |
+| `AGENTDOCK_BROWSER_ENABLED` | `false` | Expose `browser_session`, `browser_act`, and `browser_snapshot` |
+| `AGENTDOCK_BROWSER_EXECUTABLE_PATH` | empty | Optional absolute browser executable path when automatic discovery is not suitable |
 
-The macOS graphical app installs and configures the runner and Node.js automatically when browser tools are enabled. The Docker browser image also configures the runner and Chromium automatically. Native Windows and Linux installations still require a separately prepared runner. See [Browser automation](../guides/browser-control.md) for the available choices.
+The macOS and Windows apps detect installed supported browsers before enabling the feature. The Docker browser image includes Chromium and configures its executable path automatically. See [Browser automation](../guides/browser-control.md) for the regular-user workflow.
 
 ## Isolated environments for Skills and dynamic MCP
 

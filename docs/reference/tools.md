@@ -13,11 +13,12 @@ Regular users usually do not need to call tools one by one. After connecting an 
 - Track steps and verification for complex tasks.
 - Connect external MCP servers, browsers, and NexusDock Recall.
 
-AgentDock currently defines 30 built-in tools. The number actually visible depends on configuration:
+The tools actually visible to a client depend on the host configuration:
 
 - Core tools that do not depend on external integrations are always available.
 - Configuring `AGENTDOCK_NEXUS_ENDPOINT` adds `workflow_template_manage`, `recall_*`, and `private_note_manage`.
 - Enabling `AGENTDOCK_BROWSER_ENABLED` or `--browser-enabled` adds `browser_*` tools.
+- Enabling `AGENTDOCK_ACP_ENABLED` adds `acp_session`, `acp_prompt`, and `acp_interaction`.
 - Upstream tools from dynamic MCP servers are not merged directly into AgentDock's `tools/list`; they are accessed through stable discovery and invocation entry points.
 
 Call `server_info` to inspect the tools actually exposed by the current instance.
@@ -61,6 +62,20 @@ When a command runs with `skill=<name>`, AgentDock uses the active Skill root as
 
 On Windows, `exec_command` can explicitly select `runtime=windows` or `runtime=wsl`.
 
+## Coding Agents (ACP)
+
+These tools are exposed only when ACP is enabled on the AgentDock host. Regular users normally describe the coding task directly; the upstream agent manages the ACP session and progress flow.
+
+| Tool | Purpose | Main actions |
+| --- | --- | --- |
+| `acp_session` | Checks the configured Coding Agent and creates, resumes, configures, inspects, or closes persistent sessions | `info`, `authenticate`, `new`, `load`, `resume`, `fork`, `set_mode`, `set_config`, `list`, `inspect`, `close`, `delete` |
+| `acp_prompt` | Starts a coding turn and reads progress, steering, or cancellation | `start`, `events`, `steer`, `cancel` |
+| `acp_interaction` | Handles explicit permission interactions raised by the Coding Agent | `list`, `inspect`, `respond`, `cancel` |
+
+A prompt `start` returns a `run_id` quickly; progress is read through `events` instead of keeping one tool call open for the entire coding turn. Permission responses can only select an option currently offered by the Coding Agent and allowed by local AgentDock policy.
+
+See [Use local Coding Agents](../guides/coding-agents.md) for setup and project-access boundaries.
+
 ## Recoverable tasks and Workflows
 
 | Tool | Purpose | Actions |
@@ -76,7 +91,7 @@ When several templates apply, `get_many` returns their full bodies but does not 
 
 | Tool | Purpose | Actions |
 | --- | --- | --- |
-| `skill_package` | Validates, installs, and rolls back Skills, and manages each Skill's isolated environment | `validate`, `install`, `rollback`, `env_set`, `env_unset`, `env_list` |
+| `skill_package` | Validates, installs, activates, and rolls back Skills, and manages each Skill's isolated environment | `validate`, `install`, `activate`, `rollback`, `env_set`, `env_unset`, `env_list` |
 
 A Skill is a document-based working method read by the model, not a hidden executor. A typical flow is:
 
@@ -179,7 +194,7 @@ These tools are exposed only when browser capabilities are enabled:
 | `browser_act` | Navigates, clicks, types, scrolls, and waits for page conditions in a selected page | `page_id`, `goto`, `click`, `fill`, `wait_for_url`, `wait_for_text`, `wait_for_response` |
 | `browser_snapshot` | Captures selected-page and all-page metadata, text, screenshots, and errors | `session_id`, `page_id`, `full_page` |
 
-`browser_session` supports Playwright and CDP backends, headless mode, dedicated profiles, cookies, localStorage, and storage-state files. A session returns `page_id` and `pages`. When a site opens a new tab, pass the target `page_id` to `browser_act` or `browser_snapshot`. Do not take over a user's daily browser profile by default.
+`browser_session` launches an AgentDock-owned Chrome, Chromium, or Edge process through the native Go CDP runtime. It supports headless mode, dedicated `profile_id` values, cookies, and localStorage injection. A session returns `page_id` and `pages`; when a site opens a new tab, pass the target `page_id` to `browser_act` or `browser_snapshot`. AgentDock does not attach to an already-open personal browser through an external CDP endpoint.
 
 AgentDock does not expose arbitrary page-script execution by default. Prefer observable clicks, typing, scrolling, and screenshots. See [Browser automation](../guides/browser-control.md) for details.
 

@@ -92,12 +92,14 @@ MCP 客户端也在这台电脑上时选择。该模式不需要域名或 Cloudf
 
 ## 更新或修复
 
-需要更新完整的 Windows 应用时，重新下载最新安装包并运行。安装程序会识别现有安装，并默认保留任务、Skill、配置、连接方式和工作目录。
+直接在控制面板中点击“更新”。当前版本会一起更新 AgentDock Core、Windows 控制面板/托盘组件和官方核心 Skill，并在需要时重启托管服务。任务、Skill、配置、连接方式和工作目录都会保留。
 
-控制面板中的“更新”用于更新 AgentDock 核心程序；新版控制面板和安装程序仍通过最新 Setup 更新。
+如果你正在从还没有集成桌面更新器的旧版本升级，先运行一次最新 Setup，之后继续使用应用内更新即可。
 
 ## 卸载
 
 可以从 Windows **设置 > 应用 > 已安装的应用** 中卸载 AgentDock，也可以使用开始菜单中的“卸载 AgentDock”。卸载时会询问是否同时删除任务、Skill、配置和默认工作目录。
+
+使用浏览器自动化时，先安装 Chrome、Chromium 或 Microsoft Edge，再在控制面板中启用浏览器工具。只有希望容器直接包含 Chromium 时才需要 Docker browser 镜像。见 [浏览器自动化](../guides/browser-control.md)。
 
 PowerShell 自动化、固定版本、WSL 和详细文件位置见 [Windows 进阶配置](../operations/windows.md)。启动失败时查看 [故障排查](../operations/troubleshooting.md)。

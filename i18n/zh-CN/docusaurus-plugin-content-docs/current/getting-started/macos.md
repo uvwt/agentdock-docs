@@ -9,7 +9,7 @@
 - 使用 macOS 13 或更高版本。
 - 只从官方 [GitHub Release 页面](https://github.com/uvwt/agentdock/releases/latest)下载 AgentDock。
 - 固定公网地址需要已经接入 Cloudflare 的域名和对应的 Tunnel Token。没有这些条件时，先选择临时公网地址。
-- 需要浏览器自动化时，请先安装 Google Chrome 或 Chromium。
+- 需要浏览器自动化时，请先安装 Google Chrome、Chromium 或 Microsoft Edge。
 
 ## 1. 下载并安装应用
 
@@ -88,12 +88,15 @@ MCP 客户端也在这台 Mac 上时，选择“仅本机”。该模式不需�
 
 ## 可选：启用浏览器工具
 
-1. 打开“高级设置”。
-2. 勾选“启用浏览器工具”。
-3. 等待自动安装和验证完成。
-4. 点击“应用并重启”。
+1. 如果还没有浏览器，先安装 Google Chrome、Chromium 或 Microsoft Edge。
+2. 打开“高级设置”。
+3. 勾选“启用浏览器工具”。
+4. 确认 AgentDock 已检测到受支持的浏览器。
+5. 点击“应用并重启”。
 
-不需要自己安装 Node.js。建议为浏览器自动化使用独立 Profile，不要直接使用日常浏览器主 Profile。
+浏览器自动化使用 AgentDock 的 Go 原生 CDP 运行时，不需要 Node.js、Playwright 或额外的 Browser Runner。AgentDock 会使用自己的浏览器会话和 Profile，不会直接接管日常浏览器主 Profile。
+
+登录态和安全边界见 [浏览器自动化](../guides/browser-control.md)。
 
 ## 可选：设置登录后自动启动
 
@@ -106,9 +109,9 @@ MCP 客户端也在这台 Mac 上时，选择“仅本机”。该模式不需�
 
 ## 更新或修复
 
-主窗口中的“检查更新”可以更新 AgentDock 核心程序和官方核心 Skill。
+直接在主窗口中点击“检查更新”。当前版本会把 AgentDock Core、macOS 图形应用和官方核心 Skill 作为一次完整更新处理，并在需要时恢复托管服务、重新打开应用。
 
-需要更新完整的 macOS 应用时，重新下载最新 DMG，并用新的 `AgentDock.app` 替换“应用程序”中的旧版本。原有配置、Skill、任务和工作目录不会被删除。
+原有配置、Skill、任务和工作目录都会保留。如果你正在从还没有集成桌面更新器的旧版本升级，先用最新 DMG 覆盖安装一次，之后继续使用应用内更新即可。
 
 ## 常见问题
 
@@ -126,6 +129,6 @@ MCP 客户端也在这台 Mac 上时，选择“仅本机”。该模式不需�
 
 ### 浏览器工具无法启动
 
-确认已经安装 Google Chrome 或 Chromium，然后关闭再重新启用浏览器工具。
+确认已经安装 Google Chrome、Chromium 或 Microsoft Edge，然后关闭再重新启用浏览器工具。
 
 指定版本、自定义安装目录、手动服务命令和卸载步骤见 [macOS 进阶配置](../operations/macos.md)。需要控制屏幕、键盘和鼠标时，继续阅读 [macOS 桌面自动化](../guides/desktop-automation.md)。

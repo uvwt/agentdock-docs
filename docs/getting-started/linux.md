@@ -86,4 +86,6 @@ Public access must keep authentication enabled. See [Advanced Linux configuratio
 
 Download and run step 1 again. Tasks, Skills, configuration, and the working directory are preserved.
 
+For browser automation, install Chrome, Chromium, or Microsoft Edge on the host and enable browser tools. Set `AGENTDOCK_BROWSER_EXECUTABLE_PATH` if automatic discovery cannot find it. Use the Docker browser image only when you want Chromium bundled in the container. See [Browser automation](../guides/browser-control.md).
+
 For Alpine, custom directories or ports, manual service management, and removal, see [Advanced Linux configuration](../operations/linux.md). To maintain systemd, the reverse proxy, and OAuth entirely yourself, see [Manual Linux deployment](./vps.md).

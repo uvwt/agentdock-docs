@@ -92,12 +92,14 @@ Use the tray menu for quick status checks, service restart, temporary public URL
 
 ## Update or repair
 
-To update the complete Windows application, download and run the latest Setup again. It detects the existing installation and preserves tasks, Skills, configuration, connection settings, and the working directory by default.
+Use **Update** in the control panel. Current releases update the AgentDock core, Windows control-panel/tray components, and official core Skills together, then restart the managed service when needed. Tasks, Skills, configuration, connection settings, and the working directory are preserved.
 
-The **Update** button in the control panel updates the AgentDock core. A newer control panel and installer are delivered through the latest Setup.
+If you are upgrading from an older release that predates the integrated desktop updater, run the latest Setup once and continue using in-app updates afterward.
 
 ## Uninstall
 
 Remove AgentDock from **Settings > Apps > Installed apps**, or use **Uninstall AgentDock** in the Start menu. The uninstaller asks whether to remove tasks, Skills, configuration, and the default working directory as well.
+
+For browser automation, install Chrome, Chromium, or Microsoft Edge and enable browser tools in the control panel. Use the Docker browser image only when you want Chromium bundled in a container. See [Browser automation](../guides/browser-control.md).
 
 For PowerShell automation, pinned versions, WSL, and file locations, see [Advanced Windows configuration](../operations/windows.md). For startup failures, see [Troubleshooting](../operations/troubleshooting.md).

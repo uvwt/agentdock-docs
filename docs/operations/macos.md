@@ -98,18 +98,11 @@ tail -f "$HOME/Library/Logs/AgentDock/cloudflared.err.log"
 
 When a temporary URL changes, rerun the same installer command. It preserves the Bearer Token, OAuth password, and signing secret, writes the new URL, and restarts AgentDock. Update the MCP URL in the client and authorize OAuth again. A fixed installation reuses the existing public origin and Tunnel Token on later runs.
 
-## Browser runtime managed by the app
+## Browser automation
 
-When browser tools are enabled from Advanced Settings, the app installs the runner under:
+The macOS app does not install a Browser Runner or Node.js runtime. When browser tools are enabled, it verifies that Google Chrome, Chromium, or Microsoft Edge is already installed and writes the browser enablement setting to the private service configuration.
 
-```text
-~/.agentdock/browser-runner
-~/.agentdock/browser-runtime
-```
-
-It writes `AGENTDOCK_BROWSER_ENABLED`, `AGENTDOCK_BROWSER_RUNNER_DIR`, and `AGENTDOCK_BROWSER_NODE_PATH` to the private service configuration. Disabling browser tools does not remove these directories; this avoids downloading the runtime again on the next enable.
-
-Do not move the managed Node.js executable or runner directory manually. Use the browser switch in the app to repair or reapply the configuration.
+AgentDock then launches its own browser process through the native Go CDP runtime. Install or update the browser through its normal macOS distribution channel; there is no separate AgentDock browser runtime to repair.
 
 ## Directories and permissions
 

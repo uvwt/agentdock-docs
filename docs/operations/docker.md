@@ -12,7 +12,7 @@ AgentDock publishes three image variants for `linux/amd64` and `linux/arm64`:
 | --- | --- |
 | `latest` / `vX.Y.Z` | Default runtime image with common tools such as Node.js, Python, Git, and pnpm |
 | `dev-latest` / `dev-vX.Y.Z` | Adds Go, C, C++, and the `pkg-config` build toolchain |
-| `browser-latest` / `browser-vX.Y.Z` | Adds Chromium and the browser runner |
+| `browser-latest` / `browser-vX.Y.Z` | Adds Chromium for native Go CDP browser automation |
 
 The default Compose file uses the production runtime image. When you need to compile Go or native extensions inside the container, add this to `.env`:
 
