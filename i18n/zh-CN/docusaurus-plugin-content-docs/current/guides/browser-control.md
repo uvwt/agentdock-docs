@@ -2,7 +2,7 @@
 
 启用浏览器能力后，Agent 可以打开网页、点击、输入、滚动、截图，并检查页面控制台、网络和页面错误。
 
-AgentDock 的浏览器工具使用 Go 原生 CDP 运行时，并启动独立的 Chrome、Chromium 或 Microsoft Edge 进程。浏览器自动化**不需要** Node.js、Playwright 或额外的 Browser Runner。
+AgentDock 支持 Google Chrome、Chromium 和 Microsoft Edge。浏览器自动化使用由 AgentDock 管理的独立会话，与日常浏览器 Profile 分开。
 
 ## 开始前
 
@@ -60,7 +60,7 @@ Agent 应先观察页面，再执行动作，最后重新检查页面状态。
 
 需要保持登录时，使用 AgentDock 自己的浏览器 Profile。指定 `profile_id` 后，Profile 会保存在 AgentDock 的浏览器数据目录中，后续会话可以继续复用登录态。
 
-不要把 AgentDock 指向日常浏览器主 Profile。当前浏览器工具只管理 AgentDock 自己启动的浏览器，不会通过外部 CDP 调试端口接管已经打开的个人浏览器。
+不要把 AgentDock 指向日常浏览器主 Profile。浏览器工具使用 AgentDock 管理的独立会话，不会接管已经打开的个人浏览器。
 
 首次登录仍可能需要你手动完成验证码、扫码或安全确认。不要让 Agent 在聊天或日志中回显密码、Cookie 或 Authorization Header。
 

@@ -194,7 +194,7 @@ AgentDock 把只读操作和会修改仓库的操作分开。
 | `browser_act` | 在指定页面中导航、点击、输入、滚动并等待页面条件 | `page_id`、`goto`、`click`、`fill`、`wait_for_url`、`wait_for_text`、`wait_for_response` |
 | `browser_snapshot` | 获取指定页面及全部页面元数据、文本、截图和错误 | `session_id`、`page_id`、`full_page` |
 
-`browser_session` 通过 Go 原生 CDP 运行时启动由 AgentDock 管理的 Chrome、Chromium 或 Edge 进程，支持无头模式、独立 `profile_id`、Cookie 和 localStorage 注入。会话返回 `page_id` 和 `pages`；网页打开新标签页后，可以把目标 `page_id` 传给 `browser_act` 或 `browser_snapshot`。AgentDock 不会通过外部 CDP 地址接管已经打开的个人浏览器。
+`browser_session` 创建由 AgentDock 管理的 Chrome、Chromium 或 Edge 会话，支持无头模式、独立 `profile_id`、Cookie 和 localStorage 注入。会话返回 `page_id` 和 `pages`；网页打开新标签页后，可以把目标 `page_id` 传给 `browser_act` 或 `browser_snapshot`。它不会接管已经打开的个人浏览器。
 
 AgentDock 默认不开放任意页面脚本执行动作。优先使用可观察的点击、输入、滚动和截图完成操作。详细说明见 [浏览器自动化](../guides/browser-control.md)。
 

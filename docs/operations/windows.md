@@ -105,9 +105,7 @@ You may omit `wsl_distribution` to use the default distribution. WSL file tools 
 
 ## Browser capabilities
 
-Install Google Chrome, Chromium, or Microsoft Edge, then enable browser tools from the AgentDock control panel. The Windows app detects a supported browser and the AgentDock core launches it through the native Go CDP runtime.
-
-Node.js, Playwright, and a separate Browser Runner are not required. See [Browser automation](../guides/browser-control.md).
+Install Google Chrome, Chromium, or Microsoft Edge, then enable browser tools from the AgentDock control panel. The Windows app detects supported browsers automatically. See [Browser automation](../guides/browser-control.md).
 
 ## Files and credentials
 

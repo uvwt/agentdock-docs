@@ -100,9 +100,7 @@ tail -f "$HOME/Library/Logs/AgentDock/cloudflared.err.log"
 
 ## 浏览器自动化
 
-macOS 图形应用不再安装 Browser Runner 或 Node.js 运行环境。启用浏览器工具时，应用会确认本机已经安装 Google Chrome、Chromium 或 Microsoft Edge，并把浏览器启用状态写入私有服务配置。
-
-之后由 AgentDock 的 Go 原生 CDP 运行时启动独立浏览器进程。浏览器本身按正常的 macOS 安装方式维护，不存在需要单独修复的 AgentDock Browser Runner。
+启用浏览器工具时，macOS 图形应用会确认本机已经安装 Google Chrome、Chromium 或 Microsoft Edge。浏览器本身按正常方式安装和更新即可。
 
 ## 目录与权限
 

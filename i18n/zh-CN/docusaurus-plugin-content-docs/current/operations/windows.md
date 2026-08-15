@@ -105,9 +105,7 @@ if ($actual -ne $expected) { throw 'AgentDock installer checksum mismatch.' }
 
 ## 浏览器能力
 
-先安装 Google Chrome、Chromium 或 Microsoft Edge，再在 AgentDock 控制面板中启用浏览器工具。Windows 应用会检测受支持的浏览器，AgentDock Core 通过 Go 原生 CDP 运行时启动独立浏览器进程。
-
-不需要 Node.js、Playwright 或额外的 Browser Runner。具体使用方式见 [浏览器自动化](../guides/browser-control.md)。
+先安装 Google Chrome、Chromium 或 Microsoft Edge，再在 AgentDock 控制面板中启用浏览器工具。Windows 应用会自动检测受支持的浏览器。具体使用方式见 [浏览器自动化](../guides/browser-control.md)。
 
 ## 文件与凭据位置
 

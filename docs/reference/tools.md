@@ -194,7 +194,7 @@ These tools are exposed only when browser capabilities are enabled:
 | `browser_act` | Navigates, clicks, types, scrolls, and waits for page conditions in a selected page | `page_id`, `goto`, `click`, `fill`, `wait_for_url`, `wait_for_text`, `wait_for_response` |
 | `browser_snapshot` | Captures selected-page and all-page metadata, text, screenshots, and errors | `session_id`, `page_id`, `full_page` |
 
-`browser_session` launches an AgentDock-owned Chrome, Chromium, or Edge process through the native Go CDP runtime. It supports headless mode, dedicated `profile_id` values, cookies, and localStorage injection. A session returns `page_id` and `pages`; when a site opens a new tab, pass the target `page_id` to `browser_act` or `browser_snapshot`. AgentDock does not attach to an already-open personal browser through an external CDP endpoint.
+`browser_session` creates an AgentDock-managed Chrome, Chromium, or Edge session. It supports headless mode, dedicated `profile_id` values, cookies, and localStorage injection. A session returns `page_id` and `pages`; when a site opens a new tab, pass the target `page_id` to `browser_act` or `browser_snapshot`. It does not take over an already-open personal browser.
 
 AgentDock does not expose arbitrary page-script execution by default. Prefer observable clicks, typing, scrolling, and screenshots. See [Browser automation](../guides/browser-control.md) for details.
 

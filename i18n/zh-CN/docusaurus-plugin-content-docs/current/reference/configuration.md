@@ -229,7 +229,7 @@ AGENTDOCK_BROWSER_ENABLED=true
 agentdock --browser-enabled
 ```
 
-AgentDock 通过 Go 原生 CDP 运行时启动 Chrome、Chromium 或 Microsoft Edge，不需要 Node.js、Playwright 或额外的 Browser Runner。
+AgentDock 支持 Chrome、Chromium 和 Microsoft Edge。自动检测不适用时，可以显式配置浏览器可执行文件路径。
 
 | 环境变量 | 默认值 | 说明 |
 | --- | --- | --- |

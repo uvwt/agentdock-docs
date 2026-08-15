@@ -94,7 +94,7 @@ MCP 客户端也在这台 Mac 上时，选择“仅本机”。该模式不需�
 4. 确认 AgentDock 已检测到受支持的浏览器。
 5. 点击“应用并重启”。
 
-浏览器自动化使用 AgentDock 的 Go 原生 CDP 运行时，不需要 Node.js、Playwright 或额外的 Browser Runner。AgentDock 会使用自己的浏览器会话和 Profile，不会直接接管日常浏览器主 Profile。
+AgentDock 会为浏览器自动化使用独立的会话和 Profile，不会直接接管日常浏览器主 Profile。
 
 登录态和安全边界见 [浏览器自动化](../guides/browser-control.md)。
 

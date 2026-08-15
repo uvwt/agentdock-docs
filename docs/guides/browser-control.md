@@ -2,7 +2,7 @@
 
 When browser capabilities are enabled, an agent can open pages, click, type, scroll, capture screenshots, and inspect console, network, and page errors.
 
-AgentDock's browser tools use a native Go CDP runtime and launch a dedicated Chrome, Chromium, or Microsoft Edge process. Browser automation does **not** require Node.js, Playwright, or a separate Browser Runner.
+AgentDock supports Google Chrome, Chromium, and Microsoft Edge. Browser automation runs in AgentDock-managed sessions so it stays separate from your everyday browser profile.
 
 ## Before you start
 
@@ -60,7 +60,7 @@ This is more reliable than an arbitrary delay and makes failures easier to diagn
 
 Use an AgentDock profile when login state must persist. A `profile_id` creates a profile under AgentDock's own browser data directory so later sessions can reuse the same login state.
 
-Do not point AgentDock at your everyday browser profile. The current browser tools manage browsers launched by AgentDock; they do not attach to an already-open personal browser through an external CDP port.
+Do not point AgentDock at your everyday browser profile. Browser tools use AgentDock-managed browser sessions and do not take over an already-open personal browser.
 
 The first login may still require manual CAPTCHA, QR-code, or security confirmation. Do not let the agent reveal passwords, cookies, or Authorization headers in chat or logs.
 

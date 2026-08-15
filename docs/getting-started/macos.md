@@ -94,7 +94,7 @@ Quitting the menu bar app does not stop the AgentDock service. The menu bar app 
 4. Confirm that AgentDock detects a supported browser.
 5. Select **Apply and Restart**.
 
-Browser automation uses AgentDock's native Go CDP runtime. Node.js, Playwright, and a separate Browser Runner are not required. AgentDock uses its own browser sessions and profiles instead of taking over your everyday browser profile.
+AgentDock uses separate browser sessions and profiles for automation instead of taking over your everyday browser profile.
 
 See [Browser automation](../guides/browser-control.md) for login profiles and safety boundaries.
 

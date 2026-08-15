@@ -58,7 +58,6 @@ Do not run AgentDock as an administrator or root unless the task genuinely requi
 ## Browser and desktop
 
 - Use a dedicated browser profile instead of reusing the primary daily profile.
-- Bind CDP debugging ports only to `127.0.0.1`.
 - The macOS Desktop Skill runs in a high-privilege login session; grant only the required Screen Recording and Accessibility permissions.
 - Upload, send, delete, and authorization actions require explicit confirmation and post-action verification.
 

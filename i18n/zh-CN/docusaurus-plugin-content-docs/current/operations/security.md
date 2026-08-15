@@ -58,7 +58,6 @@ AGENTDOCK_OAUTH_TOKEN_SECRET=<random-signing-secret>
 ## 浏览器与桌面
 
 - 浏览器使用独立 Profile，不复用日常主 Profile。
-- CDP 调试端口只监听 `127.0.0.1`。
 - macOS Desktop Skill 运行在高权限登录会话中，只授予必要的屏幕录制和辅助功能权限。
 - 上传、发送、删除和授权等动作需要明确确认和操作后验证。
 

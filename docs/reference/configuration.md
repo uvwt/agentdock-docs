@@ -229,7 +229,7 @@ or:
 agentdock --browser-enabled
 ```
 
-AgentDock launches Chrome, Chromium, or Microsoft Edge through its native Go CDP runtime. Node.js, Playwright, and a separate Browser Runner are not required.
+AgentDock supports Chrome, Chromium, and Microsoft Edge. If automatic browser discovery is not suitable, configure the browser executable explicitly.
 
 | Environment variable | Default | Description |
 | --- | --- | --- |

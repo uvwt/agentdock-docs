@@ -100,9 +100,7 @@ When a temporary URL changes, rerun the same installer command. It preserves the
 
 ## Browser automation
 
-The macOS app does not install a Browser Runner or Node.js runtime. When browser tools are enabled, it verifies that Google Chrome, Chromium, or Microsoft Edge is already installed and writes the browser enablement setting to the private service configuration.
-
-AgentDock then launches its own browser process through the native Go CDP runtime. Install or update the browser through its normal macOS distribution channel; there is no separate AgentDock browser runtime to repair.
+When browser tools are enabled, the macOS app verifies that Google Chrome, Chromium, or Microsoft Edge is installed. Install and update the browser through its normal macOS distribution channel.
 
 ## Directories and permissions
 
