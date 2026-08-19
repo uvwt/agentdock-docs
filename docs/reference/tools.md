@@ -125,19 +125,6 @@ agentdock_context
 
 Registry data stores environment-variable names, not plaintext tokens. See [Connect external MCP servers](../concepts/dynamic-mcp.md) for a complete registration example.
 
-## Git and GitHub
-
-AgentDock separates read-only operations from operations that modify a repository.
-
-| Tool | Purpose | Actions |
-| --- | --- | --- |
-| `git_read` | Reads repositories, status, diffs, history, and GitHub access state | `repos`, `status`, `diff`, `log`, `show`, `blame`, `github_repo_access` |
-| `git_write` | Performs operations that change local or remote repository state | `clone`, `commit`, `fetch`, `pull`, `push` |
-
-`git_write commit` can stage only specified `paths` or use `all=true` to stage every change. Call `git_read status` and `git_read diff` first to review the actual content.
-
-`github_repo_access` only checks current GitHub credentials and target-repository visibility; it does not modify the repository.
-
 ## Images and artifacts
 
 | Tool | Purpose |

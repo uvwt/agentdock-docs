@@ -125,19 +125,6 @@ agentdock_context
 
 注册信息只保存环境变量名，不保存明文 Token。更完整的注册示例见 [动态 MCP](../concepts/dynamic-mcp.md)。
 
-## Git 与 GitHub
-
-AgentDock 把只读操作和会修改仓库的操作分开。
-
-| 工具 | 用途 | action |
-| --- | --- | --- |
-| `git_read` | 查看仓库、状态、差异、历史和 GitHub 访问能力 | `repos`、`status`、`diff`、`log`、`show`、`blame`、`github_repo_access` |
-| `git_write` | 执行会改变本地或远端仓库状态的操作 | `clone`、`commit`、`fetch`、`pull`、`push` |
-
-`git_write commit` 可以只暂存指定 `paths`，也可以使用 `all=true` 暂存全部变更。提交前仍应先调用 `git_read status` 和 `git_read diff` 审查真实内容。
-
-`github_repo_access` 只检查当前 GitHub 凭据和目标仓库可见性，不会修改仓库。
-
 ## 图片与 Artifact
 
 | 工具 | 用途 |
