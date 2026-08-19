@@ -112,16 +112,9 @@ Registry data stores environment-variable names, not plaintext tokens. See [Conn
 
 ## Git and GitHub
 
-AgentDock separates read-only operations from operations that modify a repository.
+AgentDock does not expose dedicated Git tools. Run repository operations through `exec_command` with the standard `git` CLI, and use `gh` for GitHub-specific operations when GitHub CLI is installed and authenticated.
 
-| Tool | Purpose | Actions |
-| --- | --- | --- |
-| `git_read` | Reads repositories, status, diffs, history, and GitHub access state | `repos`, `status`, `diff`, `log`, `show`, `blame`, `github_repo_access` |
-| `git_write` | Performs operations that change local or remote repository state | `clone`, `commit`, `fetch`, `pull`, `push` |
-
-`git_write commit` can stage only specified `paths` or use `all=true` to stage every change. Call `git_read status` and `git_read diff` first to review the actual content.
-
-`github_repo_access` only checks current GitHub credentials and target-repository visibility; it does not modify the repository.
+Inspect the real repository state before mutating it, for example with `git status --short --branch` and `git diff`. Long-running Git or GitHub CLI commands use the same command-session controls as other `exec_command` operations.
 
 ## Images and artifacts
 
