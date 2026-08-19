@@ -110,12 +110,6 @@ agentdock_context
 
 Registry data stores environment-variable names, not plaintext tokens. See [Connect external MCP servers](../concepts/dynamic-mcp.md) for a complete registration example.
 
-## Git and GitHub
-
-AgentDock does not expose dedicated Git tools. Run repository operations through `exec_command` with the standard `git` CLI, and use `gh` for GitHub-specific operations when GitHub CLI is installed and authenticated.
-
-Inspect the real repository state before mutating it, for example with `git status --short --branch` and `git diff`. Long-running Git or GitHub CLI commands use the same command-session controls as other `exec_command` operations.
-
 ## Images and artifacts
 
 | Tool | Purpose |

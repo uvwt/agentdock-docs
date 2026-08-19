@@ -110,12 +110,6 @@ agentdock_context
 
 注册信息只保存环境变量名，不保存明文 Token。更完整的注册示例见 [动态 MCP](../concepts/dynamic-mcp.md)。
 
-## Git 与 GitHub
-
-AgentDock 不再暴露专用 Git 工具。仓库操作统一通过 `exec_command` 调用标准 `git` CLI；GitHub 平台操作则在已安装并登录 GitHub CLI 时直接使用 `gh`。
-
-修改仓库前应先检查真实状态，例如执行 `git status --short --branch` 和 `git diff`。耗时较长的 Git 或 GitHub CLI 命令与其他 `exec_command` 操作共用同一套命令会话控制。
-
 ## 图片与 Artifact
 
 | 工具 | 用途 |
