@@ -52,9 +52,9 @@ Choose **Fixed domain** for a stable, long-term address and enter:
 - The HTTPS public origin, for example `https://mini.example.com`
 - The matching Cloudflare Tunnel Token
 
-Enter only the origin. Do not add `/mcp`.
+Enter only the origin. Do not add `/mcp`. For the full Cloudflare setup and address mapping, see [Configure a fixed domain](../guides/fixed-domain.md).
 
-Click **Install and Start** and keep the window open until the status reports that AgentDock is running normally.
+Click **Install and Start** and keep the window open until the status reports that AgentDock is running normally. After installation, you can change the public access mode from the control panel without rerunning the installer.
 
 ## 4. Connect an MCP client
 

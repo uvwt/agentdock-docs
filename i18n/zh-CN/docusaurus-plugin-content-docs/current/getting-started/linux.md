@@ -76,7 +76,7 @@ sudo sh /tmp/install-agentdock.sh
 安装器会询问是否已有接入 Cloudflare 的域名：
 
 - 没有域名：自动创建临时 `trycloudflare.com` 地址，适合快速使用。
-- 已有域名：填写 HTTPS 公网地址和 Cloudflare Tunnel Token，获得稳定地址。
+- 已有域名：填写 HTTPS 公网地址和 Cloudflare Tunnel Token，获得稳定地址。如果还没有创建 Tunnel，可以按 [固定域名配置教程](../guides/fixed-domain.md) 完成。
 
 安装完成后，终端会显示公网 MCP 地址和连接凭据。临时地址可能在服务重启后变化；地址变化时重新运行安装器，并替换客户端中的旧地址。已有 Bearer Token 和 OAuth 凭据会保留。
 

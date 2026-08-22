@@ -62,6 +62,8 @@ The URL in the log is temporary and changes after restart. Append `/mcp` and kee
 
 ### Named Tunnel
 
+If you are setting up the domain and Tunnel for the first time, follow [Configure a fixed domain](../guides/fixed-domain.md) first.
+
 Create a Cloudflare Named Tunnel and Public Hostname. Add these values to the existing deployment `.env` without overwriting the current AgentDock token:
 
 ```dotenv

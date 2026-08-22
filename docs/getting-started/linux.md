@@ -76,7 +76,7 @@ sudo sh /tmp/install-agentdock.sh
 The installer asks whether you already have a Cloudflare-managed domain:
 
 - No domain: create a temporary `trycloudflare.com` address for quick use.
-- Domain available: enter the HTTPS public origin and Cloudflare Tunnel Token for a stable address.
+- Domain available: enter the HTTPS public origin and Cloudflare Tunnel Token for a stable address. If you have not created the Tunnel yet, follow [Configure a fixed domain](../guides/fixed-domain.md).
 
 The terminal shows the public MCP URL and connection credentials when installation finishes. A temporary address may change after the service restarts. Run the installer again and replace the old URL in the client. Existing Bearer and OAuth credentials are preserved.
 

@@ -49,7 +49,9 @@ MCP 客户端也在这台电脑上时选择。该模式不需要域名或 Cloudf
 - HTTPS 公网地址，例如 `https://mini.example.com`
 - 对应的 Cloudflare Tunnel Token
 
-公网地址只填写域名部分，不要添加 `/mcp`。
+公网地址只填写域名部分，不要添加 `/mcp`。Cloudflare 侧完整配置和地址对应关系见 [固定域名配置教程](../guides/fixed-domain.md)。
+
+安装完成后，可以直接在 AgentDock 控制面板的 **公网访问** 中切换仅本机、临时地址和固定域名；仅修改公网访问方式时不需要重新运行安装器。
 
 ## 5. 完成安装
 
