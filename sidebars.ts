@@ -45,7 +45,7 @@ const sidebars: SidebarsConfig = {
         title: 'Configuration and tools',
         description: 'Review runtime configuration, authentication, and the built-in tool catalog.',
       },
-      items: ['reference/configuration', 'reference/tools'],
+      items: ['guides/fixed-domain', 'reference/configuration', 'reference/tools'],
     },
     {
       type: 'category',

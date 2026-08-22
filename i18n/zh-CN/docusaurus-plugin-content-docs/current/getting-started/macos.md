@@ -69,7 +69,7 @@ sh /tmp/install-agentdock.sh --register-service
 
 安装器只询问是否有已接入 Cloudflare 的域名：
 
-- 选择“有”：使用固定地址，输入 HTTPS 公网地址，并在隐藏提示中粘贴 Tunnel Token。
+- 选择“有”：使用固定地址，输入 HTTPS 公网地址，并在隐藏提示中粘贴 Tunnel Token。如果还没有创建 Tunnel，可以按 [固定域名配置教程](../guides/fixed-domain.md) 完成。
 - 选择“没有”：自动生成可立即使用的 `trycloudflare.com` 临时地址；`cloudflared` 重启后地址可能变化。
 
 AgentDock 仍只监听 `127.0.0.1`，`cloudflared` 作为独立的用户级 LaunchAgent 运行。固定和临时两种方式都会自动启用 Bearer Token 与 OAuth。完成框会显示公网地址、MCP 地址、Bearer Token 和 OAuth 登录密码；OAuth 签名密钥与 Tunnel Token 会安全保存，不在终端显示。

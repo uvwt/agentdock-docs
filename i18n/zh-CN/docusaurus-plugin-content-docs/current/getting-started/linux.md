@@ -73,7 +73,7 @@ sudo sh /tmp/install-agentdock.sh
 
 安装器只问一个面向用户的问题：**你是否有已接入 Cloudflare 的域名？**
 
-- 选择“有”：使用固定地址，输入 HTTPS 公网地址，并在隐藏提示中粘贴 Tunnel Token。
+- 选择“有”：使用固定地址，输入 HTTPS 公网地址，并在隐藏提示中粘贴 Tunnel Token。如果还没有创建 Tunnel，可以按 [固定域名配置教程](../guides/fixed-domain.md) 完成。
 - 选择“没有”：自动生成可立即使用的 `trycloudflare.com` 临时地址；`cloudflared` 重启后地址可能变化。
 
 两种方式都会自动生成或复用 Bearer Token 与 AgentDock OAuth 配置。完成框会显示公网地址、MCP 地址、Bearer Token 和 OAuth 登录密码；OAuth 签名密钥与 Cloudflare Tunnel Token 只保存在受限配置文件中。

@@ -86,6 +86,8 @@ docker compose \
 
 ### Named Tunnel
 
+如果是第一次配置域名和 Tunnel，可以先按 [固定域名配置教程](../guides/fixed-domain.md) 完成 Cloudflare 侧设置。
+
 先创建 Cloudflare Named Tunnel 和 Public Hostname。把以下值补充到现有部署 `.env`；可以参考 `docker-compose.cloudflare-tunnel.env.example`，但不要覆盖当前 AgentDock Token：
 
 ```dotenv

@@ -60,7 +60,7 @@ powershell -ExecutionPolicy Bypass `
   -RegisterStartup
 ```
 
-The installer asks only whether you already have a domain connected to Cloudflare. With a domain, it requests the fixed HTTPS public origin and a Tunnel Token. Without a domain, it creates a temporary `trycloudflare.com` address automatically.
+The installer asks only whether you already have a domain connected to Cloudflare. With a domain, it requests the fixed HTTPS public origin and a Tunnel Token. If you have not created the Tunnel yet, follow [Configure a fixed domain](../guides/fixed-domain.md). Without a domain, it creates a temporary `trycloudflare.com` address automatically.
 
 Both paths enable Bearer Token and OAuth. The completion output shows the public MCP URL, Bearer Token, and OAuth login password. OAuth and Tunnel secrets are protected with current-user DPAPI and are not placed in the `cloudflared` command line.
 

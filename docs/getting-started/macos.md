@@ -69,7 +69,7 @@ sh /tmp/install-agentdock.sh --register-service
 
 The installer asks only whether a Cloudflare-managed domain is available:
 
-- Choose **yes** for a fixed hostname. Enter the HTTPS public origin and paste the Tunnel Token at the hidden prompt.
+- Choose **yes** for a fixed hostname. Enter the HTTPS public origin and paste the Tunnel Token at the hidden prompt. If you have not created the Tunnel yet, follow [Configure a fixed domain](../guides/fixed-domain.md).
 - Choose **no** for a temporary `trycloudflare.com` URL. It is ready immediately, but may change after `cloudflared` restarts.
 
 AgentDock remains bound to `127.0.0.1`, while `cloudflared` runs as a separate user LaunchAgent. Both fixed and temporary paths automatically enable Bearer Token and OAuth authentication. The completion panel shows the public URL, MCP URL, Bearer Token, and OAuth login password. The OAuth signing secret and Tunnel Token are stored privately and are not displayed.

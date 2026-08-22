@@ -60,7 +60,7 @@ powershell -ExecutionPolicy Bypass `
   -RegisterStartup
 ```
 
-安装器只会询问你是否已有接入 Cloudflare 的域名。有域名时继续输入固定 HTTPS 公网地址和 Tunnel Token；没有域名时自动生成临时 `trycloudflare.com` 地址。
+安装器只会询问你是否已有接入 Cloudflare 的域名。有域名时继续输入固定 HTTPS 公网地址和 Tunnel Token；如果还没有创建 Tunnel，可以按 [固定域名配置教程](../guides/fixed-domain.md) 完成。没有域名时自动生成临时 `trycloudflare.com` 地址。
 
 两种方式都会同时启用 Bearer Token 和 OAuth。完成信息会显示公网 MCP 地址、Bearer Token 和 OAuth 登录密码。OAuth 与 Tunnel 密钥使用当前用户 DPAPI 加密保存，也不会写进 `cloudflared` 命令行。
 
