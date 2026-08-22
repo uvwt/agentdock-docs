@@ -67,9 +67,9 @@ https://agent.example.com
 
 Do not add `/mcp`, a port, a query string, or another path.
 
-### macOS app
+### macOS control panel
 
-Open AgentDock, go to **Public access**, and select **Fixed domain**. Enter:
+Open the AgentDock control panel, go to **Public access**, and select **Fixed domain**. Enter:
 
 ```text
 Public address   https://agent.example.com
@@ -80,11 +80,24 @@ Apply the change. AgentDock will keep the local service private and use the Name
 
 See [macOS installation](../getting-started/macos.md) if you have not installed the background service yet.
 
-### Linux or Windows installer
+### Windows control panel
 
-Run the AgentDock installer again and choose the option that says you already have a domain managed by Cloudflare. Enter the same HTTPS public origin and Tunnel Token when prompted.
+Open the AgentDock control panel, select **Public access** → **Fixed domain**, then enter:
 
-See [Linux installation](../getting-started/linux.md) or [Windows installation](../getting-started/windows.md) for the platform-specific command.
+```text
+HTTPS public address   https://agent.example.com
+Tunnel Token           <the Tunnel Token from Cloudflare>
+```
+
+Click **Apply access mode**. You can then use **Test current public address** on the same page to verify the endpoint. You do not need to rerun the installer just to change the public access mode.
+
+See [Windows installation](../getting-started/windows.md) if AgentDock is not installed yet.
+
+### Linux installer
+
+Linux installations without the desktop control panel can rerun the AgentDock installer and choose the option for an existing Cloudflare-managed domain. Enter the same HTTPS public origin and Tunnel Token when prompted.
+
+See [Linux installation](../getting-started/linux.md) for the platform-specific command.
 
 ### Docker Compose
 

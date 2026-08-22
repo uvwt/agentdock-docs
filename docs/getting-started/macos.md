@@ -61,22 +61,15 @@ Authentication may be disabled while listening only on `127.0.0.1`. LAN or publi
 
 ## Optional: publish with Cloudflare Tunnel
 
-Install the background service and let the installer configure public access:
+Open the AgentDock control panel and use **Public access** to switch between **Local only**, **Temporary address**, and **Fixed domain**. Changing the public access mode does not require rerunning the installer.
 
-```bash
-sh /tmp/install-agentdock.sh --register-service
-```
+For a fixed domain, select **Fixed domain**, enter the HTTPS public address and Cloudflare Tunnel Token, then click **Apply changes**. If you have not created the Tunnel yet, follow [Configure a fixed domain](../guides/fixed-domain.md).
 
-The installer asks only whether a Cloudflare-managed domain is available:
+For a temporary address, select **Temporary address** and apply the change. If you need a new temporary URL later, use **Regenerate temporary address** in the same control panel instead of reinstalling AgentDock.
 
-- Choose **yes** for a fixed hostname. Enter the HTTPS public origin and paste the Tunnel Token at the hidden prompt. If you have not created the Tunnel yet, follow [Configure a fixed domain](../guides/fixed-domain.md).
-- Choose **no** for a temporary `trycloudflare.com` URL. It is ready immediately, but may change after `cloudflared` restarts.
+Both public modes enable AgentDock authentication and show the public MCP address plus the credentials needed by the MCP client. Keep the Cloudflare Tunnel Token private; it is not an MCP login credential.
 
-AgentDock remains bound to `127.0.0.1`, while `cloudflared` runs as a separate user LaunchAgent. Both fixed and temporary paths automatically enable Bearer Token and OAuth authentication. The completion panel shows the public URL, MCP URL, Bearer Token, and OAuth login password. The OAuth signing secret and Tunnel Token are stored privately and are not displayed.
-
-When a temporary URL changes, rerun the same command. The installer refreshes the URL while preserving all authentication credentials. Update the MCP URL in the client and authorize OAuth again.
-
-Automation may still use `--tunnel quick`, `--tunnel named`, or `--tunnel none` as advanced overrides. See [Advanced macOS configuration](../operations/macos.md#manage-cloudflare-tunnel) for managed files, status, and logs.
+For service management, logs, and advanced overrides, see [Advanced macOS configuration](../operations/macos.md#manage-cloudflare-tunnel).
 
 ## Update
 

@@ -61,22 +61,15 @@ curl -fsS http://127.0.0.1:8765/healthz
 
 ## 可选：通过 Cloudflare Tunnel 提供公网入口
 
-安装后台服务，并让安装器同时配置公网入口：
+打开 AgentDock 控制面板，在 **公网访问** 中可以直接切换 **仅本机**、**临时地址** 和 **固定域名**。仅修改公网访问方式时不需要重新运行安装器。
 
-```bash
-sh /tmp/install-agentdock.sh --register-service
-```
+使用固定域名时，选择 **固定域名**，填写 HTTPS 公网地址和 Cloudflare Tunnel Token，然后点击 **应用更改**。如果还没有创建 Tunnel，可以按 [固定域名配置教程](../guides/fixed-domain.md) 完成。
 
-安装器只询问是否有已接入 Cloudflare 的域名：
+使用临时地址时，选择 **临时地址** 并应用即可。后续如果需要新的临时地址，直接在同一个控制面板使用 **重新生成临时地址**，不需要重新安装 AgentDock。
 
-- 选择“有”：使用固定地址，输入 HTTPS 公网地址，并在隐藏提示中粘贴 Tunnel Token。如果还没有创建 Tunnel，可以按 [固定域名配置教程](../guides/fixed-domain.md) 完成。
-- 选择“没有”：自动生成可立即使用的 `trycloudflare.com` 临时地址；`cloudflared` 重启后地址可能变化。
+两种公网模式都会启用 AgentDock 认证，并显示公网 MCP 地址和 MCP 客户端需要的认证信息。Cloudflare Tunnel Token 只用于建立 Tunnel，不是 MCP 登录凭据，应妥善保管。
 
-AgentDock 仍只监听 `127.0.0.1`，`cloudflared` 作为独立的用户级 LaunchAgent 运行。固定和临时两种方式都会自动启用 Bearer Token 与 OAuth。完成框会显示公网地址、MCP 地址、Bearer Token 和 OAuth 登录密码；OAuth 签名密钥与 Tunnel Token 会安全保存，不在终端显示。
-
-临时地址变化后，重新运行同一个命令即可刷新。安装器会保留全部认证凭据；用户只需在客户端替换 MCP URL，并重新完成 OAuth 授权。
-
-自动化仍可把 `--tunnel quick`、`--tunnel named` 或 `--tunnel none` 作为高级覆盖。安装器管理的文件、状态和日志见 [macOS 进阶配置](../operations/macos.md#管理-cloudflare-tunnel)。
+服务管理、日志和高级覆盖方式见 [macOS 进阶配置](../operations/macos.md#管理-cloudflare-tunnel)。
 
 ## 更新
 

@@ -52,19 +52,13 @@ Authentication Not required
 
 ## Optional: publish with Cloudflare Tunnel
 
-Use login startup mode so AgentDock and `cloudflared` can run together after the current user signs in:
+After installation, open the AgentDock control panel and select **Public access**. You can switch between **Local only**, **Temporary address**, and **Fixed domain** directly from this page; changing the public access mode does not require rerunning the installer.
 
-```powershell
-powershell -ExecutionPolicy Bypass `
-  -File $script `
-  -RegisterStartup
-```
+For a fixed domain, select **Fixed domain**, enter the HTTPS public address and Cloudflare Tunnel Token, then click **Apply access mode**. Use **Test current public address** on the same page to verify the endpoint. If you have not created the Tunnel yet, follow [Configure a fixed domain](../guides/fixed-domain.md).
 
-The installer asks only whether you already have a domain connected to Cloudflare. With a domain, it requests the fixed HTTPS public origin and a Tunnel Token. If you have not created the Tunnel yet, follow [Configure a fixed domain](../guides/fixed-domain.md). Without a domain, it creates a temporary `trycloudflare.com` address automatically.
+For a temporary address, select **Temporary address** and apply the mode. If the address later changes, use **Regenerate temporary address** in the control panel; existing Bearer and OAuth credentials are preserved.
 
-Both paths enable Bearer Token and OAuth. The completion output shows the public MCP URL, Bearer Token, and OAuth login password. OAuth and Tunnel secrets are protected with current-user DPAPI and are not placed in the `cloudflared` command line.
-
-A temporary address changes after `cloudflared` restarts. Run the same installer command again to generate and write back the new address. Existing Bearer and OAuth credentials are preserved; replace the MCP URL in the client and complete OAuth again.
+Both public modes enable AgentDock authentication. The control panel shows the public MCP address and the credentials needed by your MCP client. Keep the Cloudflare Tunnel Token private; it is not an MCP login credential.
 
 ## Update
 

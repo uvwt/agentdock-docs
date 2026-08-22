@@ -52,19 +52,13 @@ Invoke-RestMethod http://127.0.0.1:8765/healthz
 
 ## 可选：通过 Cloudflare Tunnel 提供公网入口
 
-使用登录启动模式，让 AgentDock 与 `cloudflared` 在当前用户登录后一起运行：
+安装完成后，打开 AgentDock 控制面板并进入 **公网访问**。这里可以直接在 **仅本机**、**临时地址** 和 **固定域名** 之间切换；仅修改公网访问方式时不需要重新运行安装器。
 
-```powershell
-powershell -ExecutionPolicy Bypass `
-  -File $script `
-  -RegisterStartup
-```
+使用固定域名时，选择 **固定域名**，填写 HTTPS 公网地址和 Cloudflare Tunnel Token，然后点击 **应用访问模式**。同一页面可以直接点击 **测试当前公网地址** 验证配置。如果还没有创建 Tunnel，可以按 [固定域名配置教程](../guides/fixed-domain.md) 完成。
 
-安装器只会询问你是否已有接入 Cloudflare 的域名。有域名时继续输入固定 HTTPS 公网地址和 Tunnel Token；如果还没有创建 Tunnel，可以按 [固定域名配置教程](../guides/fixed-domain.md) 完成。没有域名时自动生成临时 `trycloudflare.com` 地址。
+使用临时地址时，选择 **临时地址** 并应用即可。如果后续地址发生变化，可以直接在控制面板点击 **重新生成临时地址**；原 Bearer Token 和 OAuth 凭据会保留。
 
-两种方式都会同时启用 Bearer Token 和 OAuth。完成信息会显示公网 MCP 地址、Bearer Token 和 OAuth 登录密码。OAuth 与 Tunnel 密钥使用当前用户 DPAPI 加密保存，也不会写进 `cloudflared` 命令行。
-
-临时地址会在 `cloudflared` 重启后变化。重新运行同一安装命令即可生成并回写新地址；原 Bearer Token 和 OAuth 凭据保持不变。然后在客户端替换 MCP 地址，并重新完成 OAuth 授权。
+两种公网模式都会启用 AgentDock 认证。控制面板会显示公网 MCP 地址和 MCP 客户端需要的认证信息。Cloudflare Tunnel Token 只用于建立 Tunnel，不是 MCP 登录凭据，应妥善保管。
 
 ## 更新
 

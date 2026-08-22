@@ -67,9 +67,9 @@ https://agent.example.com
 
 不要追加 `/mcp`，也不要填写端口、查询参数或其他路径。
 
-### macOS 应用
+### macOS 控制面板
 
-打开 AgentDock，在 **公网访问** 中选择 **固定域名**，然后填写：
+打开 AgentDock 控制面板，在 **公网访问** 中选择 **固定域名**，然后填写：
 
 ```text
 公网地址       https://agent.example.com
@@ -80,11 +80,24 @@ Tunnel Token   <Cloudflare 提供的 Tunnel Token>
 
 如果还没有安装后台服务，可以先查看 [macOS 安装](../getting-started/macos.md)。
 
-### Linux 或 Windows 安装器
+### Windows 控制面板
 
-重新运行 AgentDock 安装器，并选择“已有接入 Cloudflare 的域名”。按照提示填写同一个 HTTPS 公网地址和 Tunnel Token。
+打开 AgentDock 控制面板，进入 **公网访问** → **固定域名**，然后填写：
 
-具体命令可以查看 [Linux 安装](../getting-started/linux.md) 或 [Windows 安装](../getting-started/windows.md)。
+```text
+HTTPS 公网地址   https://agent.example.com
+Tunnel Token     <Cloudflare 提供的 Tunnel Token>
+```
+
+点击 **应用访问模式**。随后可以直接使用同一页面的 **测试当前公网地址** 验证配置。仅切换公网访问方式时，不需要重新运行安装器。
+
+如果还没有安装 AgentDock，可以先查看 [Windows 安装](../getting-started/windows.md)。
+
+### Linux 安装器
+
+没有桌面控制面板的 Linux 安装可以重新运行 AgentDock 安装器，并选择“已有接入 Cloudflare 的域名”。按照提示填写同一个 HTTPS 公网地址和 Tunnel Token。
+
+具体命令可以查看 [Linux 安装](../getting-started/linux.md)。
 
 ### Docker Compose
 
