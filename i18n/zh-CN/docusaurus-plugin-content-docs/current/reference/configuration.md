@@ -13,7 +13,7 @@ AgentDock 当前不读取统一的 YAML、JSON 或 TOML 配置文件。运行配
 | 本机前台运行 | 通常保持 `127.0.0.1` 和默认端口即可 |
 | Docker | `.env` 中的 `AGENTDOCK_AUTH_TOKEN`，其余使用 Compose 默认值 |
 | 浏览器自动化 | 启用浏览器工具，并准备 Chrome、Edge 或 browser 镜像 |
-| NexusDock（Recall、Workflow、私密笔记） | 配置服务地址和可选 Token |
+| NexusDock（Recall、Workflow、Evolution、私密笔记） | 配置服务地址和可选 Token |
 | 局域网或公网访问 | 认证、HTTPS 和反向代理，不能只修改监听地址 |
 
 推荐按部署方式管理配置：
@@ -77,7 +77,7 @@ agentdock \
 | `AGENTDOCK_STDIO` | `false` | 是否使用 stdio 模式 |
 | `AGENTDOCK_BROWSER_ENABLED` | `false` | 是否暴露 `browser_*` 工具 |
 | `AGENTDOCK_BROWSER_EXECUTABLE_PATH` | 空 | 可选的 Chrome、Chromium 或 Edge 可执行文件绝对路径 |
-| `AGENTDOCK_NEXUS_ENDPOINT` | 空 | NexusDock 服务根地址；启用 Recall、Workflow 和私密笔记能力 |
+| `AGENTDOCK_NEXUS_ENDPOINT` | 空 | NexusDock 服务根地址；启用 Recall、Workflow、Evolution 和私密笔记能力 |
 | `AGENTDOCK_NEXUS_TOKEN` | 空 | NexusDock Bearer Token |
 | `AGENTDOCK_INSTRUCTIONS_FILE` | 空 | 可选 UTF-8 文本文件，在 MCP 初始化时作为 Server Instructions 下发给兼容客户端 |
 
@@ -163,9 +163,9 @@ AGENTDOCK_TRUSTED_PROXY_CIDRS=127.0.0.0/8,::1/128
 
 多个网段使用逗号分隔。不要把不受控制的公网网段加入该变量，否则认证限流和客户端地址判断可能被伪造。
 
-## NexusDock Recall、Workflow 与私密笔记
+## NexusDock Recall、Workflow、Evolution 与私密笔记
 
-配置 NexusDock 后，AgentDock 会暴露 `recall_*`、`workflow_template_manage` 和 `private_note_manage`。Recall 与 Workflow 使用 NexusDock Registry，私密笔记使用 NexusDock Private Notes：
+配置 NexusDock 后，AgentDock 会暴露 `recall_*`、`workflow_template_manage`、`evolve` 和 `private_note_manage`。Recall 与 Workflow 使用 NexusDock 共享服务，Evolution 生命周期策略由 AgentDock 负责，私密笔记使用 NexusDock Private Notes：
 
 ```bash
 AGENTDOCK_NEXUS_ENDPOINT=https://nexus.example.com
@@ -175,7 +175,9 @@ AGENTDOCK_NEXUS_TOKEN=<nexus-token>
 `AGENTDOCK_NEXUS_ENDPOINT` 使用 NexusDock 服务根地址，不要附加具体 API 路径。未配置时：
 
 - 本地 `task_manage` 仍可管理普通可恢复任务。
-- `recall_*`、`workflow_template_manage` 和 `private_note_manage` 不会出现在 `tools/list`。
+- `evolve`、`recall_*`、`workflow_template_manage` 和 `private_note_manage` 不会出现在 `tools/list`。
+
+多设备路由、fleet 上下文和节点 Artifact 下载见 [NexusDock](../concepts/nexusdock.md)。
 
 ## Coding Agent（ACP）
 
@@ -279,15 +281,16 @@ NexusDock 负责明文存储边界、age X25519 密文备份和 Git 忽略规则
 
 ## 查看当前状态
 
-调用 `server_info` 可以查看当前实例的公开运行状态，包括：
+调用 `agentdock_context` 可以查看当前连接的运行环境和能力启动上下文。直连 AgentDock 时会包含：
 
 - AgentDock 版本、操作系统和架构。
-- 默认目录和路径模型。
-- 是否启用认证、浏览器和 NexusDock Recall。
-- 当前实际暴露的工具列表。
-- 可信代理网段和命令会话限制。
+- AgentDock Home、默认目录、当前默认工作目录和路径模型。
+- 已安装 Skill 摘要和已启用的动态 MCP Server。
+- 配置后可见的 ACP 状态，以及 Nexus 提供的 Workflow / Recall 索引。
 
-`server_info` 不返回认证 Token、OAuth 密码、签名密钥或 NexusDock Token。
+`agentdock_context` 不会重复内置 MCP 工具清单，也不会报告当前使用的认证方式。当前连接实际暴露哪些工具，以 MCP 客户端的 `tools/list` 为准；认证配置请从部署环境或桌面控制面板检查。
+
+`agentdock_context` 和 `tools/list` 都不会返回认证 Token、OAuth 密码、签名密钥或 NexusDock Token。
 
 ## 启动前检查
 

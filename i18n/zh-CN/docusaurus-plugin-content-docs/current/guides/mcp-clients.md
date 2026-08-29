@@ -284,7 +284,7 @@ codex mcp add agentdock --url https://agentdock.example.com/mcp
 连接完成后，不要只看客户端显示“已连接”。应完成一次真实只读调用，例如：
 
 ```text
-调用 AgentDock 的 server_info，告诉我服务版本、操作系统和当前认证方式。
+调用 AgentDock 的 agentdock_context，告诉我 AgentDock 版本、操作系统、路径模型，以及当前可用的 Skill 和动态 MCP 能力索引。
 ```
 
 如果 OAuth 页面没有打开，先验证：

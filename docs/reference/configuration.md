@@ -13,7 +13,7 @@ AgentDock does not currently read one unified YAML, JSON, or TOML configuration 
 | Local foreground process | Usually keep `127.0.0.1` and the default port |
 | Docker | `AGENTDOCK_AUTH_TOKEN` in `.env`; keep the remaining Compose defaults |
 | Browser automation | Enable browser tools and prepare Chrome, Edge, or the browser image |
-| NexusDock (Recall, Workflow, Private Notes) | Configure the service URL and optional token |
+| NexusDock (Recall, Workflow, Evolution, Private Notes) | Configure the service URL and optional token |
 | LAN or public access | Authentication, HTTPS, and a reverse proxy; changing only the listen address is not enough |
 
 Manage configuration according to the deployment method:
@@ -77,7 +77,7 @@ agentdock \
 | `AGENTDOCK_STDIO` | `false` | Whether to use stdio mode |
 | `AGENTDOCK_BROWSER_ENABLED` | `false` | Whether to expose `browser_*` tools |
 | `AGENTDOCK_BROWSER_EXECUTABLE_PATH` | empty | Optional absolute Chrome, Chromium, or Edge executable path |
-| `AGENTDOCK_NEXUS_ENDPOINT` | empty | NexusDock service root URL; enables Recall, Workflow, and Private Notes capabilities |
+| `AGENTDOCK_NEXUS_ENDPOINT` | empty | NexusDock service root URL; enables Recall, Workflow, Evolution, and Private Notes capabilities |
 | `AGENTDOCK_NEXUS_TOKEN` | empty | NexusDock Bearer Token |
 | `AGENTDOCK_INSTRUCTIONS_FILE` | empty | Optional UTF-8 text file sent to compatible MCP clients as server instructions during initialization |
 
@@ -163,9 +163,9 @@ AGENTDOCK_TRUSTED_PROXY_CIDRS=127.0.0.0/8,::1/128
 
 Separate multiple networks with commas. Do not add uncontrolled public networks, or authentication rate limiting and client-address checks may be spoofed.
 
-## NexusDock Recall, Workflows, and Private Notes
+## NexusDock Recall, Workflows, Evolution, and Private Notes
 
-After NexusDock is configured, AgentDock exposes `recall_*`, `workflow_template_manage`, and `private_note_manage`. Recall and Workflows use the NexusDock Registry; Private Notes use NexusDock Private Notes:
+After NexusDock is configured, AgentDock exposes `recall_*`, `workflow_template_manage`, `evolve`, and `private_note_manage`. Recall and Workflows use NexusDock shared services, AgentDock owns the Evolution lifecycle policy, and Private Notes use NexusDock Private Notes:
 
 ```bash
 AGENTDOCK_NEXUS_ENDPOINT=https://nexus.example.com
@@ -175,7 +175,9 @@ AGENTDOCK_NEXUS_TOKEN=<nexus-token>
 `AGENTDOCK_NEXUS_ENDPOINT` is the NexusDock service root URL; do not append a specific API path. When it is not configured:
 
 - Local `task_manage` still manages ordinary recoverable tasks.
-- `recall_*`, `workflow_template_manage`, and `private_note_manage` do not appear in `tools/list`.
+- `evolve`, `recall_*`, `workflow_template_manage`, and `private_note_manage` do not appear in `tools/list`.
+
+For multi-device routing, fleet context, and node Artifact downloads, see [NexusDock](../concepts/nexusdock.md).
 
 ## Coding Agents (ACP)
 
@@ -279,15 +281,16 @@ Search matches only safe metadata such as title, summary, tags, category, and pa
 
 ## Inspect current state
 
-Call `server_info` to inspect public runtime state for the current instance, including:
+Call `agentdock_context` to inspect the runtime and capability bootstrap for the current connection. A direct AgentDock response includes:
 
 - AgentDock version, operating system, and architecture.
-- Default directories and path model.
-- Whether authentication, browser tools, and NexusDock Recall are enabled.
-- The tools actually exposed by the current instance.
-- Trusted proxy networks and command-session limits.
+- AgentDock home, default directory, current default working directory, and path model.
+- Installed Skill summaries and enabled dynamic MCP servers.
+- Optional ACP state plus Nexus-backed Workflow and Recall indexes when configured.
 
-`server_info` does not return authentication tokens, OAuth passwords, signing keys, or NexusDock tokens.
+`agentdock_context` does not duplicate the built-in MCP tool catalog or report the active authentication method. Use the MCP client's `tools/list` for the tools actually exposed by that connection, and inspect the deployment configuration or desktop control panel for authentication settings.
+
+Neither `agentdock_context` nor `tools/list` returns authentication tokens, OAuth passwords, signing keys, or NexusDock tokens.
 
 ## Startup validation
 

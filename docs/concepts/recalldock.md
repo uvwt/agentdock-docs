@@ -2,7 +2,7 @@
 
 NexusDock Recall is an optional long-term knowledge service for AgentDock. It stores stable project documentation, experience, decisions, and question records so future tasks can recover reliable context.
 
-Without NexusDock, files, commands, Git, Skills, dynamic MCP, and local tasks continue to work normally. Recall, workflow templates, and private-note tools are unavailable.
+Without NexusDock, files, commands, command-line Git, Skills, dynamic MCP, and local tasks continue to work normally. Recall, workflow templates, knowledge evolution, and private-note tools are unavailable. For the multi-device control-plane and unified MCP behavior, see [NexusDock](./nexusdock.md).
 
 ## When to use it
 
@@ -28,7 +28,7 @@ You need a reachable NexusDock URL and, optionally, a token. Ask the agent to co
 Connect AgentDock to NexusDock Recall at https://nexus.example.com, and store the token in a secure environment variable.
 ```
 
-See [Configuration](../reference/configuration.md#nexusdock-recall-workflows-and-private-notes) for the exact environment variables.
+See [Configuration](../reference/configuration.md) for the exact environment variables.
 
 ## How to use it
 
@@ -40,13 +40,16 @@ Update the long-term project documentation with the conclusions verified in this
 Search for previous OAuth troubleshooting experience.
 ```
 
+`agentdock_context` already carries a compact Recall index for startup context, so the model does not need a separate bootstrap call. When that index gives the exact path, it can read the entry directly. Otherwise `recall_search` searches Markdown and cards, using lexical retrieval by default and adding semantic retrieval transparently when NexusDock embeddings are available.
+
 The agent searches existing content before deciding whether to read, update, or create an entry, which helps avoid duplicates and conflicts.
 
 ## Content types
 
-- **Markdown:** stable project documentation, runbooks, and structured long-term facts.
+- **Markdown:** stable project documentation, runbooks, learning records, and structured long-term facts.
 - **Card:** one atomic, reusable experience, preference, or decision.
-- **Note:** question discussions, learning records, and conclusions that have not yet stabilized.
+
+Private Notes are a separate store rather than a Recall content type.
 
 ## Private Notes and Recall
 

@@ -86,7 +86,7 @@ ChatGPT 会自动发现 AgentDock 的 OAuth 元数据、注册客户端，并通
 也可以先做只读验证：
 
 ```text
-调用 AgentDock 的 server_info，并告诉我服务版本、操作系统和当前认证方式。
+调用 AgentDock 的 agentdock_context，并告诉我 AgentDock 版本、操作系统、路径模型，以及当前可用的 Skill 和动态 MCP 能力索引。
 ```
 
 连接成功不能只看 OAuth 页面是否跳回，还应确认 ChatGPT 能列出 AgentDock 工具并完成一次真实调用。

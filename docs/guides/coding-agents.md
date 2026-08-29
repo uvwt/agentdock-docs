@@ -25,7 +25,7 @@ Install and sign in to the Coding Agent you intend to use before enabling it in 
 5. Confirm that AgentDock reports the adapter as detected.
 6. Apply the settings and restart the AgentDock service.
 
-After reconnecting your MCP client, `agentdock_context` and `server_info` can show that ACP is enabled.
+After reconnecting your MCP client, `agentdock_context` can show that ACP is enabled and which adapter profile is configured.
 
 ## What you can ask for
 
@@ -63,6 +63,6 @@ If the Coding Agent cannot be enabled or started:
 - On macOS or Windows, reopen Advanced Settings and check the adapter detection message.
 - For headless deployments, confirm that `AGENTDOCK_ACP_COMMAND` is an absolute executable file path.
 - Confirm that any host environment variable referenced by `AGENTDOCK_ACP_ENV_FROM_ENV_JSON` actually exists.
-- Use `server_info` to confirm that ACP is enabled, then let the MCP client retry with a new session.
+- Use `agentdock_context` to confirm that ACP is enabled and the expected adapter is selected, then let the MCP client retry with a new session.
 
 See [Tools](../reference/tools.md#coding-agents-acp) for the user-visible ACP tool boundaries.

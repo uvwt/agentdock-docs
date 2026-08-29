@@ -12,7 +12,7 @@ Native AgentDock installers and Docker images automatically install and activate
 - `skill-installation`
 - `skill-vetter-runtime`
 
-They use the same Skill Store, version selection, and rollback mechanism as user-installed Skills. AgentDock records release-managed Skills in `bundled-skills.json`; `skill_package list`, `skill_package inspect`, and `agentdock_context` expose their `bundled` status.
+They use the same Skill Store, version selection, and rollback mechanism as user-installed Skills. AgentDock records release-managed Skills in `bundled-skills.json`, and `agentdock_context` exposes their `bundled` status in the installed Skill index.
 
 `desktop` and Skills that require accounts, operating-system permissions, or third-party service configuration are not installed automatically.
 
