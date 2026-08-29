@@ -35,6 +35,7 @@ const sidebars: SidebarsConfig = {
         'guides/coding-agents',
         'guides/desktop-automation',
         'concepts/dynamic-mcp',
+        'concepts/nexusdock',
         'concepts/recalldock',
       ],
     },

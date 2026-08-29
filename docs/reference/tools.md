@@ -8,29 +8,28 @@ Regular users usually do not need to call tools one by one. After connecting an 
 
 - Read, search, modify, and publish files.
 - Run commands and continue observing long-running work.
-- Inspect, commit, pull, and push Git repositories.
+- Use command-line Git through `exec_command`, or a registered Git service through dynamic MCP.
 - Install and use Skills.
 - Track steps and verification for complex tasks.
-- Connect external MCP servers, browsers, and NexusDock Recall.
+- Connect external MCP servers, browsers, and NexusDock.
 
 The tools actually visible to a client depend on the host configuration:
 
 - Core tools that do not depend on external integrations are always available.
-- Configuring `AGENTDOCK_NEXUS_ENDPOINT` adds `workflow_template_manage`, `recall_*`, and `private_note_manage`.
+- Configuring `AGENTDOCK_NEXUS_ENDPOINT` adds `evolve`, `workflow_template_manage`, `recall_*`, and `private_note_manage`.
 - Enabling `AGENTDOCK_BROWSER_ENABLED` or `--browser-enabled` adds `browser_*` tools.
 - Enabling `AGENTDOCK_ACP_ENABLED` adds `acp_session`, `acp_prompt`, and `acp_interaction`.
 - Upstream tools from dynamic MCP servers are not merged directly into AgentDock's `tools/list`; they are accessed through stable discovery and invocation entry points.
 
-Call `server_info` to inspect the tools actually exposed by the current instance.
+The MCP client's `tools/list` is the source of truth for the tools exposed by the current connection.
 
 ## System and context
 
 | Tool | Purpose |
 | --- | --- |
-| `server_info` | Returns version, operating system, path model, authentication state, optional capabilities, and the current tool list; the primary entry point for deployment and troubleshooting |
-| `agentdock_context` | Returns a lightweight capability index covering built-in tools, installed Skills, dynamic MCP, Workflow templates, and high-priority context |
+| `agentdock_context` | Returns local runtime facts plus installed Skills, dynamic MCP, optional ACP, operational rules, and Nexus-backed Workflow/Recall indexes when available |
 
-`agentdock_context` returns only the index needed for quick model decisions. Without NexusDock, it does not include Workflow-template indexes or related rules. Read the corresponding resource when a Skill body, dynamic MCP schema, or full Recall entry is required.
+`agentdock_context` is the bootstrap context for quick model decisions, not a duplicate tool catalog. A direct AgentDock call includes runtime fields such as version, operating system, architecture, paths, and path model. Through NexusDock it becomes a fleet context with per-node information and Nexus-owned shared context. Read the corresponding resource when a Skill body, dynamic MCP schema, or full Recall entry is required.
 
 ## Files and text
 
@@ -39,10 +38,11 @@ AgentDock uses the Host path model. Relative paths resolve from `~/AgentDock`; a
 | Tool | Purpose | Common parameters or actions |
 | --- | --- | --- |
 | `read_file` | Reads UTF-8 text in slices and supports `skill://<name>/<path>` | `path`, `start_line`, `end_line` |
-| `list_dir` | Lists directory entries with bounded recursion depth and count | `recursive`, `max_depth`, `include_hidden` |
-| `list_files` | Finds files in bulk with glob patterns | `patterns`, `glob`, `exclude_patterns` |
+| `list_dir` | Lists directories or finds files through one bounded tree/glob entry point | `path`, `max_depth`, `max_entries`, `patterns`, `exclude_patterns`, `entry_type` |
 | `search_text` | Searches file contents with text or regular expressions | `query`, `regex`, `include_globs`, `context_lines` |
 | `file_edit` | Performs text-file changes through one entry point | `replace`, `patch`, `add`, `delete`, `move` |
+
+`list_dir` replaces the older separate file-listing entry point. Glob patterns are relative to `path`: `*` stays within one path segment, while `**` crosses directories. Use `entry_type=file` when only files are needed, and keep `max_depth` / `max_entries` bounded for large trees.
 
 `file_edit` supports `dry_run` and a diff preview. For replacements, use `expected_matches` to constrain the number of matches and prevent accidental edits after the source text changes.
 
@@ -81,11 +81,21 @@ See [Use local Coding Agents](../guides/coding-agents.md) for setup and project-
 | Tool | Purpose | Actions |
 | --- | --- | --- |
 | `task_manage` | Persists multi-step tasks, progress, blockers, and final verification evidence | `create`, `list`, `get`, `checkpoint`, `block`, `resume`, `final_review`, `complete` |
-| `workflow_template_manage` | Manages and matches reusable Workflow templates; visible only when NexusDock is configured | `save`, `validate`, `publish`, `retire`, `list`, `get`, `get_many`, `match`, `vector_index` |
+| `workflow_template_manage` | Manages and matches reusable Workflow templates; visible only when NexusDock is configured | `publish`, `retire`, `list`, `get`, `get_many`, `match`, `vector_index` |
 
 `task_manage` stores state; it does not replace commands, tests, deployment, or browser verification. Ordinary tasks work entirely locally. Workflow templates live in the NexusDock Registry, so `workflow_template_manage` is absent from the tool list when NexusDock is not configured.
 
-When several templates apply, `get_many` returns their full bodies but does not combine them automatically. The model must remove irrelevant steps, merge duplicates, and pass the composed result to `task_manage create`.
+`publish` accepts one complete template and validates it before making that version active. When several templates apply, `get_many` returns their full bodies but does not combine them automatically. The model must remove irrelevant steps, merge duplicates, order the result, and pass the composed steps and completion conditions to `task_manage create`.
+
+## Knowledge evolution
+
+`evolve` is exposed when NexusDock is configured, but the Evolution lifecycle belongs to AgentDock. NexusDock provides shared storage and access paths; it does not decide whether learned knowledge becomes supported, contradicted, superseded, or retracted.
+
+| Tool | Purpose | Intents |
+| --- | --- | --- |
+| `evolve` | Proposes bounded reusable knowledge and manages its AgentDock-owned validation lifecycle | `propose`, `bind`, `supersede`, `retract` |
+
+`bind` is an advanced pre-execution learning check: the model must declare what a later Task success or failure would mean before execution starts. A Task outcome has no learning meaning by itself, and Evolution must not block normal Task completion.
 
 ## Skill packages and isolated environments
 
@@ -134,6 +144,8 @@ Registry data stores environment-variable names, not plaintext tokens. See [Conn
 
 `file_publish` always returns an `artifact_id`, hash, and size. When the current request has a reachable service address, it also returns an expiring signed URL.
 
+When a node is called through NexusDock, NexusDock can replace the node-local download location with its own temporary signed URL. The file is streamed in bounded chunks over the paired node's existing outbound connection; the source node must remain online, and NexusDock does not persist another copy of the artifact. See [NexusDock](../concepts/nexusdock.md#download-files-from-a-node).
+
 Image-producing tools such as browser screenshots usually return a lightweight artifact reference first. Load it through `view_image` instead of transferring large Base64 payloads in ordinary tool results.
 
 ## NexusDock Recall
@@ -142,19 +154,19 @@ These tools are exposed only when `AGENTDOCK_NEXUS_ENDPOINT` is configured:
 
 | Tool | Purpose | Common parameters or actions |
 | --- | --- | --- |
-| `recall_bootstrap` | Loads compact long-term context and a Runbook index at the start of an important task | `max_bytes`, `include_body` |
-| `recall_search` | Searches Markdown, experience cards, and notes | `query`, `kind`, `note_scope` |
-| `recall_read` | Reads one Recall entry by path | `path` |
-| `recall_write` | Plans, creates, updates, or deletes Recall content | `target`, `action`, `confirmed` |
-| `recall_maintain` | Checks synchronization, lists content, lints, and manages embeddings and indexes | `sync_status`, `list`, `lint`, `embedding_status`, `reindex`, `reindex_cards` |
+| `recall_search` | Searches Markdown and experience cards; semantic retrieval is added transparently when embeddings are available | `query`, `kind=all|markdown|card`, `max_results` |
+| `recall_read` | Reads one Recall entry by path | `path`, `include_raw` |
+| `recall_write` | Plans, creates, replaces, appends, patches, updates facts, diffs, or deletes Recall content | `target=card|markdown`, `action`, `confirmed` |
+| `recall_maintain` | Lists or lints content and inspects or rebuilds embedding indexes | `list`, `lint`, `embedding_status`, `reindex`, `reindex_cards` |
+
+The compact startup index is now part of `agentdock_context`; there is no separate Recall bootstrap tool. When the index already provides the required path, prefer `recall_read`. Use `recall_search` when the relevant entry is not known yet.
 
 `recall_write` requires an explicit content type:
 
-- `card`: atomic, reusable experience and decisions.
-- `note`: question discussions, learning records, and unsettled conclusions.
-- `markdown`: stable project documentation, Runbooks, and structured long-term facts.
+- `card`: atomic, reusable experience, preferences, and decisions.
+- `markdown`: stable project documentation, Runbooks, learning records, and structured long-term facts.
 
-Actual writes and deletions require `confirmed=true`. See [NexusDock Recall](../concepts/recalldock.md) for the boundaries.
+Confirmation requirements depend on the action and destination. Destructive or protected writes require `confirmed=true`; unconfirmed edits can return a preview where the contract supports it. See [NexusDock Recall](../concepts/recalldock.md) for the boundaries.
 
 ## Private Notes
 

@@ -25,7 +25,7 @@ macOS 和 Windows 图形应用目前提供这些预设：
 5. 确认界面显示已经检测到对应 Adapter。
 6. 应用设置并重启 AgentDock 服务。
 
-重新连接 MCP 客户端后，可以通过 `agentdock_context` 或 `server_info` 确认 ACP 已启用。
+重新连接 MCP 客户端后，可以通过 `agentdock_context` 确认 ACP 已启用，以及当前配置的 Adapter Profile。
 
 ## 直接描述编码任务
 
@@ -63,6 +63,6 @@ AGENTDOCK_ACP_COMMAND=/absolute/path/to/codex-acp
 - macOS 或 Windows 上重新打开高级设置，检查 Adapter 检测提示。
 - 无图形界面的部署要确认 `AGENTDOCK_ACP_COMMAND` 是绝对可执行文件路径。
 - 使用 `AGENTDOCK_ACP_ENV_FROM_ENV_JSON` 时，确认映射引用的宿主机环境变量确实存在。
-- 用 `server_info` 确认 ACP 已启用，再让 MCP 客户端新建会话重试。
+- 用 `agentdock_context` 确认 ACP 已启用且选择了预期 Adapter，再让 MCP 客户端新建会话重试。
 
 用户可见的 ACP 工具边界见 [工具介绍](../reference/tools.md)。

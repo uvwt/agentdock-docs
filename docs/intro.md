@@ -34,7 +34,7 @@ After connecting, describe a goal directly, for example:
 - “Use the browser, desktop automation, or a coding tool such as Codex, Claude, or Grok.”
 - “Break this long task into steps and keep its progress updated.”
 
-The agent selects file, command, Git, browser, Skill, or external MCP tools based on the task. Regular users rarely need to call individual tools manually.
+The agent selects file, command, browser, Skill, or external MCP tools based on the task. Git work uses the local Git CLI through command execution or a Git service exposed through dynamic MCP. Regular users rarely need to call individual tools manually.
 
 If you mainly want web ChatGPT to operate your Windows PC, follow [Connect ChatGPT to AgentDock](./guides/chatgpt.md) after installing with a public address.
 
@@ -58,6 +58,7 @@ Docker stores both categories in Docker volumes by default. Removing the program
 - [Browser automation](./guides/browser-control.md)
 - [Use a local Coding Agent](./guides/coding-agents.md)
 - [Connect external MCP servers](./concepts/dynamic-mcp.md)
+- [Use NexusDock for multiple AgentDock devices](./concepts/nexusdock.md)
 - [Complete configuration reference](./reference/configuration.md)
 - [Troubleshooting](./operations/troubleshooting.md)
 

@@ -284,7 +284,7 @@ For a Bearer Token:
 Do not stop after the client reports “connected.” Complete a real read-only call, for example:
 
 ```text
-Call AgentDock's server_info and tell me the service version, operating system, and current authentication mode.
+Call AgentDock's agentdock_context and tell me the AgentDock version, operating system, path model, and available Skill and dynamic MCP capability indexes.
 ```
 
 If the OAuth page does not open, verify:

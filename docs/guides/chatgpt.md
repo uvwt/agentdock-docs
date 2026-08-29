@@ -86,7 +86,7 @@ Use AgentDock to inspect the current device.
 A read-only check is also enough:
 
 ```text
-Call AgentDock's server_info and tell me the service version, operating system, and current authentication mode.
+Call AgentDock's agentdock_context and tell me the AgentDock version, operating system, path model, and available Skill and dynamic MCP capability indexes.
 ```
 
 Do not treat the OAuth redirect alone as success. Confirm that ChatGPT can list AgentDock tools and complete a real tool call.

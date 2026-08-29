@@ -8,29 +8,28 @@ AgentDock 通过 MCP 向上层 Agent 暴露一组稳定的内置工具。工具�
 
 - 读取、搜索、修改和发布文件。
 - 执行命令并持续观察长时间任务。
-- 检查、提交、拉取和推送 Git 仓库。
+- 通过 `exec_command` 使用本机 Git CLI，或通过动态 MCP 接入 Git 服务。
 - 安装和使用 Skill。
 - 管理复杂任务的步骤与验证。
-- 接入外部 MCP、浏览器和 NexusDock Recall。
+- 接入外部 MCP、浏览器和 NexusDock。
 
 客户端实际能看到哪些工具取决于宿主机配置：
 
 - 不依赖外部集成的基础工具始终可用。
-- 配置 `AGENTDOCK_NEXUS_ENDPOINT` 后，额外暴露 `workflow_template_manage`、`recall_*` 和 `private_note_manage`。
+- 配置 `AGENTDOCK_NEXUS_ENDPOINT` 后，额外暴露 `evolve`、`workflow_template_manage`、`recall_*` 和 `private_note_manage`。
 - 启用 `AGENTDOCK_BROWSER_ENABLED` 或 `--browser-enabled` 后，额外暴露 `browser_*` 工具。
 - 启用 `AGENTDOCK_ACP_ENABLED` 后，额外暴露 `acp_session`、`acp_prompt` 和 `acp_interaction`。
 - 动态 MCP 的上游工具不会直接混入 AgentDock 的 `tools/list`，而是通过固定的发现和调用入口访问。
 
-调用 `server_info` 可以查看当前实例真正暴露的工具清单。
+当前连接真正暴露哪些工具，以 MCP 客户端拿到的 `tools/list` 为准。
 
 ## 系统与上下文
 
 | 工具 | 用途 |
 | --- | --- |
-| `server_info` | 返回版本、操作系统、路径模型、认证状态、可选能力和当前工具列表，是部署与排障的首要入口 |
-| `agentdock_context` | 返回轻量能力索引，包括内置工具、已安装 Skill、动态 MCP、Workflow 模板和高优先级上下文 |
+| `agentdock_context` | 返回本机运行事实、已安装 Skill、动态 MCP、可选 ACP、操作规则，以及可用时由 Nexus 提供的 Workflow / Recall 索引 |
 
-`agentdock_context` 只返回适合模型快速判断的索引。未配置 NexusDock 时，它不会展示 Workflow 模板索引或相关规则。需要 Skill 正文、动态 MCP Schema 或 Recall 正文时，再调用对应读取工具。
+`agentdock_context` 是让模型快速决策的启动上下文，不是重复的工具清单。直连 AgentDock 时会包含版本、操作系统、架构、目录和路径模型等 runtime 字段；经 NexusDock 调用时则返回包含各节点信息和 Nexus 共享上下文的 fleet 结构。需要 Skill 正文、动态 MCP Schema 或 Recall 正文时，再调用对应读取工具。
 
 ## 文件与文本
 
@@ -39,10 +38,11 @@ AgentDock 使用 Host 路径模型。相对路径默认从 `~/AgentDock` 解析�
 | 工具 | 用途 | 常用参数或 action |
 | --- | --- | --- |
 | `read_file` | 分段读取 UTF-8 文本，也支持 `skill://<name>/<path>` | `path`、`start_line`、`end_line` |
-| `list_dir` | 列出目录项，可限制递归深度和数量 | `recursive`、`max_depth`、`include_hidden` |
-| `list_files` | 使用 glob 批量查找文件 | `patterns`、`glob`、`exclude_patterns` |
+| `list_dir` | 通过一个受限的目录树 / glob 入口列目录或查找文件 | `path`、`max_depth`、`max_entries`、`patterns`、`exclude_patterns`、`entry_type` |
 | `search_text` | 使用文本或正则搜索文件内容 | `query`、`regex`、`include_globs`、`context_lines` |
 | `file_edit` | 统一执行文本文件修改 | `replace`、`patch`、`add`、`delete`、`move` |
+
+`list_dir` 已取代旧的独立文件列表入口。glob 模式相对于 `path`：`*` 不跨目录层级，`**` 可以跨目录；只需要文件时使用 `entry_type=file`，大目录中应合理限制 `max_depth` / `max_entries`。
 
 `file_edit` 支持 `dry_run` 和 diff 预览。涉及替换时可以使用 `expected_matches` 约束命中数量，避免内容漂移后误改其他位置。
 
@@ -81,11 +81,21 @@ Windows 版 `exec_command` 可以显式选择 `runtime=windows` 或 `runtime=wsl
 | 工具 | 用途 | action |
 | --- | --- | --- |
 | `task_manage` | 持久化多步骤任务、进度、阻塞和最终验证证据 | `create`、`list`、`get`、`checkpoint`、`block`、`resume`、`final_review`、`complete` |
-| `workflow_template_manage` | 管理和匹配可复用 Workflow 模板；仅配置 NexusDock 后可见 | `save`、`validate`、`publish`、`retire`、`list`、`get`、`get_many`、`match`、`vector_index` |
+| `workflow_template_manage` | 管理和匹配可复用 Workflow 模板；仅配置 NexusDock 后可见 | `publish`、`retire`、`list`、`get`、`get_many`、`match`、`vector_index` |
 
 `task_manage` 保存的是状态，不会替代命令、测试、部署或浏览器验证。普通任务可以完全在本机使用；Workflow 模板存放在 NexusDock Registry，未配置 NexusDock 时 `workflow_template_manage` 不会出现在工具列表中。
 
-多个模板同时适用时，`get_many` 返回模板正文，但不会自动拼接。模型需要删除无关步骤、合并重复项，再把组合结果传给 `task_manage create`。
+`publish` 接收完整模板，并在激活该版本前进行校验。多个模板同时适用时，`get_many` 返回模板正文，但不会自动拼接。模型需要删除无关步骤、合并重复项、确定顺序，再把组合后的 steps 和 completion conditions 传给 `task_manage create`。
+
+## 知识 Evolution
+
+配置 NexusDock 后会暴露 `evolve`，但 Evolution 生命周期属于 AgentDock。NexusDock 提供共享存储和访问路径，不负责决定知识何时得到支持、被反证、被替代或撤回。
+
+| 工具 | 用途 | intent |
+| --- | --- | --- |
+| `evolve` | 提议有边界的可复用知识，并管理由 AgentDock 负责的验证生命周期 | `propose`、`bind`、`supersede`、`retract` |
+
+`bind` 属于高级的执行前学习检查：模型必须在任务开始执行前声明后续 Task 成功或失败分别代表什么。Task 结果本身没有学习含义，而且 Evolution 不能阻塞普通 Task 完成。
 
 ## Skill 包与独立环境
 
@@ -134,6 +144,8 @@ agentdock_context
 
 `file_publish` 始终返回 `artifact_id`、哈希和大小。当前请求存在可访问服务地址时，还会返回有过期时间的签名 URL。
 
+经 NexusDock 调用节点时，NexusDock 可以把节点本地下载位置替换为自己的临时签名地址。文件通过已配对节点现有的出站连接按受限分块流式传输；下载期间源节点必须在线，而且 NexusDock 不会额外持久化一份 Artifact。详见 [NexusDock](../concepts/nexusdock.md#从节点下载文件)。
+
 浏览器截图等图片型工具通常先返回轻量 Artifact 引用，再通过 `view_image` 加载，避免在普通工具结果中传递大段 Base64。
 
 ## NexusDock Recall
@@ -142,19 +154,19 @@ agentdock_context
 
 | 工具 | 用途 | 常用参数或 action |
 | --- | --- | --- |
-| `recall_bootstrap` | 在重要任务开始时加载紧凑的长期上下文和 Runbook 索引 | `max_bytes`、`include_body` |
-| `recall_search` | 搜索 Markdown、经验卡片和笔记 | `query`、`kind`、`note_scope` |
-| `recall_read` | 按路径读取一个 Recall 条目 | `path` |
-| `recall_write` | 计划、创建、更新或删除 Recall 内容 | `target`、`action`、`confirmed` |
-| `recall_maintain` | 检查同步、列表、lint、Embedding 和索引 | `sync_status`、`list`、`lint`、`embedding_status`、`reindex`、`reindex_cards` |
+| `recall_search` | 搜索 Markdown 和经验卡片；配置 Embedding 后会透明加入语义召回 | `query`、`kind=all|markdown|card`、`max_results` |
+| `recall_read` | 按路径读取一个 Recall 条目 | `path`、`include_raw` |
+| `recall_write` | 计划、创建、替换、追加、patch、更新事实、diff 或删除 Recall 内容 | `target=card|markdown`、`action`、`confirmed` |
+| `recall_maintain` | 列表、lint，并查看或重建 Embedding 索引 | `list`、`lint`、`embedding_status`、`reindex`、`reindex_cards` |
+
+紧凑的启动索引现在已经并入 `agentdock_context`，不再有独立的 Recall bootstrap 工具。索引已经给出目标路径时优先 `recall_read`；尚不知道相关条目时再使用 `recall_search`。
 
 `recall_write` 要求明确选择内容类型：
 
-- `card`：原子、可复用的经验和决策。
-- `note`：问题讨论、学习记录和未定结论。
-- `markdown`：稳定项目文档、Runbook 和结构化长期事实。
+- `card`：原子、可复用的经验、偏好和决策。
+- `markdown`：稳定项目文档、Runbook、学习记录和结构化长期事实。
 
-真实写入和删除需要 `confirmed=true`。详细边界见 [NexusDock Recall](../concepts/recalldock.md)。
+确认要求取决于 action 和目标位置。破坏性操作或受保护位置写入需要 `confirmed=true`；契约支持时，未确认编辑会返回预览。详细边界见 [NexusDock Recall](../concepts/recalldock.md)。
 
 ## 私密笔记
 

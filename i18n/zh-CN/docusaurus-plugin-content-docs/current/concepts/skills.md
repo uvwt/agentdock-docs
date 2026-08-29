@@ -12,7 +12,7 @@ AgentDock 原生安装包和 Docker 镜像会自动安装并激活以下官方�
 - `skill-installation`
 - `skill-vetter-runtime`
 
-它们与用户后来安装的 Skill 使用同一个 Skill Store、版本选择和回滚机制。AgentDock 通过 `bundled-skills.json` 标记当前由发行包随附管理的 Skill；`skill_package list`、`skill_package inspect` 和 `agentdock_context` 会显示 `bundled` 状态。
+它们与用户后来安装的 Skill 使用同一个 Skill Store、版本选择和回滚机制。AgentDock 通过 `bundled-skills.json` 标记当前由发行包随附管理的 Skill，`agentdock_context` 会在已安装 Skill 索引中显示对应的 `bundled` 状态。
 
 `desktop` 以及需要账号、系统权限或第三方服务配置的 Skill 不会自动安装。
 
