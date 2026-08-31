@@ -52,7 +52,7 @@ const sidebars: SidebarsConfig = {
         title: 'NexusDock',
         description: 'Connect multiple AgentDock devices and share Recall and Workflow data.',
       },
-      items: ['concepts/nexusdock', 'concepts/recalldock'],
+      items: ['concepts/nexusdock', 'operations/nexusdock', 'concepts/recalldock'],
     },
     {
       type: 'category',
