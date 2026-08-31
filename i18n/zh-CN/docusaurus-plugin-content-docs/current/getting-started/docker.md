@@ -1,8 +1,8 @@
 # Docker 安装
 
-适合已经安装 Docker，或希望把 AgentDock 与宿主系统隔离运行的用户。不需要下载源码或执行 `docker build`。
+使用官方预构建镜像在隔离容器中运行 AgentDock。
 
-需要控制 macOS 桌面时不要使用 Docker，请改用 [macOS 安装](./macos.md)。
+Docker 无法控制 macOS 桌面；需要桌面自动化时请改用 [macOS 安装](./macos.md)。
 
 ## 1. 确认 Docker 可用
 

@@ -5,13 +5,13 @@ slug: /intro
 
 # AgentDock
 
-AgentDock lets MCP-compatible AI clients read files, run commands, operate Git, enable browser automation, and connect external services on your computers and servers.
+AgentDock lets MCP-compatible AI clients read files, run commands, operate Git, use browser automation, and connect external services on your computers and servers.
 
-It does not decide the permission boundary for you. What AgentDock can access depends on the operating-system user that runs it, the directories mounted into Docker, and the capabilities you enable.
+Access is limited by the operating-system user, Docker mounts, and the capabilities you enable.
 
 ## First use
 
-Open [Install AgentDock](./getting-started/install.md) and choose the native installer for your current system. Choose Docker when it is already part of your environment or when you need runtime isolation.
+Choose the installation guide for your current environment:
 
 | Current environment | Recommended guide |
 | --- | --- |
@@ -20,23 +20,22 @@ Open [Install AgentDock](./getting-started/install.md) and choose the native ins
 | Linux server or desktop | [Linux installation](./getting-started/linux.md) |
 | Docker already installed | [Docker installation](./getting-started/docker.md) |
 
-After installation, add the MCP URL and token shown in the guide to your client. You do not need to understand the complete configuration, systemd, WSL, container volumes, or reverse proxies before your first connection.
+After installation, add the MCP URL and token shown in the guide to your client using **Streamable HTTP**.
 
 ## What can it do?
 
-After connecting, describe a goal directly, for example:
+Describe the goal directly, for example:
 
 - “Find out why this project fails to start, fix it, and verify the result.”
 - “Read this repository, change the code, and commit it.”
 - “Open a website, complete a lookup, and save the result as a file.”
-- “Install and use a Skill.”
-- “Connect an external MCP service.”
+- “Install and use a Skill or connect an external MCP service.”
 - “Use the browser, desktop automation, or a coding tool such as Codex, Claude, or Grok.”
 - “Break this long task into steps and keep its progress updated.”
 
-The agent selects file, command, browser, Skill, or external MCP tools based on the task. Git work uses the local Git CLI through command execution or a Git service exposed through dynamic MCP. Regular users rarely need to call individual tools manually.
+The agent selects the appropriate tools based on your request.
 
-If you mainly want web ChatGPT to operate your Windows PC, follow [Connect ChatGPT to AgentDock](./guides/chatgpt.md) after installing with a public address.
+If you want web ChatGPT to operate your computer, follow [Connect ChatGPT to AgentDock](./guides/chatgpt.md) after installing with a public address.
 
 ## Where data is stored
 
@@ -47,7 +46,7 @@ A native installation uses these defaults:
 ~/AgentDock    Default working directory
 ```
 
-Docker stores both categories in Docker volumes by default. Removing the program or container does not necessarily remove its data; confirm what must be preserved before running cleanup commands.
+Docker stores both categories in Docker volumes by default. Removing the program or container does not necessarily remove its data; confirm what must be preserved before cleanup.
 
 ## Common entry points
 
@@ -61,5 +60,3 @@ Docker stores both categories in Docker volumes by default. Removing the program
 - [Use NexusDock for multiple AgentDock devices](./concepts/nexusdock.md)
 - [Complete configuration reference](./reference/configuration.md)
 - [Troubleshooting](./operations/troubleshooting.md)
-
-Open “Advanced operations” only when you need reverse-proxy changes, system services, container mounts, or the complete environment-variable reference.

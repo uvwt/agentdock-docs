@@ -1,16 +1,16 @@
 # Advanced macOS configuration
 
-Regular users should install and manage AgentDock through the [macOS graphical app](../getting-started/macos.md). This page is for command-line installation, fixed versions, custom directories, managed files, service inspection, and removal.
+Standard installations should use the [macOS graphical application](../getting-started/macos.md). This page covers command-line installation, specific versions, custom directories, file management, service administration, and uninstallation.
 
-## Use the graphical app first
+## Graphical app settings
 
-The main window already provides status, connection addresses, credentials, start, stop, restart, core updates, and log access. **Advanced Settings** manages the port, log level, Nexus connection, browser tools, and two independent login-startup switches.
+The main window provides status, connection URLs, credentials, start, stop, restart, core updates, and log access. **Advanced Settings** manages ports, log levels, NexusDock integration, browser tools, and independent launch-at-login toggles.
 
-Do not edit `agentdock.env` or LaunchAgent files for settings that the app already exposes. The app validates changes, writes the configuration atomically with private permissions, restarts AgentDock, and restores the previous configuration when the new one does not pass its health check.
+When using the graphical app, avoid editing `agentdock.env` or LaunchAgents manually. The application validates inputs, writes configurations atomically with private permissions, restarts services, and performs health checks.
 
 ## Command-line installation
 
-The command-line installer remains available for automation and custom layouts:
+For automation or custom directories, use the command-line installer:
 
 ```bash
 curl -fL https://github.com/uvwt/agentdock/releases/latest/download/install.sh \
@@ -18,7 +18,7 @@ curl -fL https://github.com/uvwt/agentdock/releases/latest/download/install.sh \
 sh /tmp/agentdock-install.sh --register-service
 ```
 
-## Add AgentDock to PATH
+## Adding AgentDock to PATH
 
 The installer places the binary in `~/.local/bin` by default. To run `agentdock` directly:
 
@@ -33,50 +33,50 @@ Then run:
 agentdock
 ```
 
-## Install a specific version
+## Installing a specific version
 
 ```bash
 sh /tmp/agentdock-install.sh --register-service --version vX.Y.Z
 ```
 
-## Change the installation directory
+## Changing installation directory
 
 ```bash
 sh /tmp/agentdock-install.sh --register-service --install-dir "$HOME/bin"
 ```
 
-After changing the directory, add it to `PATH` or always use the full binary path.
+Ensure the custom directory is added to PATH or use absolute paths.
 
-## Run in the background
+## Background service
 
-The graphical app installs a current-user LaunchAgent automatically. In **Advanced Settings**, **Start AgentDock service after login** controls the core service, while **Show AgentDock in the menu bar after login** controls only the menu bar app. Disabling one does not silently change the other.
+The graphical app installs a LaunchAgent for the current user. In Advanced Settings, "Start AgentDock service at login" manages the core service, while "Show AgentDock menu bar at login" manages the menu bar application.
 
-For a manual setup, use a LaunchAgent for the current logged-in user. When the Desktop Skill is involved, AgentDock must run in the logged-in user session and cannot use a system-level LaunchDaemon.
+For manual configuration, use a LaunchAgent under the current login user. For desktop automation (Desktop Skill), AgentDock must run in the login user session, not as a system-wide LaunchDaemon.
 
-Keep these values stable:
+Recommended defaults:
 
 ```text
-Program path     $HOME/.local/bin/agentdock
-Working directory $HOME/AgentDock
-State directory   $HOME/.agentdock
-Listen address    127.0.0.1:8765
+Binary path    $HOME/.local/bin/agentdock
+Working dir    $HOME/AgentDock
+State dir      $HOME/.agentdock
+Listen addr    127.0.0.1:8765
 ```
 
-Do not place tokens, OAuth secrets, or third-party credentials directly in a public startup configuration. Reload the LaunchAgent after modifying it, then run a health check:
+After modifying the LaunchAgent, reload with `launchctl` and run a health check:
 
 ```bash
 curl -fsS http://127.0.0.1:8765/healthz
 ```
 
-## Manage Cloudflare Tunnel
+## Managing Cloudflare Tunnel
 
-Regular users should switch between local-only, temporary public access, and a fixed domain in the graphical app. A fixed domain can reuse the existing Tunnel Token, so changing unrelated settings does not require pasting it again.
+In the graphical app, switch between Local only, Temporary public, and Fixed domain. Fixed domain reuses the existing Tunnel Token.
 
-The command-line installer with `--register-service` and no explicit Tunnel override asks whether a Cloudflare-managed domain is available. Internally, a domain selects a Named Tunnel and no domain selects a temporary Quick Tunnel. Automation may pass `--tunnel quick`, `--tunnel named`, or `--tunnel none` directly.
+When using `--register-service` without explicitly setting a tunnel type, the command-line installer asks if you have a Cloudflare-managed domain. Under the hood, having a domain maps to a Named Tunnel, while having none maps to a temporary Quick Tunnel. Scripts can pass `--tunnel quick`, `--tunnel named`, or `--tunnel none`.
 
-For either public mode, the installer automatically creates or reuses a Bearer Token, OAuth login password, and OAuth signing secret. A temporary installation first starts AgentDock with Bearer authentication, obtains the generated `trycloudflare.com` URL, writes it to `AGENTDOCK_SERVER_URL`, enables OAuth, and restarts AgentDock. The completion panel displays the public URL, MCP URL, Bearer Token, and OAuth login password; the signing secret remains private.
+Both public modes automatically create or reuse Bearer Tokens, OAuth passwords, and OAuth signing keys. Temporary setups start AgentDock with Bearer authentication first, write the generated trycloudflare.com address to `AGENTDOCK_SERVER_URL`, enable OAuth, and restart AgentDock. The completion dialog shows the public address, MCP URL, Bearer Token, and OAuth password; signing keys remain private.
 
-The installer registers AgentDock and `cloudflared` as separate user LaunchAgents. Only `cloudflared` reads the Named Tunnel Token. Managed files:
+The installer registers AgentDock and `cloudflared` as two separate user-level LaunchAgents. Management files:
 
 ```text
 ~/Library/Application Support/AgentDock/agentdock.env
@@ -87,20 +87,20 @@ The installer registers AgentDock and `cloudflared` as separate user LaunchAgent
 ~/Library/Logs/AgentDock/cloudflared.err.log
 ```
 
-`agentdock.env` and `cloudflared.env` use mode `0600`. The AgentDock LaunchAgent does not load the Tunnel Token, and the token is not placed in `ProgramArguments`.
+`agentdock.env` and `cloudflared.env` have `0600` permissions.
 
-Inspect the service and logs:
+View service status and logs:
 
 ```bash
 launchctl print "gui/$(id -u)/com.uvwt.agentdock.cloudflared"
 tail -f "$HOME/Library/Logs/AgentDock/cloudflared.err.log"
 ```
 
-When a temporary URL changes, rerun the same installer command. It preserves the Bearer Token, OAuth password, and signing secret, writes the new URL, and restarts AgentDock. Update the MCP URL in the client and authorize OAuth again. A fixed installation reuses the existing public origin and Tunnel Token on later runs.
+If the temporary URL changes, rerun the installation command. The installer preserves Bearer Tokens, OAuth passwords, and signing keys, updates the URL, and restarts AgentDock. Update the MCP URL in your client and re-authorize OAuth.
 
 ## Browser automation
 
-When browser tools are enabled, the macOS app verifies that Google Chrome, Chromium, or Microsoft Edge is installed. Install and update the browser through its normal macOS distribution channel.
+When enabling browser tools, the macOS graphical app checks that Google Chrome, Chromium, or Microsoft Edge is installed. Install and update browsers normally.
 
 ## Directories and permissions
 
@@ -109,34 +109,34 @@ When browser tools are enabled, the macOS app verifies that Google Chrome, Chrom
 ~/AgentDock   Default working directory
 ```
 
-A native process can access whatever the current macOS user can access. Do not grant the AgentDock runtime user unnecessary directory permissions.
+Processes access files according to the macOS user's permissions. Do not grant unnecessary directory permissions.
 
 ## Desktop Skill permissions
 
-Before using screen, keyboard, and mouse automation, open **System Settings > Privacy & Security** and grant these permissions to the terminal or application that actually hosts AgentDock:
+Before using screen, keyboard, and mouse automation, grant permissions in **System Settings > Privacy & Security** to the terminal or application hosting AgentDock:
 
 - Accessibility
 - Screen & System Audio Recording
 
-Grant permissions only to the process that runs AgentDock. macOS may request authorization again after the host terminal, application path, or code signature changes.
+Grant permissions only to the application actually running AgentDock. macOS may require re-authorization when updating terminal or application paths.
 
-See [macOS desktop automation](../guides/desktop-automation.md) for the complete procedure.
+For full instructions, see [macOS desktop automation](../guides/desktop-automation.md).
 
 ## Updates and backups
 
-Rerun the installer to upgrade. Previous binaries are backed up under:
+Rerun the install script to upgrade. Old binaries are backed up to:
 
 ```text
 ~/.agentdock/backups/bin
 ```
 
-Runtime data and the default working directory are not deleted.
+Runtime data and default working directories are preserved.
 
-## Remove AgentDock
+## Uninstalling AgentDock
 
-Before removing the app, open Advanced Settings, disable **Show AgentDock in the menu bar after login**, apply the change, and quit AgentDock.
+Before removing the application, disable "Show AgentDock menu bar at login" in Advanced Settings, apply changes, and quit AgentDock.
 
-Download and run the official uninstaller:
+Download and run the official uninstallation script:
 
 ```bash
 curl -fL https://github.com/uvwt/agentdock/releases/latest/download/uninstall-macos.sh \
@@ -144,8 +144,8 @@ curl -fL https://github.com/uvwt/agentdock/releases/latest/download/uninstall-ma
 zsh /tmp/uninstall-agentdock.sh
 ```
 
-The default command removes the background services, support files, and logs while preserving the binary, `~/.agentdock`, and `~/AgentDock`.
+The default command removes background services, support files, and logs, while preserving binaries, `~/.agentdock`, and `~/AgentDock`.
 
-Use `--remove-binary` to remove the installed binaries too. Use `--purge-data` only when you intentionally want to delete the binary, all AgentDock state, installed browser support, and the default working directory.
+Use `--remove-binary` to remove the installed binary. Use `--purge-data` only when explicitly intending to remove binaries, all AgentDock state, browser profiles, and default working directories.
 
-Finally, move `AgentDock.app` from Applications to the Trash.
+Finally, move `AgentDock.app` in Applications to the Trash.

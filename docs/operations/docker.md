@@ -1,6 +1,6 @@
 # Advanced Docker configuration
 
-Regular users only need the [Docker installation](../getting-started/docker.md) for their first setup. This page covers custom ports, other images, host-directory mounts, upgrades, and old-data migration.
+This page covers image variants, Cloudflare Tunnel, custom ports, host-directory mounts, upgrades, and old-data migration.
 
 AgentDock uses a single `docker-compose.yml`. Optional capabilities (browser image, Cloudflare Tunnel) are enabled with environment variables and Compose profiles—no extra Compose overlay files.
 
@@ -62,9 +62,7 @@ The URL in the log is temporary and changes after restart. Append `/mcp` and kee
 
 ### Named Tunnel
 
-If you are setting up the domain and Tunnel for the first time, follow [Configure a fixed domain](../guides/fixed-domain.md) first.
-
-Create a Cloudflare Named Tunnel and Public Hostname. Add these values to the existing deployment `.env` without overwriting the current AgentDock token:
+Complete [Configure a fixed domain](../guides/fixed-domain.md) first. Then add the resulting public origin and Tunnel Token to the existing deployment `.env` without overwriting the current AgentDock token:
 
 ```dotenv
 AGENTDOCK_SERVER_URL=https://agent.example.com
@@ -78,7 +76,7 @@ chmod 600 .env
 docker compose --profile cloudflare-named up -d
 ```
 
-Set the Cloudflare Public Hostname service to `http://agentdock:8765`. Compose passes `TUNNEL_TOKEN` only to the `cloudflared-named` container; the AgentDock container receives `AGENTDOCK_SERVER_URL` and its own authentication token, but not the Tunnel Token. The token is provided through the container environment and does not appear in the `cloudflared` command arguments.
+Use the Docker service URL from the fixed-domain guide. Compose passes `TUNNEL_TOKEN` only to the `cloudflared-named` container; the AgentDock container receives `AGENTDOCK_SERVER_URL` and its own authentication token, but not the Tunnel Token. The token is provided through the container environment and does not appear in the `cloudflared` command arguments.
 
 Use only one Tunnel profile at a time. To stop the deployment and remove the Tunnel container while preserving AgentDock data:
 

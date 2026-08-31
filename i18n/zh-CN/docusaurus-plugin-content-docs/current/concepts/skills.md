@@ -2,7 +2,6 @@
 
 Skill 是一份给 Agent 阅读的工作说明，里面写明什么时候使用、要遵守什么步骤、需要哪些依赖，以及哪些操作必须谨慎确认。
 
-它不是单独运行的插件。真正的文件修改、命令执行、浏览器操作和外部请求仍由 AgentDock 工具完成。
 
 ## 官方核心 Skill
 
@@ -12,11 +11,11 @@ AgentDock 原生安装包和 Docker 镜像会自动安装并激活以下官方�
 - `skill-installation`
 - `skill-vetter-runtime`
 
-它们与用户后来安装的 Skill 使用同一个 Skill Store、版本选择和回滚机制。AgentDock 通过 `bundled-skills.json` 标记当前由发行包随附管理的 Skill，`agentdock_context` 会在已安装 Skill 索引中显示对应的 `bundled` 状态。
+它们与其他已安装 Skill 使用相同的版本选择和回滚机制。
 
 `desktop` 以及需要账号、系统权限或第三方服务配置的 Skill 不会自动安装。
 
-## 普通用户如何使用
+## 使用 Skill
 
 直接告诉 Agent 你的目标即可，例如：
 
@@ -33,8 +32,6 @@ Agent 通常会：
 3. 检查需要的命令、账号或环境变量。
 4. 使用真实工具执行任务。
 5. 对有副作用的操作进行确认和验证。
-
-普通用户不需要手工打开 Skill 安装目录，也不要自己拼接版本路径。
 
 ## 安装 Skill
 

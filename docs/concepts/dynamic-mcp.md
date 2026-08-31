@@ -2,7 +2,6 @@
 
 Dynamic MCP lets AgentDock connect to other MCP servers without restarting or rebuilding. Examples include design platforms, task systems, search services, and local analysis tools.
 
-Regular users only need the service URL or launch command and any credentials required by that service. The agent handles registration, inspection, and verification.
 
 ## Simplest usage
 
@@ -13,13 +12,7 @@ Connect this MCP server: https://mcp.example.com/mcp
 Use example as its name, store the authentication token in its isolated environment, and verify that its tools can be listed.
 ```
 
-The agent will usually:
-
-1. Confirm the source and transport.
-2. Register the MCP server.
-3. Save the token in that MCP server's isolated environment.
-4. Refresh the connection.
-5. Find one tool and complete a read-only verification call.
+The agent registers the server, stores credentials in its isolated environment, refreshes the connection, and verifies it with a read-only call.
 
 ## Two transport options
 
@@ -48,7 +41,7 @@ A local MCP server inherits the operating-system permissions of the AgentDock pr
 
 Do not place tokens, cookies, passwords, or OAuth codes directly in chat history, a README, or MCP registry data.
 
-Ask the agent to store secrets with `mcp_manage env_set`. `env_list` shows only variable names and whether they are configured; it never returns the actual values.
+Ask the agent to store secrets in the MCP server's isolated environment. Configuration listings show variable names and status, not secret values.
 
 Refresh the MCP connection after updating credentials.
 

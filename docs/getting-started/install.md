@@ -1,6 +1,6 @@
 # Install AgentDock
 
-Regular users can install AgentDock from the official package for their operating system. You do not need the source code or Go.
+Choose your platform to install AgentDock from official packages.
 
 | Your environment | Recommended option |
 | --- | --- |
@@ -9,9 +9,9 @@ Regular users can install AgentDock from the official package for their operatin
 | Linux server or desktop | [Automated Linux installation](./linux.md) |
 | Docker already installed | [Docker installation](./docker.md) |
 
-For your own Windows PC or Mac, prefer the graphical installer. Choose Docker when it is already part of your environment or when you specifically need container isolation.
+For your own Windows PC or Mac, prefer the graphical installer. Choose Docker when it is already part of your environment or when you need container isolation.
 
-## Choose who can connect
+## Connection options
 
 The Windows and macOS installers offer three connection options:
 
@@ -21,7 +21,7 @@ The Windows and macOS installers offer three connection options:
 | Temporary public address | ChatGPT, a phone, or another remote device; no domain is ready | Internet access |
 | Fixed domain | A stable address for long-term use | A Cloudflare-managed domain and Tunnel Token |
 
-Choose a connection option based on where the MCP client runs, whether public access is needed, and whether you already have a fixed domain. You can switch modes later from the control panel.
+Choose an option based on where your MCP client runs, whether public access is needed, and whether you already have a fixed domain. You can switch modes later in the control panel.
 
 :::warning
 Public access must use a Bearer Token or OAuth. Do not include connection credentials in screenshots, issues, or public conversations.

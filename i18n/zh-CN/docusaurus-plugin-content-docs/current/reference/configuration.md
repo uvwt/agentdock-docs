@@ -3,10 +3,10 @@
 AgentDock 当前不读取统一的 YAML、JSON 或 TOML 配置文件。运行配置通过环境变量提供，部分常用项还可以使用 CLI 参数覆盖。
 
 :::tip
-**大多数用户不需要从本页开始。** 按 Docker、Linux、Windows 或 macOS 安装指南启动后，只需使用指南给出的 MCP 地址和 Token。遇到端口冲突、远程访问、浏览器、NexusDock 或高级部署需求时，再查对应配置。
+首次安装请使用对应平台的安装指南。本页集中说明端口、远程访问、认证、浏览器、NexusDock 和高级部署配置。
 :::
 
-## 普通用户通常只需要这些配置
+## 常用配置
 
 | 场景 | 需要处理的内容 |
 | --- | --- |
@@ -238,7 +238,7 @@ AgentDock 支持 Chrome、Chromium 和 Microsoft Edge。自动检测不适用时
 | `AGENTDOCK_BROWSER_ENABLED` | `false` | 暴露 `browser_session`、`browser_act` 和 `browser_snapshot` |
 | `AGENTDOCK_BROWSER_EXECUTABLE_PATH` | 空 | 自动检测不合适时，可指定浏览器可执行文件绝对路径 |
 
-macOS 和 Windows 图形应用会在启用前检测已经安装的受支持浏览器。Docker browser 镜像直接包含 Chromium，并自动配置可执行文件路径。普通用户使用方式见 [浏览器自动化](../guides/browser-control.md)。
+macOS 和 Windows 图形应用会在启用前检测已经安装的受支持浏览器。Docker browser 镜像直接包含 Chromium，并自动配置可执行文件路径。使用方式见 [浏览器自动化](../guides/browser-control.md)。
 
 ## Skill 与动态 MCP 的独立环境
 

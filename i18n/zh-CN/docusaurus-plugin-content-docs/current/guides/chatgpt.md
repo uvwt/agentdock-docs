@@ -1,29 +1,27 @@
 # 使用 ChatGPT 连接 AgentDock
 
-ChatGPT 可以通过自定义 MCP 插件驱动 AgentDock。连接成功后，网页版 ChatGPT 就能在 AgentDock 所在的电脑上读写文件、执行命令、使用 Skill、接入外部 MCP、控制浏览器，以及通过 AgentDock 调用 Codex、Claude、Grok 等编码工具。
+通过网页版 ChatGPT 操作电脑上的文件、执行命令、管理 Git、使用浏览器自动化，或调用本机编码工具。
 
-大多数人最快的路径是桌面安装程序：开启公网地址，从控制面板复制 MCP 地址和 OAuth 密码，再在 ChatGPT 中创建插件。不需要手动创建 Client ID 或 Client Secret。
+网页版 ChatGPT 连接 AgentDock 需要：
 
-AgentDock 当前支持 OAuth 2.0 Authorization Code、PKCE S256、动态客户端注册和 Refresh Token。
+1. AgentDock 拥有 ChatGPT 可访问的公网 HTTPS 地址。
+2. AgentDock 开启 OAuth 认证。
+3. 在 ChatGPT 中使用公网 MCP 地址与 OAuth 密码完成连接。
 
-## Windows 快速上手
+Windows 和 macOS 图形安装程序已自动集成 Cloudflare Tunnel 与 OAuth 配置。
 
-这一路径使用 Windows 图形安装程序。macOS 应用的思路相同：开启公网地址，复制公网 MCP 地址和 OAuth 密码，再创建 ChatGPT 插件。
+## 快速上手（Windows / macOS 图形应用）
 
-### 1. 安装 AgentDock
+请先根据 [Windows 安装](../getting-started/windows.md) 或 [macOS 安装](../getting-started/macos.md) 指引完成 AgentDock 安装。
 
-1. 打开 [AgentDock 最新版本](https://github.com/uvwt/agentdock/releases/latest)。
-2. 根据电脑类型下载 Windows 安装包：
-   - 大多数 Intel 或 AMD 电脑：`AgentDockSetup-amd64.exe`
-   - Windows ARM 电脑：`AgentDockSetup-arm64.exe`
-3. 运行安装程序，并按界面提示继续。
-4. 选择连接方式时：
-   - 还没有域名、想先连通时，选择 **临时公网地址**。
-   - 有自己的域名、希望长期稳定使用时，建议选择 **使用自己的 Cloudflare 域名**。
+### 1. 选择公网连接方式
+
+在安装或配置 AgentDock 时选择连接方式：
+
+- 还没有域名、想先连通测试时，选择 **临时公网地址**。
+- 有自己的域名、希望长期稳定使用时，建议选择 **使用自己的 Cloudflare 域名**。
 
 ![安装时选择临时公网地址或固定 Cloudflare 域名](/img/guides/chatgpt/01-install-connection-option.png)
-
-完整安装说明见 [Windows 安装](../getting-started/windows.md)。macOS 用户可参考 [macOS 安装](../getting-started/macos.md)。
 
 :::tip
 教学和第一次连接时，临时 `trycloudflare.com` 地址就够用。临时地址可能在 Windows 或 Tunnel 重启后变化；变化后请从控制面板复制新的公网地址，并更新 ChatGPT 插件中的旧地址。
@@ -93,58 +91,18 @@ ChatGPT 会自动发现 AgentDock 的 OAuth 元数据、注册客户端，并通
 
 连通之后，你就可以让 ChatGPT 安装 Skill、接入外部 MCP、控制浏览器，或通过 AgentDock 驱动本机上的编码工具。
 
-## 远程或手动部署的前提
+## 服务器与手动部署
 
-如果你是在服务器、Docker 主机或反向代理后自行部署 AgentDock，请先确认：
+在 Linux VPS、服务器、Docker 容器或反向代理后手动部署 AgentDock 时，请确认以下前置条件：
 
-- AgentDock 已部署在 ChatGPT 能访问的公网地址。
-- 公网入口使用有效的 HTTPS 证书。
-- MCP 地址以 `/mcp` 结尾，例如 `https://agentdock.example.com/mcp`。
-- 反向代理会原样转发 `/mcp`、`/register`、`/oauth/*` 和 `/.well-known/*`。
+1. **公网 HTTPS 访问**：AgentDock 必须部署在 ChatGPT 可访问的公网地址，且公网入口配置有效 HTTPS 证书。
+2. **MCP 地址格式**：MCP 地址必须以 `/mcp` 结尾（例如 `https://agentdock.example.com/mcp`）。
+3. **启用 OAuth**：需配置 `AGENTDOCK_OAUTH_ENABLED=true`、`AGENTDOCK_SERVER_URL`、`AGENTDOCK_OAUTH_PASSWORD` 与 `AGENTDOCK_OAUTH_TOKEN_SECRET`。完整环境变量字典与密钥生成说明见 [OAuth 配置](../reference/configuration.md#oauth-配置)。
+4. **代理路由转发**：反向代理需原样转发 `/mcp`、`/register`、`/oauth/*` 和 `/.well-known/*`。
 
-桌面安装程序在选择临时或固定公网地址后，已经满足第一次连接所需条件。
+修改环境变量配置后重启 AgentDock（例如 `sudo systemctl restart agentdock` 或 `docker compose up -d`）。
 
-## 手动启用 OAuth
-
-当你不通过桌面安装程序运行 AgentDock，或需要自己设置 OAuth 环境变量时，使用本节。
-
-在 AgentDock 的环境文件、Docker Compose `environment` 或服务启动环境中加入：
-
-```bash
-AGENTDOCK_OAUTH_ENABLED=true
-AGENTDOCK_SERVER_URL=https://agentdock.example.com
-AGENTDOCK_OAUTH_PASSWORD=<用于连接授权的密码>
-AGENTDOCK_OAUTH_TOKEN_SECRET=<至少-32-字节的随机签名密钥>
-```
-
-可以使用 OpenSSL 生成随机值：
-
-```bash
-openssl rand -base64 24   # 可用作授权密码
-openssl rand -hex 32      # 可用作 Token 签名密钥
-```
-
-配置要求：
-
-- `AGENTDOCK_SERVER_URL` 只填写 Origin，不包含 `/mcp`、其他路径、查询参数或 Fragment。
-- 公网地址必须使用 `https://`。
-- `AGENTDOCK_OAUTH_PASSWORD` 至少 12 个字符。
-- `AGENTDOCK_OAUTH_TOKEN_SECRET` 至少 32 字节，并且应长期稳定保存；不要在每次重启时重新生成。
-
-只使用 OAuth 时可以不配置 `AGENTDOCK_AUTH_TOKEN`。两种认证也可以同时启用，以兼容不同 MCP 客户端。
-
-修改配置后重启 AgentDock。例如 systemd 部署：
-
-```bash
-sudo systemctl restart agentdock
-sudo systemctl status agentdock --no-pager
-```
-
-Docker Compose 部署：
-
-```bash
-docker compose up -d
-```
+完整的 VPS 部署流程见 [Linux 手动部署](../getting-started/vps.md)。
 
 ## 验证 OAuth 入口
 
@@ -201,4 +159,4 @@ OAuth 授权成功时，`POST /oauth/authorize` 会返回 `302` 跳转到 ChatGP
 - 反向代理不要记录 Authorization Header、OAuth Code 或请求正文。
 - AgentDock 会以其运行用户或容器权限操作真实资源，只授予完成任务所需的目录和命令权限。
 
-完整环境变量说明见 [配置](../reference/configuration.md#oauth-配置)，不使用桌面安装程序时的公网部署见 [Linux 手动部署](../getting-started/vps.md)。
+完整环境变量说明见 [配置参考](../reference/configuration.md#oauth-配置)，不使用桌面安装程序时的公网部署见 [Linux 手动部署](../getting-started/vps.md)。

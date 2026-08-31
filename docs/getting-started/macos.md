@@ -1,134 +1,129 @@
 # Install AgentDock on macOS
 
-The graphical macOS app is recommended for regular users. You do not need Terminal, Go, Git, or the source code.
+Install and manage AgentDock using the official macOS graphical application.
 
-The same package supports both Apple Silicon and Intel Macs.
+A single universal installer supports both Apple Silicon and Intel Macs.
 
-## Before you begin
+## Prerequisites
 
-- Use macOS 13 or later.
+- macOS 13 or later.
 - Download AgentDock only from the official [GitHub Releases page](https://github.com/uvwt/agentdock/releases/latest).
-- A fixed public address requires a Cloudflare-managed domain and its Tunnel Token. Without those, start with a temporary public address.
-- Install Google Chrome, Chromium, or Microsoft Edge before enabling browser automation.
+- A fixed public address requires a Cloudflare-managed domain and Tunnel Token. If you do not have these yet, choose a temporary public address.
+- For browser automation, install Google Chrome, Chromium, or Microsoft Edge first.
 
-## 1. Download and install the app
+## 1. Download and install
 
-1. Open the [latest AgentDock release](https://github.com/uvwt/agentdock/releases/latest).
+1. Open [AgentDock Latest Release](https://github.com/uvwt/agentdock/releases/latest).
 2. Download `AgentDock-macos-universal.dmg`.
 3. Double-click the DMG.
 4. Drag `AgentDock.app` to **Applications**.
-5. Eject the disk image after copying finishes.
+5. Eject the disk image once copied.
 
-Apple Silicon and Intel Macs use the same DMG. You do not need to identify the processor or download a ZIP package.
+Apple Silicon and Intel Macs use the same DMG.
 
-## 2. Open it for the first time
+## 2. First launch
 
-The current version is not notarized by Apple, so the first launch needs one manual confirmation:
+The current release is not yet notarized by Apple, requiring a one-time manual confirmation on first launch:
 
 1. Open **Applications** in Finder.
-2. Right-click `AgentDock.app` and choose **Open**.
-3. Click **Open** again in the confirmation dialog.
+2. Right-click `AgentDock.app` and select **Open**.
+3. Click **Open** again in the confirmation prompt.
 
-Do not disable Gatekeeper or change system-wide security settings. After the first successful launch, you can open AgentDock normally.
+Do not disable Gatekeeper or alter global system security settings. After opening successfully once, you can launch normally.
 
-AgentDock appears in the menu bar. Click its icon and choose **Install AgentDock** or **Open AgentDock** to show the main window.
+AgentDock runs in the menu bar. Click the menu bar icon and choose **Install AgentDock** or **Open AgentDock** to open the main window.
 
-## 3. Choose a connection option
+## 3. Choose connection option
 
-### Only this Mac
+### Local only
 
-Choose **Only this Mac** when the MCP client runs on the same Mac. This mode does not require a domain or Cloudflare account.
+Select when the MCP client runs on the same Mac. No domain or Cloudflare account required.
 
 ### Temporary public address
 
-Choose **Temporary address** when ChatGPT, a phone, or another remote device needs to connect and you do not have a domain ready. AgentDock creates a public HTTPS address automatically.
+Select when connecting from ChatGPT, a phone, or another remote device without a custom domain. AgentDock generates an HTTPS public address automatically.
 
-The address may change after the Mac or Tunnel restarts. When it changes, copy the new address from the control panel and replace the old address in the client.
+This address may change when the Mac or tunnel restarts. When changed, copy the new address from the control panel and update your client.
 
 ### Fixed domain
 
-Choose **Fixed domain** for a stable, long-term address and enter:
+For a permanent address, first complete the [fixed domain setup guide](../guides/fixed-domain.md). Then select **Fixed domain** and enter the HTTPS public origin and Tunnel Token from that setup. Do not append `/mcp` to the public origin.
 
-- The HTTPS public origin, for example `https://mini.example.com`
-- The matching Cloudflare Tunnel Token
+Click **Install and Start**, keeping the window open until the status shows "Healthy". You can switch connection modes later directly from the control panel without rerunning the installer.
 
-Enter only the origin. Do not add `/mcp`. For the full Cloudflare setup and address mapping, see [Configure a fixed domain](../guides/fixed-domain.md).
+## 4. Connect MCP client
 
-Click **Install and Start** and keep the window open until the status reports that AgentDock is running normally. After installation, you can change the public access mode from the control panel without rerunning the installer.
-
-## 4. Connect an MCP client
-
-After installation, the main window shows:
+After setup, the main window displays:
 
 - Service status and version
 - Local MCP URL
-- Public MCP URL, when public access is enabled
+- Public MCP URL (when public access is enabled)
 - Bearer Token
-- OAuth sign-in password, when public access is enabled
+- OAuth password (when public access is enabled)
 
-Credentials are masked by default. Select **Show** only when needed. Long URLs and credentials can be copied with the **Copy** buttons.
+Credentials are masked by default; click **Show** when needed. Use the **Copy** button for URLs and credentials.
 
-A client on the same Mac uses the local MCP URL. ChatGPT or another remote client uses the public MCP URL. Choose **Streamable HTTP** as the transport.
+Use the local MCP URL when the client is on the same Mac; use the public MCP URL for ChatGPT or other remote clients. Select **Streamable HTTP** as the transport.
 
-Do not include the Bearer Token or OAuth password in screenshots, issues, or public conversations.
+Do not include Bearer Tokens or OAuth passwords in screenshots, issues, or public conversations.
 
-## 5. Daily use
+## 5. Daily usage
 
-Use the AgentDock menu bar icon to:
+Click the AgentDock menu bar icon to:
 
-- Check service status and version
+- View status and version
 - Open the control panel
 - Start, stop, or restart the service
 - Check for updates
-- Open log and configuration folders
+- Open log and configuration directories
 
-The control panel can also test public access, change connection mode, and regenerate a temporary address. While regeneration is in progress, the previous address is hidden until the new one is ready.
+The control panel lets you test public URLs, switch connection modes, and regenerate temporary addresses.
 
-Quitting the menu bar app does not stop the AgentDock service. The menu bar app and core service have separate login-startup settings.
+Quitting the menu bar application does not stop the AgentDock background service. The menu bar application and core service have independent launch-at-login settings.
 
-## Optional: enable browser tools
+## Optional: Enable browser tools
 
-1. Install Google Chrome, Chromium, or Microsoft Edge if none is installed yet.
+1. Install Google Chrome, Chromium, or Microsoft Edge if not already installed.
 2. Open **Advanced Settings**.
-3. Enable **Browser tools**.
-4. Confirm that AgentDock detects a supported browser.
-5. Select **Apply and Restart**.
+3. Check **Enable browser tools**.
+4. Verify that AgentDock detects a supported browser.
+5. Click **Apply and Restart**.
 
-AgentDock uses separate browser sessions and profiles for automation instead of taking over your everyday browser profile.
+AgentDock uses isolated sessions and profiles for browser automation, never taking over your primary browser profile.
 
-See [Browser automation](../guides/browser-control.md) for login profiles and safety boundaries.
+For sessions and security boundaries, see [Browser automation](../guides/browser-control.md).
 
-## Optional: start after login
+## Optional: Launch at login
 
-Advanced Settings provides two independent switches:
+Advanced Settings provides two independent toggles:
 
-- Start the AgentDock service after login
-- Show AgentDock in the menu bar after login
+- Start AgentDock service at login
+- Show AgentDock menu bar at login
 
-Most users should leave both enabled. You can hide the menu bar app while keeping the core service available in the background.
+Both are recommended to stay enabled. You can disable the menu bar while keeping the core service running in the background.
 
 ## Update or repair
 
-Use **Check for Updates** in the main window. Current releases update the AgentDock core, macOS app, and official core Skills as one coordinated update, then restore the managed service and reopen the app when required.
+Click **Check for Updates** in the main window. Updates include AgentDock Core, macOS graphical app, and official core Skills as a complete package, automatically restarting services when needed.
 
-Configuration, Skills, tasks, and the working directory are preserved. If you are upgrading from an older release that predates the integrated desktop updater, install the latest DMG once and continue using in-app updates afterward.
+Existing configuration, Skills, tasks, and working directories are preserved. If upgrading from an older version without the desktop updater, install the latest DMG over the existing app once.
 
-## Common problems
+## Frequently asked questions
 
-### macOS says the developer cannot be verified
+### macOS says developer cannot be verified
 
-Right-click AgentDock in Applications and choose **Open**. Do not double-click it for the first launch.
+Right-click AgentDock in Applications and choose **Open**. Do not double-click on first launch.
 
-### The service shows an error
+### Service status error
 
-Select **Restart**, then open the log folder. The latest error is usually in `agentdock.err.log`.
+Click **Restart**, then check the log directory. Recent errors appear in `agentdock.err.log`.
 
-### The temporary public address changed
+### Temporary public address changed
 
-Copy the new public MCP URL from the control panel, replace the old URL in the client, and authorize OAuth again when prompted. Existing Bearer and OAuth credentials remain unchanged.
+Copy the new public MCP URL from the control panel and update your client; re-authorize OAuth when prompted. Existing Bearer Token and OAuth password remain unchanged.
 
-### Browser tools do not start
+### Browser tools cannot start
 
-Confirm that Google Chrome, Chromium, or Microsoft Edge is installed, then disable and enable browser tools again.
+Verify that Google Chrome, Chromium, or Microsoft Edge is installed, then disable and re-enable browser tools.
 
-For pinned versions, custom installation directories, manual service commands, and removal, see [Advanced macOS configuration](../operations/macos.md). For screen, keyboard, and mouse control, continue with [macOS desktop automation](../guides/desktop-automation.md).
+For custom versions, directories, manual commands, and uninstallation, see [Advanced macOS configuration](../operations/macos.md). For screen, keyboard, and mouse control, see [macOS desktop automation](../guides/desktop-automation.md).

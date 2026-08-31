@@ -3,10 +3,10 @@
 AgentDock does not currently read one unified YAML, JSON, or TOML configuration file. Runtime configuration is supplied through environment variables, and some common values can also be overridden with CLI flags.
 
 :::tip
-**Most users should not start on this page.** Follow the Docker, Linux, Windows, or macOS installation guide, then use the MCP URL and token shown there. Return here only for port conflicts, remote access, browser automation, NexusDock, or advanced deployment requirements.
+Use the platform installation guides for first setup. This page covers ports, remote access, authentication, browser automation, NexusDock, and advanced deployment settings.
 :::
 
-## Configuration most users need
+## Common configuration
 
 | Scenario | What to configure |
 | --- | --- |
@@ -238,7 +238,7 @@ AgentDock supports Chrome, Chromium, and Microsoft Edge. If automatic browser di
 | `AGENTDOCK_BROWSER_ENABLED` | `false` | Expose `browser_session`, `browser_act`, and `browser_snapshot` |
 | `AGENTDOCK_BROWSER_EXECUTABLE_PATH` | empty | Optional absolute browser executable path when automatic discovery is not suitable |
 
-The macOS and Windows apps detect installed supported browsers before enabling the feature. The Docker browser image includes Chromium and configures its executable path automatically. See [Browser automation](../guides/browser-control.md) for the regular-user workflow.
+The macOS and Windows apps detect installed supported browsers before enabling the feature. The Docker browser image includes Chromium and configures its executable path automatically. See [Browser automation](../guides/browser-control.md) for usage details.
 
 ## Isolated environments for Skills and dynamic MCP
 

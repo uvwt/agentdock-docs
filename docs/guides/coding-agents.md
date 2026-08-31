@@ -29,7 +29,7 @@ After reconnecting your MCP client, `agentdock_context` can show that ACP is ena
 
 ## What you can ask for
 
-You do not need to operate ACP tools manually. Ask for the outcome, for example:
+Describe the outcome directly, for example:
 
 ```text
 Use the local Coding Agent on this computer to inspect the repository, fix the failing tests, and verify the change.

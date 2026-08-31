@@ -17,20 +17,9 @@ https://agentdock.example.com/mcp
 使用公网客户端或云端服务时，应先确认：
 
 - AgentDock 已通过公网 HTTPS 域名提供服务。
-- MCP 地址以 `/mcp` 结尾。
-- OAuth 已启用，或者客户端支持通过 Header 发送 Bearer Token。
+- MCP 地址以 `/mcp` 结尾（例如 `https://agentdock.example.com/mcp`）。
+- 认证方式已就绪：远程客户端通常需要 OAuth 浏览器授权或通过 HTTP Header 传入 Bearer Token。具体环境变量配置见 [OAuth 配置](../reference/configuration.md#oauth-配置)。
 - 反向代理会转发 `/mcp`、`/register`、`/oauth/*` 和 `/.well-known/*`。
-
-启用 OAuth 时，AgentDock 至少需要：
-
-```bash
-AGENTDOCK_OAUTH_ENABLED=true
-AGENTDOCK_SERVER_URL=https://agentdock.example.com
-AGENTDOCK_OAUTH_PASSWORD=<至少-12-个字符的授权密码>
-AGENTDOCK_OAUTH_TOKEN_SECRET=<至少-32-字节的随机签名密钥>
-```
-
-`AGENTDOCK_SERVER_URL` 只填写 Origin，不附加 `/mcp`。客户端中填写的地址才是完整的 `https://agentdock.example.com/mcp`。
 
 对于与 AgentDock 运行在同一台电脑上的本地客户端，也可以连接：
 
@@ -39,6 +28,10 @@ http://127.0.0.1:8765/mcp
 ```
 
 云端客户端无法访问你电脑或服务器的 `127.0.0.1`。
+
+:::caution
+不要把真实 Bearer Token 或 OAuth 凭据留在 Shell 历史或会进入版本控制的工作区文件中。优先使用客户端的秘密管理能力或受限环境变量。
+:::
 
 ## Claude Desktop
 
@@ -58,26 +51,9 @@ Claude Desktop 是否支持自定义 MCP，以及可添加的服务器数量，�
 
 ## ChatGPT
 
-ChatGPT 需要当前套餐和工作区支持自定义 MCP 插件；企业工作区还可能需要管理员先开放开发人员模式。
+ChatGPT 通过流式 HTTP MCP 连接 AgentDock，要求使用公网 HTTPS 地址并通过浏览器完成 OAuth 授权。自定义 MCP 插件需要在 ChatGPT 设置中开启开发人员模式。
 
-在 Windows 或 macOS 桌面安装并已开启公网地址时，常见路径是：
-
-1. 从 AgentDock 控制面板复制公网 MCP 地址和 OAuth 密码。
-2. 打开 ChatGPT，进入 **设置 > 插件 > 高级设置**。
-3. 开启 **开发人员模式**。
-4. 在插件页面点击 **➕** / **创建插件**。
-5. 插件名称填写 `AgentDock`。
-6. MCP Server URL 填写公网地址，例如：
-
-   ```text
-   https://agentdock.example.com/mcp
-   ```
-
-7. 创建插件并发起连接。
-8. 浏览器打开 AgentDock 授权页后，确认插件名称与回调域名，再输入 OAuth 密码完成授权。
-9. 返回 ChatGPT，确认 AgentDock 插件已经可用。
-
-完整的 Windows 安装器教程、端点检查和排障步骤见 [使用 ChatGPT 连接 AgentDock](./chatgpt.md)。
+完整图文教程、连接模式与排障说明见 [使用 ChatGPT 连接 AgentDock](./chatgpt.md)。
 
 ## Claude Code
 
@@ -103,8 +79,6 @@ claude mcp add --transport http agentdock https://agentdock.example.com/mcp
 claude mcp add --transport http agentdock https://agentdock.example.com/mcp \
   --header "Authorization: Bearer YOUR_TOKEN_HERE"
 ```
-
-不要把真实 Token 提交到 Shell 历史、脚本或公开仓库。长期使用时，优先通过受限环境变量或客户端秘密管理能力注入。
 
 ## Cursor
 
@@ -139,8 +113,6 @@ claude mcp add --transport http agentdock https://agentdock.example.com/mcp \
   }
 }
 ```
-
-项目级 `.cursor/mcp.json` 可能进入版本控制。不要把真实 Token 直接写入会提交的文件。
 
 ## VS Code
 
@@ -180,8 +152,6 @@ Ctrl+Shift+P / Cmd+Shift+P
   }
 }
 ```
-
-工作区配置可能进入 Git。不要提交真实 Token。
 
 ## Codex
 

@@ -1,6 +1,6 @@
 # Windows 安装
 
-普通用户可以直接使用 Windows 图形安装程序。安装过程不需要 PowerShell、WSL、Go 或源码。
+使用 Windows 图形安装程序安装 AgentDock。
 
 AgentDock 支持 Windows 11 x64 和 ARM64。
 
@@ -28,7 +28,7 @@ AgentDock 支持 Windows 11 x64 和 ARM64。
 - 登录 Windows 后自动启动 AgentDock 和托盘
 - 以管理员权限运行 AgentDock 核心
 
-管理员增强模式只作用于 AgentDock 核心，控制面板和托盘仍按当前用户运行。当前账号无法提权时，可以取消管理员增强模式，AgentDock 会以普通用户模式运行。
+管理员增强模式只作用于 AgentDock 核心，控制面板和托盘仍按当前用户运行。当前账号无法提权时，可以取消管理员增强模式，AgentDock 会以标准用户模式运行。
 
 ## 4. 选择连接方式
 
@@ -44,12 +44,7 @@ MCP 客户端也在这台电脑上时选择。该模式不需要域名或 Cloudf
 
 ### 使用自己的 Cloudflare 域名
 
-适合长期使用稳定地址。需要填写：
-
-- HTTPS 公网地址，例如 `https://mini.example.com`
-- 对应的 Cloudflare Tunnel Token
-
-公网地址只填写域名部分，不要添加 `/mcp`。Cloudflare 侧完整配置和地址对应关系见 [固定域名配置教程](../guides/fixed-domain.md)。
+需要长期使用稳定地址时，先按 [固定域名配置教程](../guides/fixed-domain.md) 完成 Cloudflare 侧设置。然后在 AgentDock 中选择“固定域名”，填写该教程得到的 HTTPS 公网地址和 Tunnel Token。公网地址不要添加 `/mcp`。
 
 安装完成后，可以直接在 AgentDock 控制面板的 **公网访问** 中切换仅本机、临时地址和固定域名；仅修改公网访问方式时不需要重新运行安装器。
 

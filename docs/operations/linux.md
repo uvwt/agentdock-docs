@@ -1,6 +1,6 @@
 # Advanced Linux configuration
 
-Regular users only need the [Linux installation](../getting-started/linux.md) for their first setup. This page covers interactive installation, custom directories and ports, service-manager selection, NexusDock configuration, and binary-only installation.
+This page covers interactive installation, Cloudflare Tunnel, custom directories and ports, service-manager selection, NexusDock configuration, and binary-only installation.
 
 ## Alpine and minimal systems
 
@@ -26,14 +26,14 @@ Keep the `binary` mode for a normal deployment. `source` and `auto` are only for
 
 ## Cloudflare Tunnel
 
-Interactive installation does not expose the internal `none/quick/named` choices. It asks whether a Cloudflare-managed domain is available:
+The installer asks whether you already have a domain managed by Cloudflare:
 
 | User answer | Installer mode | Result |
 | --- | --- | --- |
 | Domain available | Fixed (`named`) | Stable HTTPS hostname for long-running clients and OAuth |
 | No domain | Temporary (`quick`) | Generated `trycloudflare.com` URL for immediate testing |
 
-A fixed installation asks for the HTTPS public origin and Cloudflare Tunnel Token. Create the Named Tunnel and Public Hostname first, then point its Service to the local URL shown by the installer, normally `http://127.0.0.1:8765`.
+For fixed mode, complete [Configure a fixed domain](../guides/fixed-domain.md) first, then enter the resulting HTTPS public origin and Tunnel Token when the installer asks.
 
 A temporary installation starts `cloudflared`, reads the generated URL from the service log, writes it to `AGENTDOCK_SERVER_URL`, enables OAuth, and restarts AgentDock. Both modes generate or reuse these credentials:
 

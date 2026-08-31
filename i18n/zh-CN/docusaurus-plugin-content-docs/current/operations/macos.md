@@ -1,10 +1,10 @@
 # macOS 进阶配置
 
-普通用户应通过 [macOS 图形应用](../getting-started/macos.md)安装和管理 AgentDock。本页用于命令行安装、指定版本、自定义目录、管理文件、服务检查和卸载。
+推荐通过 [macOS 图形应用](../getting-started/macos.md)安装和管理 AgentDock。本页用于命令行安装、指定版本、自定义目录、管理文件、服务检查和卸载。
 
 ## 优先使用图形应用
 
-主窗口已经提供状态、连接地址、凭据、启动、停止、重启、核心更新和日志入口。“高级设置”可以管理端口、日志级别、Nexus、浏览器工具，以及两个互不影响的登录自启开关。
+主窗口已经提供状态、连接地址、凭据、启动、停止、重启、核心更新和日志入口。“高级设置”可以管理端口、日志级别、NexusDock 接入、浏览器工具，以及两个互不影响的登录自启开关。
 
 图形应用已经提供的设置不要再手工编辑 `agentdock.env` 或 LaunchAgent。应用会校验输入、以私有权限原子写入配置、重启并执行健康检查；新配置无法启动时会自动恢复旧配置。
 
@@ -49,7 +49,7 @@ sh /tmp/agentdock-install.sh --register-service --install-dir "$HOME/bin"
 
 ## 后台运行
 
-图形应用会自动安装当前用户的 LaunchAgent。“高级设置”中的“登录后自动启动 AgentDock 服务”控制核心服务，“登录后显示 AgentDock 菜单栏”只控制菜单栏应用；关闭其中一个不会偷偷修改另一个。
+图形应用会自动安装当前用户的 LaunchAgent。“高级设置”中的“登录后自动启动 AgentDock 服务”控制核心服务，“登录后显示 AgentDock 菜单栏”只控制菜单栏应用；关闭其中一个不会修改另一个。
 
 手工配置时，应使用当前登录用户的 LaunchAgent。涉及 Desktop Skill 时，AgentDock 必须运行在登录用户会话中，不能使用系统级 LaunchDaemon。
 
@@ -70,7 +70,7 @@ curl -fsS http://127.0.0.1:8765/healthz
 
 ## 管理 Cloudflare Tunnel
 
-普通用户应在图形应用中切换仅本机、临时公网和固定域名。固定域名会复用已有 Tunnel Token，修改其他设置时不需要再次粘贴。
+在图形应用中可自由切换仅本机、临时公网和固定域名。固定域名会复用已有 Tunnel Token，修改其他设置时不需要再次粘贴。
 
 命令行安装器在使用 `--register-service` 且没有显式指定 Tunnel 时，只询问是否有已接入 Cloudflare 的域名。内部实现中，有域名对应 Named Tunnel，没有域名对应临时 Quick Tunnel。自动化仍可直接传入 `--tunnel quick`、`--tunnel named` 或 `--tunnel none`。
 

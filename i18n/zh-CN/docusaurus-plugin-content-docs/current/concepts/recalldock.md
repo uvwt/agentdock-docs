@@ -2,7 +2,7 @@
 
 NexusDock Recall 是 AgentDock 的可选长期知识服务。它用于保存稳定项目说明、经验、决策和问题记录，让后续任务能够找到可靠上下文。
 
-没有 NexusDock 时，文件、命令、命令行 Git、Skill、动态 MCP 和本地任务仍可正常使用；Recall、Workflow 模板、知识 Evolution 和私密笔记工具不可用。多设备控制中心和统一 MCP 行为见 [NexusDock](./nexusdock.md)。
+没有 NexusDock 时，文件、命令、命令行 Git、Skill、动态 MCP 和本地任务仍可正常使用；Recall、Workflow 模板、知识 Evolution 和私密笔记工具不可用。多设备控制中心和统一 MCP 见 [NexusDock](./nexusdock.md)。
 
 ## 什么时候适合使用
 
