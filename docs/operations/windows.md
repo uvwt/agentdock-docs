@@ -1,19 +1,19 @@
 # Advanced Windows configuration
 
-Regular users only need the [graphical Windows installation](../getting-started/windows.md) for installation and upgrades. This page covers PowerShell automation, pinned versions, WSL, browser capabilities, and manual removal.
+Standard installations should use the [Windows graphical installer](../getting-started/windows.md). This page covers PowerShell automation, pinned versions, WSL, browser setup, and manual uninstallation.
 
-## Change an existing installation
+## Modifying an existing installation
 
-Run the latest Setup again. When it detects AgentDock:
+Rerun the latest Setup installer. When an existing installation is detected:
 
-- Normal upgrade or repair: keep **Upgrade and keep all current settings**.
-- Change startup, core privileges, or connection mode: choose the settings option.
+- Standard upgrade or repair: choose "Upgrade directly and keep all current settings".
+- Change startup, admin rights, or connection options: choose "Modify startup and connection settings".
 
-The **Public access** and **Advanced settings** pages in the control panel can change most day-to-day settings without reinstalling.
+Most daily settings can also be modified in **Public Access** and **Advanced Settings** within the Control Panel without reinstalling.
 
-## PowerShell installation
+## PowerShell automated installation
 
-The PowerShell entry point is intended for automation and advanced users. Regular users can use the graphical Windows installer.
+PowerShell scripts are available for automation and headless environments:
 
 ```powershell
 $script = Join-Path $env:TEMP 'install-agentdock.ps1'
@@ -27,19 +27,19 @@ powershell -ExecutionPolicy Bypass `
   -Port 8765
 ```
 
-The default runtime directory is `%LOCALAPPDATA%\AgentDock`. `-RegisterStartup` starts AgentDock after the current user signs in; it is not a pre-login system service.
+The default installation directory is `%LOCALAPPDATA%\AgentDock`. `-RegisterStartup` starts AgentDock upon current user login; it is not a pre-login system service.
 
-Typical local connection details:
+Local connection details:
 
 ```text
-Transport      Streamable HTTP
-URL            http://127.0.0.1:8765/mcp
-Request header Authorization: Bearer <Bearer Token>
+Transport    Streamable HTTP
+URL          http://127.0.0.1:8765/mcp
+Headers      Authorization: Bearer <Bearer Token>
 ```
 
 ## Cloudflare Tunnel automation
 
-Use these values to skip the interactive connection choice:
+Skip interactive prompts using these parameters:
 
 ```text
 -TunnelMode none     Local only
@@ -47,7 +47,7 @@ Use these values to skip the interactive connection choice:
 -TunnelMode named    Fixed Cloudflare domain
 ```
 
-Fixed-domain mode also needs `-ServerUrl` and a Tunnel Token. Do not place a real token directly in shell history. Prefer a protected environment variable or `-TunnelTokenFile`.
+Fixed domains also require `-ServerUrl` and a Tunnel Token. Do not put real tokens directly into shell history; use protected environment variables or `-TunnelTokenFile`.
 
 Example:
 
@@ -60,9 +60,9 @@ powershell -ExecutionPolicy Bypass `
   -TunnelTokenFile 'C:\secure\cloudflare-token.txt'
 ```
 
-A temporary public address may change after the Tunnel restarts. Regenerate it from the control panel or tray. Bearer and OAuth credentials are preserved, but the client must use the new MCP URL and may need OAuth authorization again.
+Temporary public addresses may change when the tunnel restarts. You can regenerate addresses from the control panel or tray icon. Bearer Tokens and OAuth credentials are preserved, but clients need the updated MCP URL and re-authorized OAuth.
 
-## Install a specific version
+## Installing a specific version
 
 ```powershell
 powershell -ExecutionPolicy Bypass `
@@ -71,9 +71,9 @@ powershell -ExecutionPolicy Bypass `
   -RegisterStartup
 ```
 
-For normal upgrades, use **Update** in the AgentDock control panel. Re-run Setup or the installer script when you need to recover an older installation or explicitly install a pinned version. Tasks, Skills, configuration, and the working directory are preserved by default.
+Use **Update** in the AgentDock Control Panel for standard upgrades. Rerun Setup or install scripts only when restoring an older version or pinning a specific release. Tasks, Skills, configuration, and working directories are preserved.
 
-## Verify the installer script
+## Installer checksum verification
 
 ```powershell
 $base = 'https://github.com/uvwt/agentdock/releases/latest/download'
@@ -88,11 +88,11 @@ $actual = (Get-FileHash -LiteralPath $script -Algorithm SHA256).Hash.ToLowerInva
 if ($actual -ne $expected) { throw 'AgentDock installer checksum mismatch.' }
 ```
 
-The script also verifies the AgentDock release package it downloads.
+The installer also validates the downloaded AgentDock release archive.
 
 ## WSL runtime
 
-When WSL is installed, command and file tools can select a Linux runtime explicitly:
+When WSL is installed, file and command tools can target the Linux runtime:
 
 ```json
 {
@@ -101,13 +101,13 @@ When WSL is installed, command and file tools can select a Linux runtime explici
 }
 ```
 
-You may omit `wsl_distribution` to use the default distribution. WSL file tools require `python3` in the selected distribution and use Linux absolute paths such as `/home/...` and `/mnt/d/...`.
+`wsl_distribution` can be omitted to use the system default distribution. WSL file tools require `python3` in the target distribution, using absolute Linux paths like `/home/...` or `/mnt/d/...`.
 
 ## Browser capabilities
 
-Install Google Chrome, Chromium, or Microsoft Edge, then enable browser tools from the AgentDock control panel. The Windows app detects supported browsers automatically. See [Browser automation](../guides/browser-control.md).
+Install Google Chrome, Chromium, or Microsoft Edge first, then enable browser tools in the AgentDock Control Panel. The Windows application automatically detects supported browsers. For usage details, see [Browser automation](../guides/browser-control.md).
 
-## Files and credentials
+## Files and credential locations
 
 Default runtime directory:
 
@@ -115,23 +115,23 @@ Default runtime directory:
 %LOCALAPPDATA%\AgentDock
 ```
 
-The Bearer Token, OAuth password, OAuth signing secret, and Tunnel Token are protected for the current Windows user. Do not copy or publish these files.
+Bearer Tokens, OAuth passwords, OAuth signing keys, and Tunnel Tokens are encrypted using current-user credentials (DPAPI). Do not copy or expose these files.
 
-## Remove AgentDock
+## Uninstallation
 
-Regular users should remove AgentDock from **Settings > Apps > Installed apps** or use **Uninstall AgentDock** in the Start menu.
+Uninstall from Windows **Settings > Apps > Installed apps**, or use **Uninstall AgentDock** in the Start menu.
 
-For automated removal, run the release script:
+For automated uninstallation, run the release script:
 
 ```powershell
-$uninstaller = Join-Path $env:TEMP 'uninstall-agentdock.ps1'
+$uninstaller = Join-Path $env:TEMP 'uninstall-windows.ps1'
 Invoke-WebRequest `
   https://github.com/uvwt/agentdock/releases/latest/download/uninstall-windows.ps1 `
   -OutFile $uninstaller
 powershell -ExecutionPolicy Bypass -File $uninstaller
 ```
 
-To remove tasks, Skills, configuration, and the default working directory as well:
+To also remove tasks, Skills, configuration, and default working directory:
 
 ```powershell
 powershell -ExecutionPolicy Bypass `
@@ -140,5 +140,5 @@ powershell -ExecutionPolicy Bypass `
 ```
 
 :::danger
-`-PurgeState` deletes user data and the default working directory. Back up anything you need before running it.
+`-PurgeState` deletes user data and default working directories. Back up required files before running.
 :::

@@ -1,6 +1,6 @@
 # Linux 安装
 
-AgentDock 提供 Linux x64 和 ARM64 预编译版本。普通安装不需要 Go、Git 或源码。
+AgentDock 提供 Linux x64 和 ARM64 预编译版本。
 
 下面的默认流程只允许本机访问，适合第一次安装和服务器部署。
 
@@ -76,7 +76,7 @@ sudo sh /tmp/install-agentdock.sh
 安装器会询问是否已有接入 Cloudflare 的域名：
 
 - 没有域名：自动创建临时 `trycloudflare.com` 地址，适合快速使用。
-- 已有域名：填写 HTTPS 公网地址和 Cloudflare Tunnel Token，获得稳定地址。如果还没有创建 Tunnel，可以按 [固定域名配置教程](../guides/fixed-domain.md) 完成。
+- 已有域名：先按 [固定域名配置教程](../guides/fixed-domain.md) 完成 Cloudflare 侧设置，再在安装器提示时填写得到的 HTTPS 公网地址和 Tunnel Token。
 
 安装完成后，终端会显示公网 MCP 地址和连接凭据。临时地址可能在服务重启后变化；地址变化时重新运行安装器，并替换客户端中的旧地址。已有 Bearer Token 和 OAuth 凭据会保留。
 
@@ -86,6 +86,10 @@ sudo sh /tmp/install-agentdock.sh
 
 重新下载并运行第 1 步即可。任务、Skill、配置和工作目录会保留。
 
-使用浏览器自动化时，在宿主机安装 Chrome、Chromium 或 Microsoft Edge 并启用浏览器工具；自动检测不到时可设置 `AGENTDOCK_BROWSER_EXECUTABLE_PATH`。只有希望容器直接包含 Chromium 时才需要 Docker browser 镜像。见 [浏览器自动化](../guides/browser-control.md)。
+## 按需继续
 
-Alpine、自定义目录或端口、手动服务管理和卸载见 [Linux 进阶配置](../operations/linux.md)。需要完全手动维护 systemd、反向代理和 OAuth 时，见 [Linux 手动部署](./vps.md)。
+- 使用浏览器自动化：在宿主机安装 Chrome、Chromium 或 Microsoft Edge 并启用浏览器工具；自动检测不到时可设置 `AGENTDOCK_BROWSER_EXECUTABLE_PATH`。只有希望容器直接包含 Chromium 时才需要 Docker browser 镜像。见 [浏览器自动化](../guides/browser-control.md)。
+- Alpine、自定义目录或端口、手动服务管理和卸载：见 [Linux 进阶配置](../operations/linux.md)。
+- 需要完全手动维护 systemd、反向代理和 OAuth 时：见 [Linux 手动部署](./vps.md)。
+- 启动失败：查看 [故障排查](../operations/troubleshooting.md)。
+- 需要公网访问：先阅读 [安全模型](../operations/security.md)。

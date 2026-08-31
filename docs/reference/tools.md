@@ -2,7 +2,7 @@
 
 AgentDock exposes a stable set of built-in tools to upstream agents over MCP. Tools perform real actions, Skills describe working methods, and dynamic MCP connects external services. These responsibilities are distinct.
 
-Regular users usually do not need to call tools one by one. After connecting an MCP client, describe the goal and let the agent choose the appropriate tools. This page is mainly for understanding capability boundaries, troubleshooting connections, and integration development.
+After connecting an MCP client, describe the goal and let the agent choose the appropriate tools. This page documents capability boundaries, connection troubleshooting, and integration details.
 
 ## Common capabilities
 
@@ -64,7 +64,7 @@ On Windows, `exec_command` can explicitly select `runtime=windows` or `runtime=w
 
 ## Coding Agents (ACP)
 
-These tools are exposed only when ACP is enabled on the AgentDock host. Regular users normally describe the coding task directly; the upstream agent manages the ACP session and progress flow.
+These tools are exposed only when ACP is enabled on the AgentDock host. Describe the coding task directly; the upstream agent manages the ACP session and progress flow.
 
 | Tool | Purpose | Main actions |
 | --- | --- | --- |
@@ -111,7 +111,7 @@ agentdock_context
 → execute through real file, command, browser, or MCP tools
 ```
 
-`skill_package env_list` returns variable names and configuration state, never secret values. See [Use Skills](../concepts/skills.md) for the regular-user workflow.
+`skill_package env_list` returns variable names and configuration state, never secret values. See [Use Skills](../concepts/skills.md) for usage details.
 
 ## Dynamic MCP
 

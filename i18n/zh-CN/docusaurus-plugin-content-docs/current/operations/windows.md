@@ -1,6 +1,6 @@
 # Windows 进阶配置
 
-普通用户首次安装和升级只需要使用 [Windows 图形安装](../getting-started/windows.md)。本页用于 PowerShell 自动化、固定版本、WSL、浏览器能力和手动卸载。
+推荐通过 [Windows 图形安装](../getting-started/windows.md)安装和管理 AgentDock。本页用于 PowerShell 自动化、固定版本、WSL、浏览器能力和手动卸载。
 
 ## 修改现有安装
 
@@ -13,7 +13,7 @@
 
 ## PowerShell 自动安装
 
-PowerShell 入口面向自动化和高级用户。普通用户可以直接使用 Windows 图形安装程序。
+PowerShell 入口面向自动化和高级用户。
 
 ```powershell
 $script = Join-Path $env:TEMP 'install-agentdock.ps1'
@@ -119,12 +119,12 @@ Bearer Token、OAuth 密码、OAuth 签名密钥和 Tunnel Token 使用当前用
 
 ## 卸载
 
-普通用户从 Windows **设置 > 应用 > 已安装的应用** 卸载，或使用开始菜单中的“卸载 AgentDock”。
+从 Windows **设置 > 应用 > 已安装的应用** 卸载，或使用开始菜单中的“卸载 AgentDock”。
 
 自动化卸载可以运行 Release 中的脚本：
 
 ```powershell
-$uninstaller = Join-Path $env:TEMP 'uninstall-agentdock.ps1'
+$uninstaller = Join-Path $env:TEMP 'uninstall-windows.ps1'
 Invoke-WebRequest `
   https://github.com/uvwt/agentdock/releases/latest/download/uninstall-windows.ps1 `
   -OutFile $uninstaller

@@ -49,10 +49,9 @@ The following actions usually need an additional confirmation:
 - Change system permissions or account settings.
 - Write sensitive information to the clipboard.
 
-Coordinate-based clicking is fragile across window positions, scaling, and multiple displays. Prefer readable Accessibility elements when available.
 
 ## Privacy
 
 Desktop screenshots may contain notifications, chats, accounts, and file contents. Do not publish, synchronize, or commit screenshots and runtime artifacts automatically.
 
-Regular users do not need to call the Desktop Skill's internal commands manually. See [Contributor guide](../contributing/development.md#skill-development) for Skill development.
+Skill development is covered in the [Contributor guide](../contributing/development.md#skill-development).

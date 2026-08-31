@@ -1,6 +1,6 @@
 # Docker 进阶配置
 
-普通用户首次安装只需要完成 [Docker 安装](../getting-started/docker.md)。本页用于修改端口、选择其他镜像、挂载宿主目录、更新版本或迁移旧数据。
+本页介绍镜像类型、Cloudflare Tunnel、修改端口、挂载宿主目录、版本更新和旧数据迁移。
 
 AgentDock 只使用一份 `docker-compose.yml`。浏览器镜像和 Cloudflare Tunnel 等可选能力通过环境变量与 Compose profile 启用，不再需要额外的 Compose 叠加文件。
 
@@ -62,9 +62,7 @@ docker compose logs -f cloudflared-quick
 
 ### Named Tunnel
 
-如果是第一次配置域名和 Tunnel，可以先按 [固定域名配置教程](../guides/fixed-domain.md) 完成 Cloudflare 侧设置。
-
-先创建 Cloudflare Named Tunnel 和 Public Hostname。把以下值补充到现有部署 `.env`，不要覆盖当前 AgentDock Token：
+先按 [固定域名配置教程](../guides/fixed-domain.md) 完成 Cloudflare 侧设置。然后把得到的公网地址和 Tunnel Token 补充到现有部署 `.env`，不要覆盖当前 AgentDock Token：
 
 ```dotenv
 AGENTDOCK_SERVER_URL=https://agent.example.com
@@ -78,7 +76,7 @@ chmod 600 .env
 docker compose --profile cloudflare-named up -d
 ```
 
-Cloudflare Public Hostname 的 Service 设置为 `http://agentdock:8765`。Compose 只把 `TUNNEL_TOKEN` 传给 `cloudflared-named` 容器；AgentDock 容器只接收 `AGENTDOCK_SERVER_URL` 和自身认证 Token，不会接收 Tunnel Token。Token 通过容器环境提供，不会出现在 `cloudflared` 命令参数中。
+Cloudflare 侧使用固定域名教程中的 Docker Service URL。Compose 只把 `TUNNEL_TOKEN` 传给 `cloudflared-named` 容器；AgentDock 容器只接收 `AGENTDOCK_SERVER_URL` 和自身认证 Token，不会接收 Tunnel Token。Token 通过容器环境提供，不会出现在 `cloudflared` 命令参数中。
 
 同一时间只启用一种 Tunnel profile。停止整个部署、移除 Tunnel 容器并保留 AgentDock 数据：
 

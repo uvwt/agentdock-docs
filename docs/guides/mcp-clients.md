@@ -17,20 +17,9 @@ Menu names, plan restrictions, and workspace policies may change between client 
 For a public client or cloud service, confirm that:
 
 - AgentDock is available through a public HTTPS domain.
-- The MCP URL ends with `/mcp`.
-- OAuth is enabled, or the client supports a Bearer Token in an HTTP header.
+- The MCP URL ends with `/mcp` (for example, `https://agentdock.example.com/mcp`).
+- Authentication is configured: remote clients typically require OAuth browser authorization or a Bearer Token in the HTTP request header. For full environment variable setup, see [OAuth configuration](../reference/configuration.md#oauth-configuration).
 - The reverse proxy forwards `/mcp`, `/register`, `/oauth/*`, and `/.well-known/*`.
-
-OAuth requires at least:
-
-```bash
-AGENTDOCK_OAUTH_ENABLED=true
-AGENTDOCK_SERVER_URL=https://agentdock.example.com
-AGENTDOCK_OAUTH_PASSWORD=<authorization-password-at-least-12-characters>
-AGENTDOCK_OAUTH_TOKEN_SECRET=<random-signing-key-at-least-32-bytes>
-```
-
-`AGENTDOCK_SERVER_URL` contains only the origin, without `/mcp`. The client receives the complete `https://agentdock.example.com/mcp` URL.
 
 A local client running on the same computer as AgentDock may also connect to:
 
@@ -39,6 +28,10 @@ http://127.0.0.1:8765/mcp
 ```
 
 A cloud client cannot reach `127.0.0.1` on your computer or server.
+
+:::caution
+Keep real Bearer Tokens and OAuth credentials out of shell history and version-controlled workspace files. Use the client's secret-management capability or a restricted environment variable when available.
+:::
 
 ## Claude Desktop
 
@@ -58,26 +51,9 @@ Availability of custom MCP connections and the number of servers you can add dep
 
 ## ChatGPT
 
-The current plan and workspace must support custom MCP plugins. An enterprise workspace may also require an administrator to enable developer mode.
+ChatGPT connects to AgentDock over Streamable HTTP MCP using a public HTTPS URL and OAuth browser authorization. Custom MCP plugins require Developer mode to be enabled in ChatGPT settings.
 
-On a Windows or macOS desktop install with a public address enabled, the usual path is:
-
-1. Copy the public MCP URL and OAuth password from the AgentDock control panel.
-2. Open ChatGPT and go to **Settings > Plugins > Advanced settings**.
-3. Enable **Developer mode**.
-4. On the plugins page, select **+** / **Create plugin**.
-5. Enter `AgentDock` as the plugin name.
-6. Enter the public MCP URL, for example:
-
-   ```text
-   https://agentdock.example.com/mcp
-   ```
-
-7. Create the plugin and begin the connection.
-8. When the browser opens the AgentDock authorization page, confirm the plugin name and callback domain, then enter the OAuth password.
-9. Return to ChatGPT and confirm that the AgentDock plugin is available.
-
-For the full Windows installer walkthrough, endpoint checks, and troubleshooting, see [Connect ChatGPT to AgentDock](./chatgpt.md).
+For the complete step-by-step walkthrough, screenshots, and troubleshooting, see [Connect ChatGPT to AgentDock](./chatgpt.md).
 
 ## Claude Code
 
@@ -103,8 +79,6 @@ Select AgentDock and complete OAuth authorization in the browser.
 claude mcp add --transport http agentdock https://agentdock.example.com/mcp \
   --header "Authorization: Bearer YOUR_TOKEN_HERE"
 ```
-
-Do not leave a real token in shell history, scripts, or a public repository. For long-term use, inject it through a restricted environment variable or the client's secret-management capability.
 
 ## Cursor
 
@@ -139,8 +113,6 @@ For a Bearer Token:
   }
 }
 ```
-
-Project-level `.cursor/mcp.json` may be committed to version control. Never place a real token in a file that will be committed.
 
 ## VS Code
 
@@ -180,8 +152,6 @@ For a Bearer Token:
   }
 }
 ```
-
-Workspace configuration may enter Git. Do not commit a real token.
 
 ## Codex
 

@@ -1,6 +1,6 @@
 # Linux 进阶配置
 
-普通用户首次安装只需要完成 [Linux 安装](../getting-started/linux.md)。本页用于交互式安装、修改目录和端口、选择服务管理器、配置 NexusDock 或只安装二进制。
+本页介绍交互式安装、Cloudflare Tunnel、修改目录和端口、服务管理器、NexusDock 和二进制安装。
 
 ## Alpine 与极简系统
 
@@ -26,14 +26,14 @@ sh /tmp/install-agentdock.sh
 
 ## Cloudflare Tunnel
 
-交互式安装不会把 `none/quick/named` 这些内部模式直接丢给普通用户，而是询问是否有已接入 Cloudflare 的域名：
+交互式安装会询问是否有已接入 Cloudflare 的域名：
 
-| 用户回答 | 安装器内部模式 | 结果 |
+| 用户回答 | 安装器模式 | 结果 |
 | --- | --- | --- |
 | 有域名 | 固定（`named`） | 稳定 HTTPS 地址，适合长期客户端和 OAuth |
 | 没有域名 | 临时（`quick`） | 自动生成 `trycloudflare.com` 地址，适合立即体验 |
 
-固定模式会询问 HTTPS 公网地址和 Cloudflare Tunnel Token。应先创建 Named Tunnel 与 Public Hostname，再把 Service 指向安装器输出的本机地址，通常是 `http://127.0.0.1:8765`。
+使用固定模式时，先按 [固定域名配置教程](../guides/fixed-domain.md) 完成 Cloudflare 侧设置，再在安装器提示时填写得到的 HTTPS 公网地址和 Tunnel Token。
 
 临时模式会启动 `cloudflared`，从服务日志读取生成的地址，写入 `AGENTDOCK_SERVER_URL`，启用 OAuth，然后重启 AgentDock。两种模式都会生成或复用：
 

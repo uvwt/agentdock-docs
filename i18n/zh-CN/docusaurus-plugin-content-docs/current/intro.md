@@ -5,13 +5,13 @@ slug: /intro
 
 # AgentDock
 
-AgentDock 让支持 MCP 的 AI 客户端可以在你的电脑或服务器上读取文件、执行命令、操作 Git，并按需启用浏览器或连接其他服务。
+AgentDock 让支持 MCP 的 AI 客户端可以在你的电脑或服务器上读取文件、执行命令、操作 Git、使用浏览器自动化并连接其他服务。
 
-它不会替你决定权限范围。AgentDock 能访问什么，取决于运行它的系统用户、Docker 挂载目录和你启用的功能。
+可访问范围由运行 AgentDock 的系统用户、Docker 挂载目录和你启用的功能决定。
 
 ## 第一次使用
 
-先打开 [安装 AgentDock](./getting-started/install.md)，按当前系统选择原生安装。已经在使用 Docker，或需要隔离运行环境时再选择 Docker。
+按当前环境选择安装方式：
 
 | 当前环境 | 推荐入口 |
 | --- | --- |
@@ -20,23 +20,22 @@ AgentDock 让支持 MCP 的 AI 客户端可以在你的电脑或服务器上读�
 | Linux 服务器或桌面 | [Linux 安装](./getting-started/linux.md) |
 | 已经安装 Docker | [Docker 安装](./getting-started/docker.md) |
 
-安装完成后，把页面给出的 MCP 地址和 Token 填入客户端即可。第一次使用不需要先理解完整配置、systemd、WSL、容器数据卷或反向代理。
+安装完成后，把页面给出的 MCP 地址和 Token 填入客户端，传输方式选择 **Streamable HTTP**。
 
 ## 可以让它做什么
 
-连接成功后，可以直接向 Agent 提出任务，例如：
+直接向 Agent 提出任务，例如：
 
 - “检查这个项目为什么启动失败，并修好后验证。”
 - “读取这份仓库，修改代码并提交。”
 - “打开网页完成查询，并把结果整理成文件。”
-- “安装并使用一个 Skill。”
-- “接入一个外部 MCP 服务。”
+- “安装并使用一个 Skill，或接入一个外部 MCP 服务。”
 - “控制浏览器、桌面自动化，或调用 Codex、Claude、Grok 等编码工具。”
 - “把长任务拆成步骤，并持续更新进度。”
 
-Agent 会根据任务选择文件、命令、浏览器、Skill 或外部 MCP 工具。Git 操作通过命令执行调用本机 Git CLI，或通过动态 MCP 接入 Git 服务。普通用户通常不需要逐个手动调用工具。
+Agent 会根据任务选择合适的工具。
 
-如果主要想用网页版 ChatGPT 操控自己的 Windows 电脑，安装时开启公网地址后，按 [使用 ChatGPT 连接 AgentDock](./guides/chatgpt.md) 继续即可。
+如果主要想用网页版 ChatGPT 操控自己的电脑，安装时开启公网地址后，按 [使用 ChatGPT 连接 AgentDock](./guides/chatgpt.md) 继续即可。
 
 ## 数据保存在哪里
 
@@ -47,7 +46,7 @@ Agent 会根据任务选择文件、命令、浏览器、Skill 或外部 MCP 工
 ~/AgentDock    默认工作目录
 ```
 
-Docker 安装默认把这两类数据保存到 Docker volume。删除程序或容器不一定会删除数据；执行清理命令前请先确认是否需要保留。
+Docker 默认把这两类数据保存在 Docker volume。删除程序或容器不一定会删除数据；清理前先确认需要保留的内容。
 
 ## 常用入口
 
@@ -61,5 +60,3 @@ Docker 安装默认把这两类数据保存到 Docker volume。删除程序或�
 - [使用 NexusDock 管理多台 AgentDock](./concepts/nexusdock.md)
 - [完整配置参考](./reference/configuration.md)
 - [故障排查](./operations/troubleshooting.md)
-
-需要修改反向代理、系统服务、容器挂载或完整环境变量时，再进入“进阶与运维”。

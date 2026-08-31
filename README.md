@@ -64,7 +64,7 @@ Navigation order is maintained explicitly in `sidebars.ts`. Docusaurus locale re
 
 ## Content rules
 
-- Give regular users the shortest complete path first. Move internals, exhaustive parameters, and maintainer workflows into reference, operations, or contributor sections.
+- Give users the shortest complete path first. Move internals, exhaustive parameters, and maintainer workflows into reference, operations, or contributor sections.
 - Write for public users. Do not record personal device paths, private ports, private domains, or maintainer credentials.
 - Keep migration history, retired API inventories, and temporary compatibility plans out of primary user documentation.
 - Commands, flags, and environment variables must match the current source code.

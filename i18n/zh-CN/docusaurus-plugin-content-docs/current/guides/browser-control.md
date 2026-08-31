@@ -34,7 +34,7 @@ AgentDock 支持 Google Chrome、Chromium 和 Microsoft Edge。浏览器自动�
 
 ## 直接提出任务
 
-普通用户不需要手工调用浏览器工具，可以直接说：
+直接描述任务即可：
 
 ```text
 打开这个页面，检查是否能正常加载，并告诉我有没有控制台或网络错误。
@@ -44,18 +44,6 @@ AgentDock 支持 Google Chrome、Chromium 和 Microsoft Edge。浏览器自动�
 
 Agent 应先观察页面，再执行动作，最后重新检查页面状态。
 
-## 多标签页与稳定等待
-
-网页打开新标签页或弹窗后，浏览器工具会返回当前 `page_id` 和 `pages` 列表。Agent 应选择目标页面继续操作，不要默认所有动作仍发生在第一个页面。
-
-页面加载较慢时，优先等待可验证条件，而不是固定睡眠时间：
-
-- 等待 URL 变化。
-- 等待指定文本或元素出现。
-- 等待匹配的网络响应和状态码。
-
-这样比盲目等待几秒更稳定，也更容易判断失败原因。
-
 ## 登录态与 Profile
 
 需要保持登录时，使用 AgentDock 自己的浏览器 Profile。指定 `profile_id` 后，Profile 会保存在 AgentDock 的浏览器数据目录中，后续会话可以继续复用登录态。
@@ -63,15 +51,6 @@ Agent 应先观察页面，再执行动作，最后重新检查页面状态。
 不要把 AgentDock 指向日常浏览器主 Profile。浏览器工具使用 AgentDock 管理的独立会话，不会接管已经打开的个人浏览器。
 
 首次登录仍可能需要你手动完成验证码、扫码或安全确认。不要让 Agent 在聊天或日志中回显密码、Cookie 或 Authorization Header。
-
-## 截图与故障判断
-
-截图只能证明视觉状态。判断页面是否真正正常时，还应检查：
-
-- 最终 URL 和页面文本。
-- `console_errors`。
-- `network_errors`。
-- `page_errors`。
 
 ## 安全边界
 

@@ -1,8 +1,6 @@
 # Manual Linux systemd deployment
 
-This page is for operators who want to maintain the service user, release binary, environment file, systemd unit, and HTTPS reverse proxy themselves. Regular users should start with the [Linux installation](./linux.md).
-
-Manual deployment still uses a prebuilt release. You do not need Go or a source build on the server.
+This guide covers manual setup of the service user, prebuilt release, environment file, systemd unit, and HTTPS reverse proxy.
 
 ## Recommended topology
 
@@ -131,7 +129,7 @@ Do not log the Authorization header at the proxy. Configure `AGENTDOCK_TRUSTED_P
 
 ## OAuth (optional)
 
-OAuth is recommended for MCP clients such as ChatGPT that use browser authorization. AgentDock supports dynamic client registration, Authorization Code, PKCE S256, and Refresh Tokens:
+For browser-authorized clients such as ChatGPT, enable OAuth:
 
 ```bash
 AGENTDOCK_OAUTH_ENABLED=true
@@ -140,16 +138,7 @@ AGENTDOCK_OAUTH_PASSWORD=<authorization-password-at-least-12-characters>
 AGENTDOCK_OAUTH_TOKEN_SECRET=<random-signing-key-at-least-32-bytes>
 ```
 
-A public `AGENTDOCK_SERVER_URL` must use HTTPS and contain only the origin, without `/mcp`. Keep the signing key stable instead of regenerating it on every restart. OAuth and Bearer Token authentication can be enabled separately or together according to client requirements. Do not commit the password or signing key.
-
-After configuration and restart, verify:
-
-```bash
-curl -fsS https://agentdock.example.com/.well-known/oauth-authorization-server
-curl -fsS https://agentdock.example.com/.well-known/oauth-protected-resource/mcp
-```
-
-The MCP URL entered in ChatGPT is `https://agentdock.example.com/mcp`. See [Connect ChatGPT to AgentDock](../guides/chatgpt.md) for the complete workflow.
+`AGENTDOCK_SERVER_URL` is the HTTPS origin without `/mcp`. Keep the password and signing key out of version control. See [Connect ChatGPT to AgentDock](../guides/chatgpt.md) for connection and endpoint checks.
 
 ## Update
 

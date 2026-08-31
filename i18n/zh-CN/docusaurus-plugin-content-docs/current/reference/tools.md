@@ -2,7 +2,7 @@
 
 AgentDock 通过 MCP 向上层 Agent 暴露一组稳定的内置工具。工具负责执行真实动作，Skill 负责描述工作方法，动态 MCP 负责接入外部服务，这三者职责不同。
 
-普通用户通常不需要逐个手动调用工具。连接 MCP 客户端后，直接描述目标，Agent 会选择合适工具。这个页面主要用于了解能力范围、排查连接问题或进行集成开发。
+连接 MCP 客户端后，直接描述目标，Agent 会选择合适工具。本页用于了解能力范围、排查连接问题和集成开发。
 
 ## 常见能力
 
@@ -64,7 +64,7 @@ Windows 版 `exec_command` 可以显式选择 `runtime=windows` 或 `runtime=wsl
 
 ## Coding Agent（ACP）
 
-这些工具只有在宿主机启用 ACP 后才会暴露。普通用户通常只需要直接描述编码任务，由上游 Agent 管理 ACP 会话和进度读取。
+这些工具只有在宿主机启用 ACP 后才会暴露。直接描述编码任务即可，由上游 Agent 管理 ACP 会话和进度读取。
 
 | 工具 | 用途 | 主要动作 |
 | --- | --- | --- |
@@ -111,7 +111,7 @@ agentdock_context
 → 使用真实文件、命令、浏览器或 MCP 工具执行
 ```
 
-`skill_package env_list` 不返回秘密值，只返回变量名和是否已配置。普通用户使用方式见 [使用 Skill](../concepts/skills.md)。
+`skill_package env_list` 不返回秘密值，只返回变量名和是否已配置。使用方式见 [使用 Skill](../concepts/skills.md)。
 
 ## 动态 MCP
 

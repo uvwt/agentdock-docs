@@ -1,48 +1,48 @@
 # NexusDock Recall
 
-NexusDock Recall is an optional long-term knowledge service for AgentDock. It stores stable project documentation, experience, decisions, and question records so future tasks can recover reliable context.
+NexusDock Recall is an optional long-term knowledge service for AgentDock. It stores stable project notes, experience, decisions, and problem logs so later tasks can find reliable context.
 
-Without NexusDock, files, commands, command-line Git, Skills, dynamic MCP, and local tasks continue to work normally. Recall, workflow templates, knowledge evolution, and private-note tools are unavailable. For the multi-device control-plane and unified MCP behavior, see [NexusDock](./nexusdock.md).
+Without NexusDock, file, command, command-line Git, Skill, dynamic MCP, and local task tools remain fully available; Recall, workflow template, knowledge evolution, and private note tools are unavailable. See [NexusDock](./nexusdock.md) for the multi-device control plane and unified MCP gateway.
 
 ## When to use it
 
-Good candidates include:
+Store:
 
-- Long-lived project structure and operating instructions.
-- Verified deployment or troubleshooting experience.
-- Decisions and preferences that should carry across conversations.
-- Open questions and learning records that still need resolution.
+- Long-lived project structure and runtime steps.
+- Verified deployment or troubleshooting notes.
+- Decisions and preferences meant to be reused across sessions.
+- Open questions and learning notes.
 
 Do not store:
 
-- Tokens, passwords, cookies, private keys, or browser login state.
-- One-off logs or temporary execution state.
-- Unverified speculation.
-- Live progress for the current task.
+- Tokens, passwords, cookies, private keys, or browser sessions.
+- One-off logs and temporary execution state.
+- Unverified guesses.
+- Real-time task progress.
 
-## Connect NexusDock
+## Setup
 
-You need a reachable NexusDock URL and, optionally, a token. Ask the agent to configure it:
+You need an accessible NexusDock URL and an optional token. Ask your agent:
 
 ```text
-Connect AgentDock to NexusDock Recall at https://nexus.example.com, and store the token in a secure environment variable.
+Connect AgentDock to NexusDock Recall at https://nexus.example.com using a secure environment variable for the token.
 ```
 
-See [Configuration](../reference/configuration.md) for the exact environment variables.
+For exact environment variables, see [Configuration reference](../reference/configuration.md).
 
 ## How to use it
 
-You can say:
+Speak directly:
 
 ```text
-Before starting, look for existing deployment records for this project.
-Update the long-term project documentation with the conclusions verified in this task, but do not store temporary logs.
-Search for previous OAuth troubleshooting experience.
+Check existing deployment notes for this project before starting.
+Update verified conclusions to long-term project docs; do not record temporary logs.
+Search earlier troubleshooting notes about OAuth.
 ```
 
-`agentdock_context` already carries a compact Recall index for startup context, so the model does not need a separate bootstrap call. When that index gives the exact path, it can read the entry directly. Otherwise `recall_search` searches Markdown and cards, using lexical retrieval by default and adding semantic retrieval transparently when NexusDock embeddings are available.
+`agentdock_context` already includes a compact Recall startup index, so models do not need a separate bootstrap call. Read directly when the index already provides the exact path; otherwise use `recall_search` to search Markdown and Cards. When NexusDock has embeddings configured, it adds semantic recall behind the same search tool transparently.
 
-The agent searches existing content before deciding whether to read, update, or create an entry, which helps avoid duplicates and conflicts.
+The agent searches existing content first, then decides whether to read, update, or create, avoiding duplicates and conflicts.
 
 ## Content types
 
@@ -56,7 +56,7 @@ Private Notes are a separate store rather than a Recall content type.
 Private Notes use a separate NexusDock Private Notes store and are not part of Recall search:
 
 - Recall stores reusable project knowledge and must not contain tokens, passwords, cookies, or private keys.
-- Private Notes store sensitive information only when the user explicitly asks, with age-encrypted backups.
+- Private Notes store sensitive information only when you explicitly ask, with age-encrypted backups.
 - Private-note search returns safe metadata only; reading the body requires an explicit action.
 - `recall_*` cannot read, modify, or list private notes. Use `private_note_manage` instead.
 

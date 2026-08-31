@@ -1,6 +1,6 @@
 # Contributor guide
 
-This page is for contributors modifying AgentDock source code, public documentation, or first-party Skills. Regular users should begin with [Install AgentDock](../getting-started/install.md).
+This page is for contributors modifying AgentDock source code, public documentation, or first-party Skills.
 
 Code and public documentation are maintained in separate repositories:
 
@@ -39,7 +39,7 @@ pnpm check
 - Update tests when changing tool descriptions, schemas, paths, authentication, commands, browsers, or desktop capabilities.
 - When changing an installer, verify help text, defaults, generated files, and representative installation paths.
 - Do not publish real tokens, private endpoints, personal directories, or maintainer credentials.
-- Keep migration history, temporary compatibility behavior, and maintainer-machine deployment details out of regular user documentation.
+- Keep migration history, temporary compatibility behavior, and maintainer-machine deployment details out of user documentation.
 
 ## Tool result conventions
 
@@ -69,7 +69,7 @@ Add `references/`, `scripts/`, entry points, and tests only when needed. Require
 - Increment the semantic version after changing instructions, references, or scripts.
 - Use `skill-authoring` to review content and portability, then use `skill_package validate` to validate package structure.
 
-See [Use Skills](../concepts/skills.md) for the regular-user workflow.
+See [Use Skills](../concepts/skills.md) for usage details.
 
 ## Commits and releases
 
@@ -78,4 +78,4 @@ See [Use Skills](../concepts/skills.md) for the regular-user workflow.
 - Before committing, confirm the working tree contains only changes for the current task.
 - Check GitHub Actions after pushing.
 - Visit the deployed page after documentation is published.
-- Follow the current source-repository maintenance rules for releases, signing, production deployment, and maintainer-machine operations; do not duplicate those procedures in regular user pages.
+- Follow the current source-repository maintenance rules for releases, signing, production deployment, and maintainer-machine operations; do not duplicate those procedures in user documentation.

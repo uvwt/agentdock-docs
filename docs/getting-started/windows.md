@@ -1,107 +1,102 @@
 # Windows installation
 
-Regular users can use the graphical Windows installer. You do not need PowerShell, WSL, Go, or the source code.
+Install AgentDock using the official Windows graphical installer.
 
 AgentDock supports Windows 11 x64 and ARM64.
 
-## 1. Download the installer
+## 1. Download installer
 
-Open the [latest AgentDock release](https://github.com/uvwt/agentdock/releases/latest) and download the package for your computer:
+Open [AgentDock Latest Release](https://github.com/uvwt/agentdock/releases/latest) and download the package for your architecture:
 
 - Most Intel or AMD PCs: `AgentDockSetup-amd64.exe`
-- Windows on ARM: `AgentDockSetup-arm64.exe`
+- Windows ARM PCs: `AgentDockSetup-arm64.exe`
 
-Choose `amd64` unless you know that your PC runs Windows on ARM.
+If unsure, choose `amd64`.
 
-The installer already contains the AgentDock core, control panel, core Skills, and Cloudflare component. Installation and upgrades do not download those components from GitHub.
+The installer already bundles AgentDock Core, the control panel, core Skills, and Cloudflare components. Installation and upgrades do not download these components separately from GitHub.
 
-## 2. Run the installer
+## 2. Run installer
 
 Double-click the installer and follow the on-screen instructions.
 
-If a UAC prompt appears during installation, confirm the file name and publisher information before continuing.
+If a UAC prompt appears, confirm the filename and publisher information before continuing.
 
 ## 3. Choose startup options
 
-Setup provides these startup options:
+The installer offers these startup options:
 
-- Start AgentDock and the tray after signing in to Windows
-- Run the AgentDock core with administrator privileges
+- Launch AgentDock and tray icon on Windows login
+- Run AgentDock Core with Administrator privileges
 
-Administrator-enhanced mode applies only to the AgentDock core. The control panel and tray continue to run as the signed-in user. If the current account cannot elevate, clear that option and use standard-user mode.
+Administrator enhancement mode applies only to AgentDock Core; the control panel and tray icon always run as the current user. If current account cannot elevate, uncheck Administrator enhancement mode to run in standard user mode.
 
-## 4. Choose a connection option
+## 4. Choose connection option
 
-### Local access only
+### Local only
 
-Choose this when the MCP client runs on the same PC. This mode does not require a domain or Cloudflare account.
+Select when the MCP client runs on the same computer. No domain or Cloudflare account required.
 
 ### Temporary public address
 
-Use this for ChatGPT, a phone, or another remote device when you do not have a domain ready. AgentDock creates a `trycloudflare.com` address automatically.
+Select when connecting from ChatGPT, a phone, or another remote device without a custom domain. AgentDock generates a `trycloudflare.com` address automatically.
 
-The address may change after Windows or the Tunnel restarts. When it changes, read the new address from the control panel and replace the old address in your client.
+Temporary addresses may change when Windows or the tunnel restarts. When changed, copy the new address from the control panel and update your client.
 
-### Your own Cloudflare domain
+### Fixed Cloudflare domain
 
-Use this for a stable, long-term address. Enter:
+For a permanent address, first complete the [fixed domain setup guide](../guides/fixed-domain.md). Then select **Fixed domain** and enter the HTTPS public origin and Tunnel Token from that setup. Do not append `/mcp` to the public origin.
 
-- The HTTPS public origin, for example `https://mini.example.com`
-- The matching Cloudflare Tunnel Token
+After installation, you can switch between Local only, Temporary address, and Fixed domain in the **Public Access** section of the control panel without rerunning the installer.
 
-Enter only the origin. Do not add `/mcp`. For the full Cloudflare setup and address mapping, see [Configure a fixed domain](../guides/fixed-domain.md).
+## 5. Complete installation
 
-After installation, you can switch between local, temporary, and fixed-domain access directly from **Public access** in AgentDock Control Panel. Changing the public access mode does not require rerunning Setup.
+"Add desktop shortcut" is checked by default. Click **Finish** to open the AgentDock Control Panel. You can also open it from the Start menu, desktop shortcut, or system tray.
 
-## 5. Finish installation
-
-**Create a desktop shortcut** is selected by default. Clicking **Finish** opens AgentDock Control Panel. You can also open it later from the Start menu, desktop shortcut, or system tray.
-
-Wait until the top-right status says that AgentDock is running normally, then confirm that the version, local MCP URL, and selected public URL are visible.
+Wait until the top-right displays "Healthy", and confirm the version, local MCP URL, and selected public address appear.
 
 :::tip
-When an existing installation is detected, Setup defaults to upgrading while keeping all current settings. Keep that option for a normal upgrade. Choose the settings option only when you need to change startup or connection behavior.
+When an existing installation is detected, the installer defaults to "Upgrade directly and keep all current settings". Keep this option for standard upgrades; choose "Modify settings" only when changing startup or connection modes.
 :::
 
-## 6. Connect an MCP client
+## 6. Connect MCP client
 
-The **Overview** page shows:
+In the control panel **Overview** tab, check:
 
 - Local MCP URL
-- Public MCP URL, when public access is enabled
+- Public MCP URL (when public access is enabled)
 - Bearer Token
-- OAuth password, when public access is enabled
+- OAuth password (when public access is enabled)
 
-Credentials are masked by default. Select **Show** only when needed. Values in the text fields can be copied with the standard Windows copy command.
+Credentials are masked by default; click **Show** when needed.
 
-A client on the same PC uses the local MCP URL. ChatGPT or another remote client uses the public MCP URL. Choose **Streamable HTTP** as the transport.
+Use the local MCP URL when the client is on the same computer; use the public MCP URL for ChatGPT or other remote clients. Select **Streamable HTTP** as the transport.
 
-To connect web ChatGPT after choosing a temporary or fixed public address:
+If you selected a temporary or fixed public address and want to connect web ChatGPT:
 
 1. Copy the public MCP URL and OAuth password from the control panel.
-2. In ChatGPT, enable developer mode under **Settings > Plugins**.
-3. Create a plugin, paste the public MCP URL, and authorize with the OAuth password.
+2. In ChatGPT, open **Settings > Plugins**, and enable developer mode.
+3. Create a plugin, enter the public MCP URL, and authorize with the OAuth password.
 
-The full walkthrough is in [Connect ChatGPT to AgentDock](../guides/chatgpt.md). For other clients, see [Connect AgentDock from different clients](../guides/mcp-clients.md).
+For full instructions, see [Connect ChatGPT to AgentDock](../guides/chatgpt.md). For other clients, see [Connect AgentDock from different clients](../guides/mcp-clients.md).
 
-Do not include the Bearer Token or OAuth password in screenshots, issues, or public conversations.
+Do not include Bearer Tokens or OAuth passwords in screenshots, issues, or public conversations.
 
-## Daily use
+## Daily usage
 
-Use the control panel to check status and version, start or stop the service, test public access, change connection mode, regenerate a temporary URL, and adjust port, logging, and startup settings.
+The control panel lets you check status and version, start or stop services, test public addresses, switch connection modes, regenerate temporary addresses, and adjust port, log, and startup settings.
 
-Use the tray menu for quick status checks, service restart, temporary public URL regeneration, and log access.
+The tray menu provides quick access to status, restarting services, regenerating temporary public addresses, and opening logs.
 
 ## Update or repair
 
-Use **Update** in the control panel. Current releases update the AgentDock core, Windows control-panel/tray components, and official core Skills together, then restart the managed service when needed. Tasks, Skills, configuration, connection settings, and the working directory are preserved.
+Click **Update** in the control panel. Updates include AgentDock Core, Windows control panel/tray components, and official core Skills, restarting managed services when needed. Tasks, Skills, configuration, connection mode, and working directories are preserved.
 
-If you are upgrading from an older release that predates the integrated desktop updater, run the latest Setup once and continue using in-app updates afterward.
+If upgrading from an older version without the desktop updater, run the latest Setup once, then continue using in-app updates.
 
-## Uninstall
+## Uninstallation
 
-Remove AgentDock from **Settings > Apps > Installed apps**, or use **Uninstall AgentDock** in the Start menu. The uninstaller asks whether to remove tasks, Skills, configuration, and the default working directory as well.
+Uninstall AgentDock from Windows **Settings > Apps > Installed apps**, or use **Uninstall AgentDock** in the Start menu. The uninstaller asks whether to remove tasks, Skills, configuration, and default working directories.
 
-For browser automation, install Chrome, Chromium, or Microsoft Edge and enable browser tools in the control panel. Use the Docker browser image only when you want Chromium bundled in a container. See [Browser automation](../guides/browser-control.md).
+For browser automation, install Chrome, Chromium, or Microsoft Edge first, then enable browser tools in the control panel. Docker browser images are needed only when you want Chromium contained in Docker. See [Browser automation](../guides/browser-control.md).
 
-For PowerShell automation, pinned versions, WSL, and file locations, see [Advanced Windows configuration](../operations/windows.md). For startup failures, see [Troubleshooting](../operations/troubleshooting.md).
+For PowerShell automation, pinned versions, WSL, and file locations, see [Advanced Windows configuration](../operations/windows.md). If startup fails, see [Troubleshooting](../operations/troubleshooting.md).
