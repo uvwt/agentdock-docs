@@ -4,6 +4,29 @@ NexusDock 是面向多台 AgentDock 设备的可选自托管控制中心。真�
 
 当你希望多台 Mac、Windows PC、Linux 主机或服务器通过一个可信入口统一使用时，可以部署 NexusDock。只有一台 AgentDock 时，普通本机工具和任务并不依赖 NexusDock。
 
+准备自托管时，可直接参考 [部署 NexusDock](../operations/nexusdock.md)，其中包含 Docker、HTTPS、升级和备份说明。
+
+## Web 控制台能做什么
+
+控制台把 NexusDock 的共享数据和各节点自己的运行状态分开管理：
+
+- **总览**：查看系统状态、各 AgentDock 节点是否在线，以及平台、版本、Skill、动态 MCP、最近任务和节点工具等摘要。
+- **Recall**：管理共享知识，包括资料库、经验卡片、Evolution 记录、向量召回和本地版本历史。
+- **Workflow**：浏览已发布模板、当前步骤与匹配规则，并查看历史版本。
+- **任务 / Skill / MCP**：这些页面属于具体 AgentDock 节点。先选择设备，再查看其可恢复任务和已安装 Skill；动态 MCP 还可以直接添加、启停、刷新和移除，并管理隔离环境变量。敏感值只写入，不会从服务端回显明文。
+- **设置**分为四部分：**账号与会话**用于修改密码和管理活动登录；**MCP 接入**用于查看统一 MCP 地址以及获取或重置专用 Access Token；**AI 与向量**用于配置 Stage 3 与 Embedding、测试连接和重建索引；**系统与节点**用于配对、重命名、停用或删除 AgentDock 节点，并查看系统状态。
+
+Runtime 页面不会把节点上的任务、Skill 或动态 MCP 状态复制一份到 NexusDock。NexusDock 通过当前选中的 AgentDock 节点读取或管理这些数据，因此节点离线时也无法查看其实时运行状态。
+
+## 第一次使用的典型流程
+
+1. 登录 NexusDock Web 控制台。
+2. 打开 **设置 → 系统与节点**，点击 **配对设备**，生成一个有过期时间且只能使用一次的配对码。
+3. 在目标设备执行页面生成的 `agentdock nexus pair ...` 命令，然后重启 AgentDock。
+4. 节点上线后，在 Runtime 页面顶部选择对应设备，即可查看任务、Skill 和动态 MCP。
+5. 如果需要 Recall 语义搜索或 Workflow 向量匹配，可在 **设置 → AI 与向量** 中配置 Embedding、测试连接并重建索引。
+6. 需要让 MCP 客户端访问整套设备时，连接 NexusDock 的 `/mcp`。支持 OAuth 的客户端可以通过浏览器授权；其他客户端可以使用 **设置 → MCP 接入** 中的专用 Access Token。
+
 ## 设备如何连接
 
 先在 NexusDock 控制台中为 AgentDock 设备发起配对。完成配对后，设备会主动向 NexusDock 建立出站 WebSocket 连接。
@@ -37,7 +60,7 @@ NexusDock 不提供额外的 `node_list` 工具。`agentdock_context` 返回的 
 
 文件、命令、任务、浏览器、ACP、动态 MCP 和 `evolve` 等仍然是 AgentDock 节点能力。经 NexusDock 调用时，它们的输入 Schema 会增加必填的 `node_id`，由 NexusDock 路由到指定设备。
 
-如果不同节点对同一个设备工具公布了无法安全兼容的契约，NexusDock 会保守处理公开 MCP 契约，而不会假装这些 Schema 完全一致。让已配对的 AgentDock 节点保持在较新的相近版本，可以减少这类兼容差异。
+建议让已配对的 AgentDock 节点保持在相近的最新版本，以减少工具契约差异，保证统一 MCP 入口尽量完整、一致。
 
 ## Recall 与 Workflow 数据
 

@@ -4,6 +4,29 @@ NexusDock is the optional self-hosted control plane for multiple AgentDock devic
 
 Use NexusDock when you want several Macs, Windows PCs, Linux hosts, or servers to appear behind one trusted entry point. A single AgentDock instance does not require NexusDock for normal local tools or tasks.
 
+Ready to self-host it? See [Deploy NexusDock](../operations/nexusdock.md) for the Docker setup, HTTPS boundary, upgrades, and backups.
+
+## What the web console gives you
+
+The console separates shared NexusDock data from node-local runtime state:
+
+- **Overview** shows system status, whether each AgentDock node is online, and summaries for platform, version, Skills, dynamic MCP, recent tasks, and node tools.
+- **Recall** provides the shared knowledge workspace: library files, experience cards, Evolution records, vector recall, and local version history.
+- **Workflow** lets you browse published templates, their current steps and matching rules, and older retired versions.
+- **Tasks**, **Skills**, and **MCP** are node views. Select a device first, then inspect its recoverable tasks and installed Skills. Dynamic MCP servers can also be added, enabled, disabled, refreshed, or removed, with isolated environment variables managed without reading secret values back in plaintext.
+- **Settings** has four areas: **Account & Sessions** for password and active-session management; **MCP Access** for the fleet MCP endpoint and dedicated Access Token; **AI & Vector** for Stage 3 and embedding configuration, connection tests, and index rebuilds; and **System & Nodes** for pairing, renaming, disabling, or removing AgentDock nodes and checking system state.
+
+The Runtime pages do not copy a node's task, Skill, or dynamic MCP state into NexusDock. NexusDock reads or manages those resources through the selected AgentDock node, so an offline node cannot serve its live runtime data.
+
+## A typical first setup
+
+1. Sign in to the NexusDock web console.
+2. Open **Settings → System & Nodes** and choose **Pair device** to generate an expiring, one-time pairing code.
+3. Run the generated `agentdock nexus pair ...` command on the target machine, then restart AgentDock.
+4. After the node is online, choose it from the Runtime node selector to inspect tasks, Skills, and dynamic MCP.
+5. If you want semantic Recall search or vector-assisted Workflow matching, configure embeddings under **Settings → AI & Vector**, test the connection, and rebuild the indexes.
+6. To connect an MCP client to the whole fleet, use the NexusDock `/mcp` endpoint. OAuth-capable clients can authorize in the browser; other clients can use the dedicated token shown under **Settings → MCP Access**.
+
 ## How devices connect
 
 Pair each AgentDock device from the NexusDock control panel. The device then opens an outbound WebSocket connection to NexusDock.
@@ -37,7 +60,7 @@ Central tools are published once and do not take a `node_id`, including:
 
 Device tools such as files, commands, tasks, browser automation, ACP, dynamic MCP, and `evolve` remain AgentDock capabilities. Through NexusDock, their input schema adds a required `node_id` so the call is routed to the intended node.
 
-If different nodes advertise incompatible versions of the same device-tool contract, NexusDock keeps the public MCP contract conservative instead of silently pretending the schemas are identical. Keeping paired AgentDock nodes reasonably current reduces these compatibility gaps.
+Keep paired AgentDock nodes on reasonably recent, similar versions to reduce tool-contract differences and keep the unified MCP endpoint as complete and consistent as possible.
 
 ## Recall and Workflow data
 
