@@ -79,7 +79,6 @@ agentdock \
 | `AGENTDOCK_BROWSER_EXECUTABLE_PATH` | empty | Optional absolute Chrome, Chromium, or Edge executable path |
 | `AGENTDOCK_NEXUS_ENDPOINT` | empty | NexusDock service root URL; enables Recall, Workflow, Evolution, and Private Notes capabilities |
 | `AGENTDOCK_NEXUS_TOKEN` | empty | NexusDock Bearer Token |
-| `AGENTDOCK_INSTRUCTIONS_FILE` | empty | Optional UTF-8 text file sent to compatible MCP clients as server instructions during initialization |
 
 Use only `true` or `false` for boolean values to avoid differences between service managers.
 
@@ -205,17 +204,13 @@ Only the variable names are stored in the mapping; the child process receives th
 
 AgentDock does not maintain an ACP project-root whitelist. Session workspaces may use any host-accessible directory, so use operating-system permissions or container mounts when a Coding Agent needs a stricter boundary.
 
-## Static MCP server instructions
+## Workspace rules
 
-Set `AGENTDOCK_INSTRUCTIONS_FILE` when you want compatible MCP clients to receive a short, static instruction block during MCP initialization:
+AgentDock does not expose an environment variable for project instructions. The global rule file is fixed at `~/.agentdock/AGENTS.md`. Project rules use `<workspace>/AGENTS.md` and may be inherited by nested directories.
 
-```bash
-AGENTDOCK_INSTRUCTIONS_FILE=/absolute/path/to/agentdock-instructions.md
-```
+Call `workspace_context` before operating on a project, after switching workspaces, or when workspace rules may have changed. Its optional `workdir` applies only to that request and does not change the default directory for later commands. The tool returns the active `AGENTS.md` chain plus the workspace-local Skill index under `<workspace>/.agents/skills/*/SKILL.md`; read a returned Skill file with `read_file` when its full instructions are needed.
 
-The file must be a non-empty regular UTF-8 file, no larger than 64 KiB, and its path must be absolute. AgentDock reads it at startup and returns the text as MCP server `instructions`.
-
-This is bootstrap guidance for the client, not dynamic Recall memory and not a replacement for `agentdock_context`. Whether a client incorporates MCP server instructions into its own prompt or UI is controlled by that client.
+MCP initialization instructions remain stable AgentDock guidance and never embed `AGENTS.md` contents.
 
 ## Browser tools
 

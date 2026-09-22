@@ -33,6 +33,12 @@ Agent 通常会：
 4. 使用真实工具执行任务。
 5. 对有副作用的操作进行确认和验证。
 
+## 工作区 Skill
+
+项目可以在 `<workspace>/.agents/skills/<skill-name>/SKILL.md` 提供本地 Skill。`workspace_context` 只返回这些 Skill 的 `name`、`description` 和 `file` 索引，不会把 Skill 正文直接注入上下文；只有确定要使用某个 Skill 时，再用 `read_file` 读取返回的 `SKILL.md`。
+
+同名时优先使用当前项目的 workspace Skill，其次是 AgentDock Skill，最后才是 `~/.agents/skills` 下的全局 common Skill。
+
 ## 安装 Skill
 
 安装前应先确认来源可信。可以让 Agent 先校验包，再安装并激活：

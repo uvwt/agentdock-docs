@@ -51,14 +51,16 @@ Start with `agentdock_context`. NexusDock returns a fleet context with two parts
 
 NexusDock does not expose a separate `node_list` tool. The `node_id` returned by `agentdock_context` is the routing key for device tools.
 
-Central tools are published once and do not take a `node_id`, including:
+Fleet-owned central tools are published once and do not take a `node_id`, including:
 
 - `agentdock_context`
 - `recall_search`, `recall_read`, `recall_write`, and `recall_maintain`
 - `workflow_template_manage`
 - `private_note_manage`
 
-Device tools such as files, commands, tasks, browser automation, ACP, dynamic MCP, and `evolve` remain AgentDock capabilities. Through NexusDock, their input schema adds a required `node_id` so the call is routed to the intended node.
+`workspace_context` is also a canonical shared tool, but it is intentionally node-scoped: NexusDock exposes `workspace_context(node_id, workdir?)` and routes the request to that AgentDock node. The fleet `agentdock_context` remains a fleet overview and never carries workspace rule bodies.
+
+Other device tools such as files, commands, tasks, browser automation, ACP, dynamic MCP, and `evolve` remain AgentDock capabilities. Through NexusDock, their input schema adds a required `node_id` so the call is routed to the intended node.
 
 Keep paired AgentDock nodes on reasonably recent, similar versions to reduce tool-contract differences and keep the unified MCP endpoint as complete and consistent as possible.
 
