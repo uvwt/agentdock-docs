@@ -28,8 +28,13 @@ AgentDock 通过 MCP 向上层 Agent 暴露一组稳定的内置工具。工具�
 | 工具 | 用途 |
 | --- | --- |
 | `agentdock_context` | 返回本机运行事实、已安装 Skill、动态 MCP、可选 ACP、操作规则，以及可用时由 Nexus 提供的 Workflow / Recall 索引 |
+| `workspace_context` | 按本次工作区选择返回生效的 `AGENTS.md` 链和 workspace-local Skill 索引 |
 
-`agentdock_context` 是让模型快速决策的启动上下文，不是重复的工具清单。直连 AgentDock 时会包含版本、操作系统、架构、目录和路径模型等 runtime 字段；经 NexusDock 调用时则返回包含各节点信息和 Nexus 共享上下文的 fleet 结构。需要 Skill 正文、动态 MCP Schema 或 Recall 正文时，再调用对应读取工具。
+`agentdock_context` 是让模型快速决策的启动上下文，不是重复的工具清单。直连 AgentDock 时会包含版本、操作系统、架构、目录和路径模型等 runtime 字段；经 NexusDock 调用时则返回包含各节点信息和 Nexus 共享上下文的 fleet 结构。
+
+操作具体项目、切换工作区或工作区规则可能变化时，使用 `workspace_context`。直连 AgentDock 时只需可选 `workdir`；经 NexusDock 调用时需要 `node_id`，并可再传 `workdir`。返回包含 `workdir`、`workspace_root`、`instructions`、`workspace_skills` 和 `warnings`：先读取固定的 `~/.agentdock/AGENTS.md`，再读取工作区 `AGENTS.md` 继承链，并索引 `<workspace>/.agents/skills/*/SKILL.md`，但不返回 Skill 正文。
+
+需要 Skill 正文、动态 MCP Schema 或 Recall 正文时，再调用对应读取工具。
 
 ## 文件与文本
 

@@ -79,7 +79,6 @@ agentdock \
 | `AGENTDOCK_BROWSER_EXECUTABLE_PATH` | 空 | 可选的 Chrome、Chromium 或 Edge 可执行文件绝对路径 |
 | `AGENTDOCK_NEXUS_ENDPOINT` | 空 | NexusDock 服务根地址；启用 Recall、Workflow、Evolution 和私密笔记能力 |
 | `AGENTDOCK_NEXUS_TOKEN` | 空 | NexusDock Bearer Token |
-| `AGENTDOCK_INSTRUCTIONS_FILE` | 空 | 可选 UTF-8 文本文件，在 MCP 初始化时作为 Server Instructions 下发给兼容客户端 |
 
 布尔值统一使用 `true` 或 `false`，避免不同服务管理器产生解析差异。
 
@@ -205,17 +204,13 @@ AGENTDOCK_ACP_ENV_FROM_ENV_JSON='{"OPENAI_API_KEY":"OPENAI_API_KEY"}'
 
 AgentDock 不再维护 ACP 项目根目录白名单。会话可以使用运行用户有权限访问的任意宿主机目录；需要更严格边界时，应使用操作系统权限或容器挂载限制 Coding Agent。
 
-## 静态 MCP Server Instructions
+## 工作区规则
 
-需要在 MCP 初始化时给兼容客户端下发一段简短、静态的说明时，可以设置 `AGENTDOCK_INSTRUCTIONS_FILE`：
+AgentDock 不通过环境变量配置项目规则。全局规则固定为 `~/.agentdock/AGENTS.md`；项目规则使用 `<workspace>/AGENTS.md`，并可由子目录逐级继承。
 
-```bash
-AGENTDOCK_INSTRUCTIONS_FILE=/absolute/path/to/agentdock-instructions.md
-```
+操作具体项目、切换工作区或工作区规则可能变化时，先调用 `workspace_context`。可选 `workdir` 只影响本次请求，不会修改后续命令的默认工作目录。工具会返回当前生效的 `AGENTS.md` 链，以及 `<workspace>/.agents/skills/*/SKILL.md` 下的工作区 Skill 索引；需要完整 Skill 说明时，再用 `read_file` 读取返回的文件路径。
 
-文件必须是非空的普通 UTF-8 文件，大小不超过 64 KiB，并且路径必须是绝对路径。AgentDock 启动时读取文件，并通过 MCP Server `instructions` 字段返回内容。
-
-它用于给客户端提供静态启动说明，不是动态 Recall 记忆，也不替代 `agentdock_context`。客户端最终是否把 MCP Server Instructions 放进自己的提示词或界面，由客户端自身决定。
+MCP 初始化 Instructions 只保留稳定的 AgentDock 使用说明，不会嵌入任何 `AGENTS.md` 正文。
 
 ## 浏览器工具
 

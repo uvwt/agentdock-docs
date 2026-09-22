@@ -51,12 +51,14 @@ MCP 客户端可以只连接 NexusDock 的 `/mcp`，而不用分别配置每台 
 
 NexusDock 不提供额外的 `node_list` 工具。`agentdock_context` 返回的 `node_id` 就是后续调用设备工具时使用的路由标识。
 
-以下中央工具只发布一次，并且不需要 `node_id`：
+Fleet 级中央工具只发布一次，并且不需要 `node_id`：
 
 - `agentdock_context`
 - `recall_search`、`recall_read`、`recall_write`、`recall_maintain`
 - `workflow_template_manage`
 - `private_note_manage`
+
+`workspace_context` 同样是 canonical shared tool，但它有意保持 node-scoped：NexusDock 对外提供 `workspace_context(node_id, workdir?)`，并把请求路由到指定 AgentDock 节点。fleet `agentdock_context` 仍只负责 fleet 总览，不携带工作区规则正文。
 
 文件、命令、任务、浏览器、ACP、动态 MCP 和 `evolve` 等仍然是 AgentDock 节点能力。经 NexusDock 调用时，它们的输入 Schema 会增加必填的 `node_id`，由 NexusDock 路由到指定设备。
 

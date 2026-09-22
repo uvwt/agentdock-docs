@@ -33,6 +33,12 @@ The agent typically:
 4. Uses actual tools to perform the task.
 5. Confirms and verifies operations with side effects.
 
+## Workspace-local Skills
+
+A project can expose local Skills at `<workspace>/.agents/skills/<skill-name>/SKILL.md`. `workspace_context` returns only their `name`, `description`, and `file` index; it does not inject the Skill body into context. Read the returned `SKILL.md` with `read_file` only when that Skill is needed.
+
+When names overlap, prefer the workspace Skill for the active project, then AgentDock Skills, then global common Skills under `~/.agents/skills`.
+
 ## Installing a Skill
 
 Confirm the source is trustworthy before installing. Ask the agent to vet the package before installing and activating:

@@ -28,8 +28,13 @@ The MCP client's `tools/list` is the source of truth for the tools exposed by th
 | Tool | Purpose |
 | --- | --- |
 | `agentdock_context` | Returns local runtime facts plus installed Skills, dynamic MCP, optional ACP, operational rules, and Nexus-backed Workflow/Recall indexes when available |
+| `workspace_context` | Returns the active `AGENTS.md` chain and workspace-local Skill index for one request-local workspace selection |
 
-`agentdock_context` is the bootstrap context for quick model decisions, not a duplicate tool catalog. A direct AgentDock call includes runtime fields such as version, operating system, architecture, paths, and path model. Through NexusDock it becomes a fleet context with per-node information and Nexus-owned shared context. Read the corresponding resource when a Skill body, dynamic MCP schema, or full Recall entry is required.
+`agentdock_context` is the bootstrap context for quick model decisions, not a duplicate tool catalog. A direct AgentDock call includes runtime fields such as version, operating system, architecture, paths, and path model. Through NexusDock it becomes a fleet context with per-node information and Nexus-owned shared context.
+
+Use `workspace_context` before project operations, after switching workspaces, or when workspace rules may have changed. Direct AgentDock accepts optional `workdir`; NexusDock requires `node_id` plus optional `workdir`. The result includes `workdir`, `workspace_root`, `instructions`, `workspace_skills`, and `warnings`. It reads the fixed global `~/.agentdock/AGENTS.md`, then the workspace `AGENTS.md` inheritance chain, and indexes `<workspace>/.agents/skills/*/SKILL.md` without returning Skill bodies.
+
+Read the corresponding resource when a Skill body, dynamic MCP schema, or full Recall entry is required.
 
 ## Files and text
 
