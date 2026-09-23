@@ -77,7 +77,7 @@ docker compose up -d --force-recreate
 
 - 确认 AgentDock 在当前 macOS 登录会话中运行。
 - 检查屏幕录制和辅助功能权限。
-- 重新读取当前激活的 `desktop` Skill 文档。
+- 用 `agentdock_context` 找到当前 `desktop` Skill 候选，再重新读取宿主返回的 Skill 文件。
 - 操作前后分别观察应用状态或截图，不要只依赖命令返回成功。
 - 坐标可能因窗口位置、缩放或多显示器变化而失效，应优先使用辅助功能元素。
 

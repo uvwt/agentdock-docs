@@ -13,11 +13,11 @@ Docker、远程 VPS、系统级后台服务和未登录会话不能控制真实 
 把下面这句话发给已经连接 AgentDock 的客户端：
 
 ```text
-请读取官方 AgentDock Skills 目录中的 desktop 条目，按其中的摘要校验软件包，然后安装并激活：
+请读取官方 AgentDock Skills 目录中的 desktop 条目，审查软件包来源和权限，按其中的摘要校验软件包，然后安装它的当前内容：
 https://raw.githubusercontent.com/uvwt/agentdock-skills/main/catalog.json
 ```
 
-Desktop Skill 在 [uvwt/agentdock-skills](https://github.com/uvwt/agentdock-skills) 中独立版本化和发布，目录会锁定下载地址与 SHA-256 摘要。安装完成后可以询问“当前 desktop Skill 是否已经激活”进行确认。
+Desktop Skill 在 [uvwt/agentdock-skills](https://github.com/uvwt/agentdock-skills) 独立发布。目录可以包含发布者自己的版本/Release 元数据，以及下载地址和 SHA-256 摘要；但 AgentDock 对每个 managed Skill 名称只保留一份当前内容。安装后用 `agentdock_context` 确认 managed `desktop` 候选已经存在，并核对其 `content_digest`。更新时重新审查并安装目录中的新包即可，不存在单独的激活步骤。
 
 ## 3. 授予 macOS 权限
 

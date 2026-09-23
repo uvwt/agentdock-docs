@@ -13,11 +13,11 @@ Follow the [macOS installation](../getting-started/macos.md) and run AgentDock a
 Send this instruction to a client that is already connected to AgentDock:
 
 ```text
-Read the desktop entry from the official AgentDock Skills catalog, verify the package against its digest, then install and activate it:
+Read the desktop entry from the official AgentDock Skills catalog, review the package source and permissions, verify the package against its digest, then install its current content:
 https://raw.githubusercontent.com/uvwt/agentdock-skills/main/catalog.json
 ```
 
-The Desktop Skill is versioned and released independently in [uvwt/agentdock-skills](https://github.com/uvwt/agentdock-skills). The catalog pins its download URL and SHA-256 digest. After installation, ask whether the `desktop` Skill is active.
+The Desktop Skill is released independently in [uvwt/agentdock-skills](https://github.com/uvwt/agentdock-skills). The catalog can carry publisher version/release metadata plus a download URL and SHA-256 digest, but AgentDock itself keeps only one managed current-content tree per Skill name. After installation, use `agentdock_context` to confirm the managed `desktop` candidate is present and its `content_digest` matches the installed content. Updating it means reviewing and installing the new catalog package; there is no separate activation step.
 
 ## 3. Grant macOS permissions
 

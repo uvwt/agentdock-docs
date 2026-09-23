@@ -119,26 +119,6 @@ Bearer Token、OAuth 密码、OAuth 签名密钥和 Tunnel Token 使用当前用
 
 ## 卸载
 
-从 Windows **设置 > 应用 > 已安装的应用** 卸载，或使用开始菜单中的“卸载 AgentDock”。
+使用 Windows **设置 > 应用 > 已安装的应用**，或开始菜单中的“卸载 AgentDock”。已安装的卸载器是受支持入口，并会让用户选择是否同时删除保留的 AgentDock 任务、Skill、配置、浏览器状态和默认工作目录数据。
 
-自动化卸载可以运行 Release 中的脚本：
-
-```powershell
-$uninstaller = Join-Path $env:TEMP 'uninstall-windows.ps1'
-Invoke-WebRequest `
-  https://github.com/uvwt/agentdock/releases/latest/download/uninstall-windows.ps1 `
-  -OutFile $uninstaller
-powershell -ExecutionPolicy Bypass -File $uninstaller
-```
-
-同时删除任务、Skill、配置和默认工作目录：
-
-```powershell
-powershell -ExecutionPolicy Bypass `
-  -File $uninstaller `
-  -PurgeState
-```
-
-:::danger
-`-PurgeState` 会删除用户数据和默认工作目录。执行前先备份需要保留的内容。
-:::
+Release 中的 `install.ps1` 仍是安装/更新入口；AgentDock Release 不再提供单独下载的 `uninstall-windows.ps1`。自动化卸载应调用目标部署实际安装的产品卸载器，不要按仓库内部 helper 名称从 Release 下载脚本。

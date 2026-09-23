@@ -77,7 +77,7 @@ Do not echo complete tokens, cookies, or headers in error messages.
 
 - Confirm that AgentDock runs in the current macOS login session.
 - Check Screen Recording and Accessibility permissions.
-- Read the active `desktop` Skill instructions again.
+- Use `agentdock_context` to find the current `desktop` Skill candidate, then read the returned Skill file again.
 - Observe the application state or capture a screenshot both before and after the action; do not rely only on a successful command result.
 - Coordinates may become invalid when the window moves, scaling changes, or multiple displays are used. Prefer Accessibility elements.
 

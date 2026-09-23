@@ -89,7 +89,7 @@ Quitting the menu bar application does not stop the AgentDock background service
 4. Verify that AgentDock detects a supported browser.
 5. Click **Apply and Restart**.
 
-AgentDock uses isolated sessions and profiles for browser automation, never taking over your primary browser profile.
+AgentDock uses isolated sessions and profiles by default. Attaching to an existing Chromium-family browser over CDP is an explicit advanced choice; see the browser guide before using that mode.
 
 For sessions and security boundaries, see [Browser automation](../guides/browser-control.md).
 

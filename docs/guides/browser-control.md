@@ -2,7 +2,7 @@
 
 With browser capabilities enabled, the agent can navigate pages, click, type, scroll, capture screenshots, and check page console, network, and page errors.
 
-AgentDock supports Google Chrome, Chromium, and Microsoft Edge. Browser automation uses isolated sessions managed by AgentDock, separated from your primary browser profile.
+AgentDock supports Google Chrome, Chromium, and Microsoft Edge. By default, browser automation launches isolated AgentDock-managed sessions. Advanced users can instead attach to an existing Chromium-family browser over CDP; that mode is opt-in and has different isolation boundaries.
 
 ## Before you start
 
@@ -44,18 +44,20 @@ Take a screenshot of the final page.
 
 The agent observes the page first, executes actions, and verifies the final state.
 
-## Login state and profiles
+## Login state, profiles, and existing CDP browsers
 
-When persistent logins are needed, use AgentDock's dedicated browser profiles. Specifying a `profile_id` saves the profile in AgentDock's browser data directory for reuse across subsequent sessions.
+For an AgentDock-owned browser, use a dedicated `profile_id` when persistent login state is needed. AgentDock stores that profile in its own browser data directory for reuse across later sessions; do not point an owned session at your daily browser profile.
 
-Do not point AgentDock to your daily personal browser profile. Browser tools use isolated sessions managed by AgentDock and do not take over existing open personal browsers.
+Advanced setups can attach to an already-running Chromium-family browser. A per-session `cdp_url` is limited to loopback endpoints; named or remote CDP endpoints must be configured by the user through AgentDock settings. `AGENTDOCK_BROWSER_CDP_URL` selects a configured endpoint, while `AGENTDOCK_BROWSER_REUSE_EXISTING_CDP=true` asks AgentDock to reuse one uniquely discovered local CDP browser.
+
+When attached over CDP, AgentDock creates and manages a dedicated target inside the external browser and leaves that browser running when the AgentDock session closes. External CDP sessions cannot use AgentDock persistent `profile_id`, cookie injection, or localStorage injection. Because the external browser may contain unrelated logged-in state, attach only to a browser instance you intentionally exposed for automation.
 
 Initial logins may still require manual captcha completion, QR code scans, or 2FA confirmations. Do not let the agent echo passwords, cookies, or Authorization headers in chats or logs.
 
 ## Security boundaries
 
 - Confirm before uploading files, sending messages, submitting forms, deleting content, or authorizing.
-- Use AgentDock dedicated profiles instead of personal browser profiles.
+- Prefer AgentDock-owned dedicated profiles. If you explicitly use CDP attachment, expose only a browser instance intended for automation.
 - Grant access only to websites and files required by the task.
 - Clean up persistent profiles when login sessions are no longer needed.
 

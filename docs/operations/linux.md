@@ -1,6 +1,6 @@
 # Advanced Linux configuration
 
-This page covers interactive installation, Cloudflare Tunnel, custom directories and ports, service-manager selection, NexusDock configuration, and binary-only installation.
+This page covers interactive installation, Cloudflare Tunnel, custom directories and ports, service-manager selection, optional NexusDock pairing, and installation without a managed system service.
 
 ## Alpine and minimal systems
 
@@ -22,7 +22,7 @@ curl -fsSL https://github.com/uvwt/agentdock/releases/latest/download/install.sh
 sh /tmp/install-agentdock.sh
 ```
 
-Keep the `binary` mode for a normal deployment. `source` and `auto` are only for development or troubleshooting when prebuilt artifacts are unavailable.
+The public installer uses the prebuilt release archive for the detected architecture. Building AgentDock from source is a contributor workflow, not an installer mode.
 
 ## Cloudflare Tunnel
 
@@ -43,7 +43,7 @@ A temporary installation starts `cloudflared`, reads the generated URL from the 
 
 The completion panel prints the public URL, MCP URL, Bearer Token, and OAuth login password. The OAuth signing secret is not printed. The Tunnel Token is written only to root-only `/etc/agentdock/cloudflared.env`; it is not written to `agentdock.env`, passed to AgentDock, or placed in the `cloudflared` command line.
 
-If a temporary URL changes, rerun the same installer. Existing host, port, advanced settings, Bearer Token, OAuth password, signing secret, and NexusDock configuration are preserved. The new URL is written back automatically and AgentDock is restarted. The client must replace the old MCP URL and authorize OAuth again.
+If a temporary URL changes, rerun the same installer. Existing host, port, advanced settings, Bearer Token, OAuth password, and signing secret are preserved. A previously paired NexusDock device identity lives in AgentDock state and is not replaced by rerunning the installer. The new URL is written back automatically and AgentDock is restarted. The client must replace the old MCP URL and authorize OAuth again.
 
 The default Tunnel service is `agentdock-cloudflared`:
 
@@ -117,8 +117,6 @@ Common variables:
 | `AGENTDOCK_HOST` | Listen address |
 | `AGENTDOCK_PORT` | Listen port |
 | `AGENTDOCK_AUTH_TOKEN` | Custom Bearer Token |
-| `AGENTDOCK_NEXUS_ENDPOINT` | NexusDock URL |
-| `AGENTDOCK_NEXUS_TOKEN` | NexusDock token |
 | `AGENTDOCK_TUNNEL_MODE` | `none`, `quick`, or `named` |
 | `AGENTDOCK_SERVER_URL` | Fixed HTTPS origin for Named Tunnel and OAuth |
 | `AGENTDOCK_CLOUDFLARE_TUNNEL_TOKEN` | Named Tunnel Token; stored only in `cloudflared.env` |
@@ -126,7 +124,18 @@ Common variables:
 
 Do not commit real tokens. When `AGENTDOCK_AUTH_TOKEN` is omitted, the installer generates one and writes it to a root-only environment file.
 
-## Install only the binary
+## Pair NexusDock
+
+NexusDock is paired after installation; it is not configured through installer environment variables. For the default Linux service account and install root, generate a one-time code in **NexusDock → Settings → System & Nodes**, then run:
+
+```bash
+sudo -u agentdock -H /opt/agentdock/bin/agentdock nexus pair --endpoint https://nexus.example.com --code <pairing-code>
+sudo systemctl restart agentdock
+```
+
+On OpenRC, restart the corresponding `agentdock` service instead of systemd. If you changed the service user or install root, use those actual values. Do not reintroduce the legacy Nexus endpoint/token environment variables.
+
+## Install without a system service
 
 To avoid registering a system service:
 
@@ -137,7 +146,7 @@ sudo env \
   sh /tmp/install-agentdock.sh
 ```
 
-This mode does not start AgentDock automatically. Run `/opt/agentdock/bin/agentdock` manually.
+This mode still installs the release runtime and bundled core Skills, but does not register or start a system service. Run `/opt/agentdock/bin/agentdock` manually when needed.
 
 ## Change the port or token
 
