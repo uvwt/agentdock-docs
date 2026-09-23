@@ -1,6 +1,6 @@
 # Linux 进阶配置
 
-本页介绍交互式安装、Cloudflare Tunnel、修改目录和端口、服务管理器、NexusDock 和二进制安装。
+本页介绍交互式安装、Cloudflare Tunnel、修改目录和端口、服务管理器、可选 NexusDock 配对，以及不注册系统服务的安装方式。
 
 ## Alpine 与极简系统
 
@@ -22,7 +22,7 @@ curl -fsSL https://github.com/uvwt/agentdock/releases/latest/download/install.sh
 sh /tmp/install-agentdock.sh
 ```
 
-普通部署保持 `binary` 即可。`source` 和 `auto` 只用于开发或预编译产物不可用的调试场景。
+公开安装器会按当前架构使用预编译 Release 包。源码构建属于贡献者工作，不是安装器模式。
 
 ## Cloudflare Tunnel
 
@@ -43,7 +43,7 @@ sh /tmp/install-agentdock.sh
 
 完成框会显示公网地址、MCP 地址、Bearer Token 和 OAuth 登录密码。OAuth 签名密钥不会显示。Tunnel Token 只写入 root-only 的 `/etc/agentdock/cloudflared.env`，不会写入 `agentdock.env`、传给 AgentDock，也不会出现在 `cloudflared` 命令行中。
 
-临时地址变化后，重新运行同一个安装脚本即可。现有监听地址、端口、高级配置、Bearer Token、OAuth 密码、签名密钥和 NexusDock 配置都会保留；安装器会自动回写新地址并重启 AgentDock。客户端仍需替换旧 MCP URL，并重新完成 OAuth 授权。
+临时地址变化后，重新运行同一个安装脚本即可。现有监听地址、端口、高级配置、Bearer Token、OAuth 密码和签名密钥都会保留；已经配对的 NexusDock 设备身份位于 AgentDock 状态目录中，重新运行安装器不会替换它。安装器会自动回写新地址并重启 AgentDock。客户端仍需替换旧 MCP URL，并重新完成 OAuth 授权。
 
 默认 Tunnel 服务名是 `agentdock-cloudflared`：
 
@@ -117,8 +117,6 @@ sudo env \
 | `AGENTDOCK_HOST` | 监听地址 |
 | `AGENTDOCK_PORT` | 监听端口 |
 | `AGENTDOCK_AUTH_TOKEN` | 自定义 Bearer Token |
-| `AGENTDOCK_NEXUS_ENDPOINT` | NexusDock 地址 |
-| `AGENTDOCK_NEXUS_TOKEN` | NexusDock Token |
 | `AGENTDOCK_TUNNEL_MODE` | `none`、`quick` 或 `named` |
 | `AGENTDOCK_SERVER_URL` | Named Tunnel 和 OAuth 使用的固定 HTTPS Origin |
 | `AGENTDOCK_CLOUDFLARE_TUNNEL_TOKEN` | Named Tunnel Token，只保存在 `cloudflared.env` |
@@ -126,7 +124,18 @@ sudo env \
 
 不要把真实 Token 写进仓库。未提供 `AGENTDOCK_AUTH_TOKEN` 时，安装器会自动生成并写入 root-only 环境文件。
 
-## 只安装二进制
+## 配对 NexusDock
+
+NexusDock 在 AgentDock 安装完成后单独配对，不再通过安装器环境变量配置。使用默认 Linux 服务用户和安装目录时，先在 **NexusDock → 设置 → 系统与节点** 生成一次性配对码，再执行：
+
+```bash
+sudo -u agentdock -H /opt/agentdock/bin/agentdock nexus pair --endpoint https://nexus.example.com --code <pairing-code>
+sudo systemctl restart agentdock
+```
+
+OpenRC 环境改为重启对应的 `agentdock` 服务。如果自定义了服务用户或安装目录，应使用实际值。不要重新写回旧 Nexus endpoint/token 环境变量。
+
+## 不注册系统服务
 
 不希望注册系统服务时：
 
@@ -137,7 +146,7 @@ sudo env \
   sh /tmp/install-agentdock.sh
 ```
 
-这种模式不会自动启动 AgentDock，需要手动运行 `/opt/agentdock/bin/agentdock`。
+这种模式仍会安装 Release 运行时和随包发布的核心 Skill，但不会注册或启动系统服务；需要时手动运行 `/opt/agentdock/bin/agentdock`。
 
 ## 修改端口或 Token
 

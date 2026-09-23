@@ -119,26 +119,6 @@ Bearer Tokens, OAuth passwords, OAuth signing keys, and Tunnel Tokens are encryp
 
 ## Uninstallation
 
-Uninstall from Windows **Settings > Apps > Installed apps**, or use **Uninstall AgentDock** in the Start menu.
+Use Windows **Settings > Apps > Installed apps** or **Uninstall AgentDock** in the Start menu. The installed uninstaller is the supported entry point and lets you choose whether preserved AgentDock tasks, Skills, configuration, browser state, and default working-directory data should also be removed.
 
-For automated uninstallation, run the release script:
-
-```powershell
-$uninstaller = Join-Path $env:TEMP 'uninstall-windows.ps1'
-Invoke-WebRequest `
-  https://github.com/uvwt/agentdock/releases/latest/download/uninstall-windows.ps1 `
-  -OutFile $uninstaller
-powershell -ExecutionPolicy Bypass -File $uninstaller
-```
-
-To also remove tasks, Skills, configuration, and default working directory:
-
-```powershell
-powershell -ExecutionPolicy Bypass `
-  -File $uninstaller `
-  -PurgeState
-```
-
-:::danger
-`-PurgeState` deletes user data and default working directories. Back up required files before running.
-:::
+The release `install.ps1` remains an installation/update entry; AgentDock releases do not publish a separate `uninstall-windows.ps1` download. Automation should invoke the installed product uninstaller used by the target deployment rather than downloading an internal repository helper by name.

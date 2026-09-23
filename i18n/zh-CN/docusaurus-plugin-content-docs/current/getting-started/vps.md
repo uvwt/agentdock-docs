@@ -41,6 +41,12 @@ curl -fL "$BASE_URL/$ASSET.sha256" -o "$TMP_DIR/$ASSET.sha256"
 )
 
 sudo install -m 0755 "$TMP_DIR/bin/agentdock" /opt/agentdock/bin/agentdock
+sudo rm -rf /opt/agentdock/share/agentdock/core-skills
+sudo install -d -m 0755 /opt/agentdock/share/agentdock/core-skills
+sudo cp -R "$TMP_DIR/share/agentdock/core-skills/." /opt/agentdock/share/agentdock/core-skills/
+sudo chown -R root:root /opt/agentdock/share/agentdock/core-skills
+sudo -u agentdock -H /opt/agentdock/bin/agentdock skill bootstrap \
+  --bundle /opt/agentdock/share/agentdock/core-skills
 rm -rf "$TMP_DIR"
 ```
 
@@ -66,13 +72,6 @@ AGENTDOCK_AUTH_TOKEN=<replace-with-a-random-secret>
 ```bash
 sudo chown root:agentdock /etc/agentdock/agentdock.env
 sudo chmod 0640 /etc/agentdock/agentdock.env
-```
-
-需要 NexusDock Recall 或 Workflow 模板时，额外配置：
-
-```bash
-AGENTDOCK_NEXUS_ENDPOINT=https://nexus.example.com
-AGENTDOCK_NEXUS_TOKEN=<replace-with-a-secret>
 ```
 
 ## systemd unit
@@ -109,6 +108,19 @@ sudo systemctl daemon-reload
 sudo systemctl enable --now agentdock
 ```
 
+## 配对 NexusDock（可选）
+
+如果这台设备需要使用 NexusDock Recall/Workflow 或加入 NexusDock fleet，先到 **NexusDock → 设置 → 系统与节点** 生成一次性配对码。使用与 AgentDock 服务相同的用户完成配对，再重启服务：
+
+```bash
+sudo -u agentdock -H /opt/agentdock/bin/agentdock nexus pair \
+  --endpoint https://nexus.example.com \
+  --code <pairing-code>
+sudo systemctl restart agentdock
+```
+
+不要再把旧 Nexus endpoint/token 凭据写进 `agentdock.env`；当前 AgentDock 只从已配对的设备身份加载 NexusDock 配置。
+
 ## HTTPS 反代
 
 Caddy 示例：
@@ -142,7 +154,7 @@ AGENTDOCK_OAUTH_TOKEN_SECRET=<至少-32-字节的随机签名密钥>
 
 ## 更新
 
-重新下载并校验目标 Release，覆盖 `/opt/agentdock/bin/agentdock`，然后重启：
+重新下载并校验目标 Release，除了替换二进制，还要按上面的安装步骤刷新并 bootstrap 该 Release 的 `share/agentdock/core-skills` Bundle，然后重启：
 
 ```bash
 sudo systemctl restart agentdock

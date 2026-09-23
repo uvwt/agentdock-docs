@@ -4,7 +4,7 @@ Standard installations should use the [macOS graphical application](../getting-s
 
 ## Graphical app settings
 
-The main window provides status, connection URLs, credentials, start, stop, restart, core updates, and log access. **Advanced Settings** manages ports, log levels, NexusDock integration, browser tools, and independent launch-at-login toggles.
+The main window provides status, connection URLs, credentials, start, stop, restart, updates, and log access. **Advanced Settings** manages ports, log levels, NexusDock pairing, browser connection mode, ACP profiles, MCP Apps, and independent launch-at-login toggles.
 
 When using the graphical app, avoid editing `agentdock.env` or LaunchAgents manually. The application validates inputs, writes configurations atomically with private permissions, restarts services, and performs health checks.
 
@@ -42,7 +42,8 @@ sh /tmp/agentdock-install.sh --register-service --version vX.Y.Z
 ## Changing installation directory
 
 ```bash
-sh /tmp/agentdock-install.sh --register-service --install-dir "$HOME/bin"
+AGENTDOCK_INSTALL_DIR="$HOME/bin" \
+  sh /tmp/agentdock-install.sh --register-service
 ```
 
 Ensure the custom directory is added to PATH or use absolute paths.
@@ -122,30 +123,20 @@ Grant permissions only to the application actually running AgentDock. macOS may 
 
 For full instructions, see [macOS desktop automation](../guides/desktop-automation.md).
 
-## Updates and backups
+## Updates
 
-Rerun the install script to upgrade. Old binaries are backed up to:
-
-```text
-~/.agentdock/backups/bin
-```
-
-Runtime data and default working directories are preserved.
+Rerun the same `install.sh` entry to upgrade. The installer stages the target release transactionally, updates the bundled core Skills, verifies the resulting runtime, and preserves AgentDock state and the default working directory. A failed installation is rolled back by the installer; there is no user-selectable binary or Skill history to maintain manually.
 
 ## Uninstalling AgentDock
 
-Before removing the application, disable "Show AgentDock menu bar at login" in Advanced Settings, apply changes, and quit AgentDock.
-
-Download and run the official uninstallation script:
+The public Unix maintenance entry is the same `install.sh` used for installation; AgentDock releases do not publish a separate macOS uninstall script. Download the current entry if necessary, then run:
 
 ```bash
-curl -fL https://github.com/uvwt/agentdock/releases/latest/download/uninstall-macos.sh \
-  -o /tmp/uninstall-agentdock.sh
-zsh /tmp/uninstall-agentdock.sh
+curl -fL https://github.com/uvwt/agentdock/releases/latest/download/install.sh \
+  -o /tmp/agentdock-install.sh
+sh /tmp/agentdock-install.sh --uninstall
 ```
 
-The default command removes background services, support files, and logs, while preserving binaries, `~/.agentdock`, and `~/AgentDock`.
+The normal macOS uninstall removes AgentDock background services, the installed CLI/runtime files, the graphical application, and AgentDock application logs/configuration, while preserving `~/.agentdock` and `~/AgentDock` user data.
 
-Use `--remove-binary` to remove the installed binary. Use `--purge-data` only when explicitly intending to remove binaries, all AgentDock state, browser profiles, and default working directories.
-
-Finally, move `AgentDock.app` in Applications to the Trash.
+Use `--purge-data` only when you explicitly intend to remove those preserved AgentDock state and default working-directory contents too. Custom layouts require explicit user-data paths before destructive purge so inherited environment values cannot become accidental deletion targets.

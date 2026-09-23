@@ -16,7 +16,7 @@ AgentDock 通过 MCP 向上层 Agent 暴露一组稳定的内置工具。工具�
 客户端实际能看到哪些工具取决于宿主机配置：
 
 - 不依赖外部集成的基础工具始终可用。
-- 配置 `AGENTDOCK_NEXUS_ENDPOINT` 后，额外暴露 `evolve`、`workflow_template_manage`、`recall_*` 和 `private_note_manage`。
+- 当前 AgentDock 与 NexusDock 完成配对后，额外暴露 `evolve`、`workflow_template_manage`、`recall_*` 和 `private_note_manage`。
 - 启用 `AGENTDOCK_BROWSER_ENABLED` 或 `--browser-enabled` 后，额外暴露 `browser_*` 工具。
 - 启用 `AGENTDOCK_ACP_ENABLED` 后，额外暴露 `acp_session`、`acp_prompt` 和 `acp_interaction`。
 - 动态 MCP 的上游工具不会直接混入 AgentDock 的 `tools/list`，而是通过固定的发现和调用入口访问。
@@ -42,7 +42,7 @@ AgentDock 使用 Host 路径模型。相对路径默认从 `~/AgentDock` 解析�
 
 | 工具 | 用途 | 常用参数或 action |
 | --- | --- | --- |
-| `read_file` | 分段读取 UTF-8 文本，也支持 `skill://<name>/<path>` | `path`、`start_line`、`end_line` |
+| `read_file` | 分段读取 UTF-8 文本，也支持宿主签发的 `skill://...` 资源 URI | `path`、`start_line`、`end_line` |
 | `list_dir` | 通过一个受限的目录树 / glob 入口列目录或查找文件 | `path`、`max_depth`、`max_entries`、`patterns`、`exclude_patterns`、`entry_type` |
 | `search_text` | 使用文本或正则搜索文件内容 | `query`、`regex`、`include_globs`、`context_lines` |
 | `file_edit` | 统一执行文本文件修改 | `replace`、`patch`、`add`、`delete`、`move` |
@@ -63,38 +63,40 @@ Windows 版 AgentDock 的文件工具可以通过 `runtime=wsl` 使用 WSL 原�
 
 `exec_command` 在命令未快速结束时返回 `session_id`，后续使用 `session_observe` 读取状态。需要交互输入时使用 `session_act action=write`。
 
-通过 `skill=<name>` 运行命令时，AgentDock 会把当前激活 Skill 根目录设为默认工作目录，并只向该子进程注入 Skill 独立环境。
+通过宿主签发的 managed `skill_ref` 运行命令时，AgentDock 会把该精确 Skill 根目录设为默认工作目录，注入它的独立环境，并提供保留的 `SKILL_DATA_DIR` 作为私有持久数据目录。shared 和 workspace 候选不会继承 managed Skill 的环境或数据目录。
 
 Windows 版 `exec_command` 可以显式选择 `runtime=windows` 或 `runtime=wsl`。
 
 ## Coding Agent（ACP）
 
-这些工具只有在宿主机启用 ACP 后才会暴露。直接描述编码任务即可，由上游 Agent 管理 ACP 会话和进度读取。
+只有宿主启用 ACP 时才会暴露这些工具。三组工具都接受可选 `profile_id`；省略时使用配置的默认 Profile。
 
-| 工具 | 用途 | 主要动作 |
+| 工具 | 用途 | 主要 action |
 | --- | --- | --- |
-| `acp_session` | 检查当前 Coding Agent，并创建、恢复、配置、查看或关闭持久会话 | `info`、`authenticate`、`new`、`load`、`resume`、`fork`、`set_mode`、`set_config`、`list`、`inspect`、`close`、`delete` |
-| `acp_prompt` | 启动编码轮次，并读取进度、steering 或取消任务 | `start`、`events`、`steer`、`cancel` |
-| `acp_interaction` | 处理 Coding Agent 发起的显式权限交互 | `list`、`inspect`、`respond`、`cancel` |
+| `acp_session` | 管理 AgentDock session 与 Adapter 原生 session | `info`、`new`、`list`、`inspect`、`open`、`update`、`close`、`delete` |
+| `acp_prompt` | 启动异步 Prompt Run、读取有序事件、请求取消 | `start`、`events`、`cancel` |
+| `acp_interaction` | 处理待用户参与的权限交互 | `list`、`respond` |
 
-`acp_prompt start` 会很快返回 `run_id`，后续通过 `events` 读取进度，而不是让一次工具调用一直等待完整编码轮次。权限响应只能选择 Coding Agent 当前明确提供、且本地 AgentDock 策略允许的选项。
+`acp_session open` 会在内部协商 resume/load；Adapter 声明能力时，`new` 可以通过 `from_session_id` fork；`update` 负责 session mode 或配置项。认证可以通过 `info(auth_method_id=...)` 发起，也可以在其他 session action 中带上 Adapter 声明的认证方法。Prompt steering 属于能力驱动的内部流程，不再是单独公开 action。
 
-安装方式和项目访问边界见 [使用本地 Coding Agent](../guides/coding-agents.md)。
+`acp_prompt start` 会快速返回 `run_id`，进度通过 `events` 增量读取。permission 响应只能选择 Coding Agent 当前提供且本地策略允许的选项，或者取消待处理交互。
+
+Profile、安装和项目访问边界见 [使用本地 Coding Agent](../guides/coding-agents.md)。
 
 ## 可恢复任务与 Workflow
 
 | 工具 | 用途 | action |
 | --- | --- | --- |
 | `task_manage` | 持久化多步骤任务、进度、阻塞和最终验证证据 | `create`、`list`、`get`、`checkpoint`、`block`、`resume`、`final_review`、`complete` |
-| `workflow_template_manage` | 管理和匹配可复用 Workflow 模板；仅配置 NexusDock 后可见 | `publish`、`retire`、`list`、`get`、`get_many`、`match`、`vector_index` |
+| `workflow_template_manage` | 管理和匹配可复用 Workflow 模板；仅当前 AgentDock 设备与 NexusDock 配对后可见 | `publish`、`retire`、`list`、`get`、`get_many`、`match`、`vector_index` |
 
-`task_manage` 保存的是状态，不会替代命令、测试、部署或浏览器验证。普通任务可以完全在本机使用；Workflow 模板存放在 NexusDock Registry，未配置 NexusDock 时 `workflow_template_manage` 不会出现在工具列表中。
+`task_manage` 保存的是状态，不会替代命令、测试、部署或浏览器验证。普通任务可以完全在本机使用；Workflow 模板存放在 NexusDock Registry；当前 AgentDock 设备未与 NexusDock 配对时，`workflow_template_manage` 不会出现在工具列表中。
 
 `publish` 接收完整模板，并在激活该版本前进行校验。多个模板同时适用时，`get_many` 返回模板正文，但不会自动拼接。模型需要删除无关步骤、合并重复项、确定顺序，再把组合后的 steps 和 completion conditions 传给 `task_manage create`。
 
 ## 知识 Evolution
 
-配置 NexusDock 后会暴露 `evolve`，但 Evolution 生命周期属于 AgentDock。NexusDock 提供共享存储和访问路径，不负责决定知识何时得到支持、被反证、被替代或撤回。
+当前 AgentDock 设备与 NexusDock 配对后会暴露 `evolve`，但 Evolution 生命周期属于 AgentDock。NexusDock 提供共享存储和访问路径，不负责决定知识何时得到支持、被反证、被替代或撤回。
 
 | 工具 | 用途 | intent |
 | --- | --- | --- |
@@ -102,21 +104,26 @@ Windows 版 `exec_command` 可以显式选择 `runtime=windows` 或 `runtime=wsl
 
 `bind` 属于高级的执行前学习检查：模型必须在任务开始执行前声明后续 Task 成功或失败分别代表什么。Task 结果本身没有学习含义，而且 Evolution 不能阻塞普通 Task 完成。
 
-## Skill 包与独立环境
+## managed Skill 与独立环境
 
 | 工具 | 用途 | action |
 | --- | --- | --- |
-| `skill_package` | 校验、安装、激活和回滚 Skill，并管理每个 Skill 的独立环境 | `validate`、`install`、`activate`、`rollback`、`env_set`、`env_unset`、`env_list` |
+| `skill_manage` | 安装或移除 managed Skill 当前内容，并管理它的独立环境 | `install`、`remove`、`env_set`、`env_unset`、`env_list` |
 
-Skill 是模型读取的文档型工作方法，不是隐藏执行器。常见调用顺序：
+AgentDock 不提供独立的 Skill 版本、激活或回滚生命周期。每个 managed Skill 名称只有一份当前内容；重复安装相同内容会按 `content_digest` no-op，同名但经过审查的新内容会原子替换当前内容。
+
+典型流程：
 
 ```text
-agentdock_context
-→ read_file skill://<name>/SKILL.md
-→ 使用真实文件、命令、浏览器或 MCP 工具执行
+agentdock_context / workspace_context
+→ select one exact Skill candidate
+→ read_file <the candidate's returned file>
+→ execute through real tools using the same returned skill_ref when needed
 ```
 
-`skill_package env_list` 不返回秘密值，只返回变量名和是否已配置。使用方式见 [使用 Skill](../concepts/skills.md)。
+不要根据裸名称自行构造 `skill_ref` 或 `skill://` URI。同名的 managed、shared、workspace 候选仍是不同来源。`skill_manage env_list` 只返回变量名和配置状态，不回显秘密值。普通 `remove` 会保留 managed Skill 的环境和持久数据；`purge=true` 才会一并删除这些保留资源。
+
+用户流程见 [使用 Skill](../concepts/skills.md)。
 
 ## 动态 MCP
 
@@ -155,7 +162,7 @@ agentdock_context
 
 ## NexusDock Recall
 
-以下工具只在配置 `AGENTDOCK_NEXUS_ENDPOINT` 后暴露：
+直连 AgentDock 时，只有当前设备已经与 NexusDock 配对，才会暴露这些工具：
 
 | 工具 | 用途 | 常用参数或 action |
 | --- | --- | --- |
@@ -175,7 +182,7 @@ agentdock_context
 
 ## 私密笔记
 
-`private_note_manage` 只在配置 `AGENTDOCK_NEXUS_ENDPOINT` 后暴露：
+直连 AgentDock 时，只有当前设备已经与 NexusDock 配对，才会暴露 `private_note_manage`：
 
 | 工具 | 用途 | action |
 | --- | --- | --- |

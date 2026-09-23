@@ -89,7 +89,7 @@ MCP 客户端也在这台 Mac 上时选择。该模式不需要域名或 Cloudfl
 4. 确认 AgentDock 已检测到受支持的浏览器。
 5. 点击“应用并重启”。
 
-AgentDock 会为浏览器自动化使用独立的会话和 Profile，不会直接接管日常浏览器主 Profile。
+AgentDock 默认使用独立会话和 Profile。通过 CDP 附着已有 Chromium 系浏览器属于显式的高级模式，使用前请先阅读浏览器指南。
 
 登录态和安全边界见 [浏览器自动化](../guides/browser-control.md)。
 

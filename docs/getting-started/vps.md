@@ -41,6 +41,12 @@ curl -fL "$BASE_URL/$ASSET.sha256" -o "$TMP_DIR/$ASSET.sha256"
 )
 
 sudo install -m 0755 "$TMP_DIR/bin/agentdock" /opt/agentdock/bin/agentdock
+sudo rm -rf /opt/agentdock/share/agentdock/core-skills
+sudo install -d -m 0755 /opt/agentdock/share/agentdock/core-skills
+sudo cp -R "$TMP_DIR/share/agentdock/core-skills/." /opt/agentdock/share/agentdock/core-skills/
+sudo chown -R root:root /opt/agentdock/share/agentdock/core-skills
+sudo -u agentdock -H /opt/agentdock/bin/agentdock skill bootstrap \
+  --bundle /opt/agentdock/share/agentdock/core-skills
 rm -rf "$TMP_DIR"
 ```
 
@@ -66,13 +72,6 @@ Restrict its permissions:
 ```bash
 sudo chown root:agentdock /etc/agentdock/agentdock.env
 sudo chmod 0640 /etc/agentdock/agentdock.env
-```
-
-Add these variables when NexusDock Recall or workflow templates are required:
-
-```bash
-AGENTDOCK_NEXUS_ENDPOINT=https://nexus.example.com
-AGENTDOCK_NEXUS_TOKEN=<replace-with-a-secret>
 ```
 
 ## systemd unit
@@ -109,6 +108,19 @@ sudo systemctl daemon-reload
 sudo systemctl enable --now agentdock
 ```
 
+## Pair NexusDock (optional)
+
+If this device should use NexusDock Recall/Workflow or join a NexusDock fleet, generate a one-time pairing code under **NexusDock → Settings → System & Nodes**. Pair as the same service user that runs AgentDock, then restart the service:
+
+```bash
+sudo -u agentdock -H /opt/agentdock/bin/agentdock nexus pair \
+  --endpoint https://nexus.example.com \
+  --code <pairing-code>
+sudo systemctl restart agentdock
+```
+
+Do not put legacy Nexus endpoint/token credentials in `agentdock.env`; current AgentDock loads NexusDock identity from the paired device state.
+
 ## HTTPS reverse proxy
 
 Caddy example:
@@ -142,7 +154,7 @@ AGENTDOCK_OAUTH_TOKEN_SECRET=<random-signing-key-at-least-32-bytes>
 
 ## Update
 
-Download and verify the target release again, replace `/opt/agentdock/bin/agentdock`, then restart:
+Download and verify the target release again, replace the binary **and** refresh/bootstrap that release's `share/agentdock/core-skills` bundle as shown above, then restart:
 
 ```bash
 sudo systemctl restart agentdock

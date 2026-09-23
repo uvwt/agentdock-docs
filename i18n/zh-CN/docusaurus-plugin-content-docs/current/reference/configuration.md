@@ -1,60 +1,57 @@
 # 配置
 
-AgentDock 当前不读取统一的 YAML、JSON 或 TOML 配置文件。运行配置通过环境变量提供，部分常用项还可以使用 CLI 参数覆盖。
+AgentDock Core 不读取统一的 YAML、JSON 或 TOML 配置文件。运行参数来自环境变量，少量常用项也可以通过命令行参数覆盖；使用桌面安装包和控制面板时，应优先让图形界面管理这些设置。
 
 :::tip
-首次安装请使用对应平台的安装指南。本页集中说明端口、远程访问、认证、浏览器、NexusDock 和高级部署配置。
+首次安装请使用对应平台的安装指南。本页主要作为运行行为、无界面部署和高级配置的参考。
 :::
 
-## 常用配置
+## 选择正确的配置入口
 
-| 场景 | 需要处理的内容 |
+| 场景 | 推荐配置入口 |
 | --- | --- |
-| 本机前台运行 | 通常保持 `127.0.0.1` 和默认端口即可 |
-| Docker | `.env` 中的 `AGENTDOCK_AUTH_TOKEN`，其余使用 Compose 默认值 |
-| 浏览器自动化 | 启用浏览器工具，并准备 Chrome、Edge 或 browser 镜像 |
-| NexusDock（Recall、Workflow、Evolution、私密笔记） | 配置服务地址和可选 Token |
-| 局域网或公网访问 | 认证、HTTPS 和反向代理，不能只修改监听地址 |
+| macOS 或 Windows 桌面应用 | AgentDock 控制面板 / 高级设置 |
+| 直接前台运行 | 环境变量和受支持的 CLI 参数 |
+| Docker 或 Compose | 容器 `environment`、`env_file` 或 secret 注入 |
+| Linux 服务 | 权限受限的服务环境文件 |
+| NexusDock | 使用 `agentdock nexus pair` 配对设备；不要再把旧 Nexus 凭据写进 Core 环境 |
 
-推荐按部署方式管理配置：
+不要把 Token、密码、Cookie、私钥、OAuth Secret 或设备身份提交到源码仓库。
 
-- 本地前台运行：Shell 环境变量或 CLI 参数。
-- Docker Compose：`environment` 或项目根目录的本地 `.env`。
-- systemd：权限受限的 `EnvironmentFile`。
-- Windows 登录自启动：安装脚本生成的当前用户配置和 DPAPI 保护数据。
+## 优先级与目录
 
-不要把 Token、密码、Cookie、私钥或 OAuth Secret 提交到源码仓库。
-
-## 配置方式与优先级
-
-AgentDock 启动时按以下顺序解析：
+普通 Core 运行配置按以下顺序解析：
 
 1. 内置默认值。
 2. 环境变量。
-3. CLI 参数。
+3. 受支持的 CLI 参数。
 
-CLI 只覆盖它明确提供的参数。认证秘密、OAuth 密码和 NexusDock Token 等配置只能通过环境变量提供。
+CLI 只覆盖它实际提供的项目。例如在无界面部署中，认证秘密和 ACP Profile JSON 仍通过环境提供。
 
-AgentDock 的两个主要目录由运行它的操作系统用户决定：
+两个主要目录由实际运行 AgentDock 的操作系统用户决定：
 
 ```text
-~/.agentdock   内部状态、Skill、任务、MCP 配置和 Artifact
-~/AgentDock    文件、命令和 Git 工具的默认工作目录
+~/.agentdock   Internal state, managed Skills, tasks, MCP configuration, browser data, and artifacts
+~/AgentDock    Default working directory for relative file and command operations
 ```
 
-需要修改目录时，可以把 `AGENTDOCK_HOME` 或 `AGENTDOCK_DEFAULT_DIR` 设置为绝对路径。需要更强的数据隔离时，仍应使用独立系统用户或明确的容器挂载。
+需要更换位置时，将 `AGENTDOCK_HOME` 或 `AGENTDOCK_DEFAULT_DIR` 设为绝对路径。需要更强隔离时，应使用操作系统账号、权限或容器挂载，而不是把 AgentDock 路径配置当成沙箱。
 
 ## CLI 参数
 
-| 参数 | 对应环境变量 | 默认值 | 说明 |
+当前服务入口提供这些参数：
+
+| 参数 | 环境变量 | 默认值 | 用途 |
 | --- | --- | --- | --- |
 | `--host` | `AGENTDOCK_HOST` | `127.0.0.1` | HTTP 监听地址 |
-| `--port` | `AGENTDOCK_PORT` | `8765` | HTTP 监听端口，范围 `1`～`65535` |
+| `--port` | `AGENTDOCK_PORT` | `8765` | HTTP 端口，范围 `1`～`65535` |
 | `--log-level` | `AGENTDOCK_LOG_LEVEL` | `info` | `debug`、`info`、`warn` 或 `error` |
-| `--nexus-endpoint` | `AGENTDOCK_NEXUS_ENDPOINT` | 空 | NexusDock 服务根地址 |
-| `--browser-enabled` | `AGENTDOCK_BROWSER_ENABLED` | `false` | 暴露浏览器自动化工具 |
-| `--browser-executable-path` | `AGENTDOCK_BROWSER_EXECUTABLE_PATH` | 空 | 指定 Chrome、Chromium 或 Edge 可执行文件 |
-| `--stdio` | `AGENTDOCK_STDIO` | `false` | 通过标准输入输出提供 JSON-RPC，不启动 HTTP 服务 |
+| `--mcp-apps-enabled` | `AGENTDOCK_MCP_APPS_ENABLED` | `true` | 是否暴露可选 MCP Apps UI 资源与元数据 |
+| `--browser-enabled` | `AGENTDOCK_BROWSER_ENABLED` | `false` | 是否暴露浏览器自动化工具 |
+| `--browser-executable-path` | `AGENTDOCK_BROWSER_EXECUTABLE_PATH` | 空 | Chrome、Chromium 或 Edge 可执行文件绝对路径 |
+| `--browser-cdp-url` | `AGENTDOCK_BROWSER_CDP_URL` | 空 | 由用户配置的现有 Chromium CDP 地址 |
+| `--browser-reuse-existing-cdp` | `AGENTDOCK_BROWSER_REUSE_EXISTING_CDP` | `false` | 自动复用唯一检测到的本地 CDP 浏览器 |
+| `--stdio` | `AGENTDOCK_STDIO` | `false` | 使用 stdio 提供 JSON-RPC，不启动 HTTP 服务 |
 
 示例：
 
@@ -65,62 +62,59 @@ agentdock \
   --log-level info
 ```
 
-## 基础运行配置
+NexusDock 不再属于服务参数。配对会建立独立设备身份，由 AgentDock 在普通运行配置之外加载。
 
-| 环境变量 | 默认值 | 说明 |
+## Core 运行环境变量
+
+| 环境变量 | 默认值 | 用途 |
 | --- | --- | --- |
-| `AGENTDOCK_HOME` | `~/.agentdock` | AgentDock 内部状态目录；手工设置时必须解析为绝对目录 |
-| `AGENTDOCK_DEFAULT_DIR` | `~/AgentDock` | 相对文件、命令和 Git 操作的默认工作目录；手工设置时必须解析为绝对目录 |
-| `AGENTDOCK_HOST` | `127.0.0.1` | HTTP 监听地址；非回环地址必须启用 Bearer Token 或 OAuth |
-| `AGENTDOCK_PORT` | `8765` | HTTP 监听端口 |
+| `AGENTDOCK_HOME` | `~/.agentdock` | AgentDock 私有状态根目录；显式设置时必须解析为绝对目录 |
+| `AGENTDOCK_DEFAULT_DIR` | `~/AgentDock` | 默认工作目录；显式设置时必须解析为绝对目录 |
+| `AGENTDOCK_HOST` | `127.0.0.1` | HTTP 监听地址；非回环监听必须有 Bearer Token 或 OAuth |
+| `AGENTDOCK_PORT` | `8765` | HTTP 端口 |
 | `AGENTDOCK_LOG_LEVEL` | `info` | 日志级别 |
-| `AGENTDOCK_STDIO` | `false` | 是否使用 stdio 模式 |
-| `AGENTDOCK_BROWSER_ENABLED` | `false` | 是否暴露 `browser_*` 工具 |
-| `AGENTDOCK_BROWSER_EXECUTABLE_PATH` | 空 | 可选的 Chrome、Chromium 或 Edge 可执行文件绝对路径 |
-| `AGENTDOCK_NEXUS_ENDPOINT` | 空 | NexusDock 服务根地址；启用 Recall、Workflow、Evolution 和私密笔记能力 |
-| `AGENTDOCK_NEXUS_TOKEN` | 空 | NexusDock Bearer Token |
+| `AGENTDOCK_STDIO` | `false` | 使用 stdio 传输而不是 HTTP 服务 |
+| `AGENTDOCK_MCP_APPS_ENABLED` | `true` | 是否暴露可选 MCP Apps UI 资源与元数据 |
+| `AGENTDOCK_COMMAND_ENV_FROM_ENV_JSON` | 空 | 明确把哪些宿主变量映射给 `exec_command` 子进程 |
+| `AGENTDOCK_TRUSTED_PROXY_CIDRS` | 空 | 逗号分隔的可信反向代理 CIDR |
 
-布尔值统一使用 `true` 或 `false`，避免不同服务管理器产生解析差异。
+布尔值建议统一写成 `true` 或 `false`。
+
+`AGENTDOCK_COMMAND_ENV_FROM_ENV_JSON` 是显式允许列表，不会把整个宿主环境透传给子进程。例如：
+
+```bash
+AGENTDOCK_COMMAND_ENV_FROM_ENV_JSON='{"HTTP_PROXY":"HTTP_PROXY","HTTPS_PROXY":"HTTPS_PROXY"}'
+```
+
+Skill 运行时保留变量 `SKILL_DATA_DIR` 不能通过该映射或请求级命令环境覆盖。
 
 ## Bearer Token 认证
 
-最简单的 HTTP 认证方式是设置：
+最简单的 HTTP 认证方式：
 
 ```bash
 export AGENTDOCK_AUTH_TOKEN="$(openssl rand -hex 32)"
 ```
 
-客户端访问 `/mcp` 时发送：
+客户端调用 `/mcp` 时发送：
 
 ```http
 Authorization: Bearer <token>
 ```
 
-只监听回环地址时允许不配置认证；一旦监听 `0.0.0.0`、局域网地址或公网地址，AgentDock 会拒绝在无认证状态下启动。
-
-Docker Compose 示例：
-
-```yaml
-services:
-  agentdock:
-    environment:
-      AGENTDOCK_AUTH_TOKEN: "${AGENTDOCK_AUTH_TOKEN:?set AGENTDOCK_AUTH_TOKEN}"
-```
+只监听回环地址时可以不启用认证；非回环 HTTP 监听如果既没有 Bearer Token 也没有 OAuth，AgentDock 会拒绝启动。
 
 ## OAuth 配置
 
-OAuth 适合 ChatGPT 等需要浏览器授权流程的远程 MCP 客户端。AgentDock 支持 Authorization Code、PKCE S256、动态客户端注册和 Refresh Token；兼容客户端可以通过服务端元数据自动完成注册，不需要管理员预先创建 Client ID 或 Client Secret。
+OAuth 适合支持浏览器授权的远程客户端。启用时使用：
 
-启用时必须同时配置以下变量：
-
-| 环境变量 | 要求 | 说明 |
+| 环境变量 | 要求 | 用途 |
 | --- | --- | --- |
 | `AGENTDOCK_OAUTH_ENABLED` | `true` | 启用 OAuth |
-| `AGENTDOCK_SERVER_URL` | 必填 | AgentDock 对客户端公开的 Origin，例如 `https://agentdock.example.com` |
-| `AGENTDOCK_OAUTH_PASSWORD` | 至少 12 个字符 | 用户在授权页面输入的连接密码 |
-| `AGENTDOCK_OAUTH_TOKEN_SECRET` | 至少 32 字节 | OAuth 状态和 Token 的签名密钥；应稳定保存，不要在每次重启时重新生成 |
-
-可选的 `AGENTDOCK_OAUTH_ACCESS_TOKEN_TTL` 用于控制 Access Token 有效期，默认 `1h`；支持 `12h` 这类 Go duration、`90d` 这类整数天数以及 `never`。
+| `AGENTDOCK_SERVER_URL` | 必填 | AgentDock 公网 Origin，例如 `https://agentdock.example.com` |
+| `AGENTDOCK_OAUTH_PASSWORD` | 至少 12 个字符 | 授权页面登录密码 |
+| `AGENTDOCK_OAUTH_TOKEN_SECRET` | 至少 32 字节 | OAuth 状态和 Token 的稳定签名密钥 |
+| `AGENTDOCK_OAUTH_ACCESS_TOKEN_TTL` | 可选，默认 `1h` | Access Token 有效期；支持 Go duration、`90d` 这类整数天数或 `never` |
 
 示例：
 
@@ -131,172 +125,124 @@ AGENTDOCK_OAUTH_PASSWORD=<long-login-password>
 AGENTDOCK_OAUTH_TOKEN_SECRET=<random-secret-at-least-32-bytes>
 ```
 
-可使用 OpenSSL 生成随机值：
+`AGENTDOCK_SERVER_URL` 是 Origin，不包含 MCP 路径。非回环公网 Origin 必须使用 HTTPS；客户端 MCP 地址再附加 `/mcp`，例如 `https://agentdock.example.com/mcp`。
 
-```bash
-openssl rand -base64 24
-openssl rand -hex 32
-```
-
-`AGENTDOCK_SERVER_URL` 必须是没有路径、查询参数或 Fragment 的完整 Origin。非回环地址必须使用 HTTPS；仅 `localhost` 或回环 IP 可以使用 HTTP。客户端实际填写的 MCP 地址则需要附加 `/mcp`，例如 `https://agentdock.example.com/mcp`。
-
-启用后会公开以下 OAuth 入口：
-
-| 路径 | 用途 |
-| --- | --- |
-| `/.well-known/oauth-authorization-server` | OAuth Authorization Server 元数据 |
-| `/.well-known/oauth-protected-resource/mcp` | MCP Protected Resource 元数据 |
-| `/register` | 动态客户端注册 |
-| `/oauth/authorize` | 浏览器授权页 |
-| `/oauth/token` | Authorization Code 和 Refresh Token 兑换 |
-
-Bearer Token 和 OAuth 可以同时配置。只需要一种认证方式时，不要额外保留无用秘密。面向 ChatGPT 的完整连接流程见 [使用 ChatGPT 连接 AgentDock](../guides/chatgpt.md)。
+Bearer Token 和 OAuth 可以同时存在。不要因为旧部署曾经使用某个秘密，就长期保留已经不用的配置。
 
 ## 可信反向代理
 
-默认情况下，AgentDock 不信任客户端提供的 `X-Forwarded-For`。只有反向代理确实位于受控网段，并且会正确重写代理链时，才配置：
+AgentDock 默认不信任任意 `X-Forwarded-For`。只有代理由你控制并正确重写转发链时，才配置代理网段：
 
 ```bash
 AGENTDOCK_TRUSTED_PROXY_CIDRS=127.0.0.0/8,::1/128
 ```
 
-多个网段使用逗号分隔。不要把不受控制的公网网段加入该变量，否则认证限流和客户端地址判断可能被伪造。
+不要信任过宽的公网网段。客户端地址会参与认证与限流相关判断。
 
-## NexusDock Recall、Workflow、Evolution 与私密笔记
+## 配对 NexusDock
 
-配置 NexusDock 后，AgentDock 会暴露 `recall_*`、`workflow_template_manage`、`evolve` 和 `private_note_manage`。Recall 与 Workflow 使用 NexusDock 共享服务，Evolution 生命周期策略由 AgentDock 负责，私密笔记使用 NexusDock Private Notes：
+当前 AgentDock 通过设备配对身份连接 NexusDock。旧 `AGENTDOCK_NEXUS_ENDPOINT` 和 `AGENTDOCK_NEXUS_TOKEN` 不再是受支持的 Core 配置来源；服务启动前会清理这两个旧环境变量，只从成功配对产生的身份加载 Nexus 信息。
+
+先在 **NexusDock → 设置 → 系统与节点** 生成一次性配对码，再在目标 AgentDock 设备执行控制台生成的命令。通用形式：
 
 ```bash
-AGENTDOCK_NEXUS_ENDPOINT=https://nexus.example.com
-AGENTDOCK_NEXUS_TOKEN=<nexus-token>
+agentdock nexus pair \
+  --endpoint https://nexus.example.com \
+  --code <pairing-code> \
+  --name <optional-device-name>
 ```
 
-`AGENTDOCK_NEXUS_ENDPOINT` 使用 NexusDock 服务根地址，不要附加具体 API 路径。未配置时：
+查看已保存的配对状态：
 
-- 本地 `task_manage` 仍可管理普通可恢复任务。
-- `evolve`、`recall_*`、`workflow_template_manage` 和 `private_note_manage` 不会出现在 `tools/list`。
+```bash
+agentdock nexus status
+```
 
-多设备路由、fleet 上下文和节点 Artifact 下载见 [NexusDock](../concepts/nexusdock.md)。
+配对后重启 AgentDock。身份加载成功后，直连 AgentDock 可以暴露 Nexus 支持的 Recall、Workflow、Evolution 和私密笔记能力，同时设备也会建立到 Nexus 的出站 Bridge 连接。
+
+多设备路由和 fleet MCP 入口见 [NexusDock](../concepts/nexusdock.md)。
 
 ## Coding Agent（ACP）
 
-ACP 默认关闭。macOS 和 Windows 用户通常直接在 AgentDock 高级设置中启用即可，完整流程见 [使用本地 Coding Agent](../guides/coding-agents.md)。
+ACP 默认关闭。macOS 和 Windows 用户通常直接在 AgentDock UI 配置。无界面部署使用 Profile 模型：
 
-无图形界面的部署可以使用这些宿主机配置：
-
-| 环境变量 | 默认值 | 说明 |
+| 环境变量 | 默认值 | 用途 |
 | --- | --- | --- |
-| `AGENTDOCK_ACP_ENABLED` | `false` | 是否暴露内置 ACP 工具 |
-| `AGENTDOCK_ACP_AGENT` | `claude` | 当前 Coding Agent 的简短配置名称 |
-| `AGENTDOCK_ACP_COMMAND` | 空 | 启用 ACP 时必填的 Adapter 可执行文件绝对路径 |
-| `AGENTDOCK_ACP_ARGS_JSON` | 空 | 可选的 Adapter 参数 JSON 字符串数组 |
-| `AGENTDOCK_ACP_ENV_FROM_ENV_JSON` | 空 | 可选 JSON 对象，把子进程变量名映射到已有宿主机变量名 |
-| `AGENTDOCK_ACP_MAX_CONCURRENT_PROMPTS` | `2` | 同时运行的 Prompt 上限，范围 `1` 到 `8` |
-| `AGENTDOCK_ACP_INTERACTION_TIMEOUT_MS` | `300000` | 权限交互超时毫秒数，范围 `1000` 到 `3600000` |
+| `AGENTDOCK_ACP_ENABLED` | `false` | 启用 ACP 工具 |
+| `AGENTDOCK_ACP_PROFILES_JSON` | 空 | ACP Profile JSON 数组 |
+| `AGENTDOCK_ACP_DEFAULT_PROFILE` | 第一个启用的 Profile | 工具调用省略 `profile_id` 时使用的默认 Profile |
+| `AGENTDOCK_ACP_MAX_CONCURRENT_PROMPTS` | `2` | Prompt 并发上限，范围 `1`～`8` |
+| `AGENTDOCK_ACP_INTERACTION_TIMEOUT_MS` | `300000` | 交互超时毫秒数，范围 `1000`～`3600000` |
 
-环境变量映射示例：
+每个 Profile 包含 `id`、`kind`、`command`、可选 `args`、可选 `env_from_env` 和 `enabled`。内置类型 `codex`、`claude`、`grok` 使用同名固定 ID；custom 可以使用其他唯一 ID。
+
+示例：
 
 ```bash
-AGENTDOCK_ACP_ENV_FROM_ENV_JSON='{"OPENAI_API_KEY":"OPENAI_API_KEY"}'
+AGENTDOCK_ACP_ENABLED=true
+AGENTDOCK_ACP_PROFILES_JSON='[{"id":"codex","kind":"codex","command":"/absolute/path/to/codex-acp","enabled":true}]'
+AGENTDOCK_ACP_DEFAULT_PROFILE=codex
 ```
 
-映射只保存变量名；AgentDock 启动时再把宿主机中的当前值传给子进程。凭据应保存在宿主机环境中，不要直接写进 `AGENTDOCK_ACP_ARGS_JSON`。
+`env_from_env` 只映射变量名，不保存真实值。Provider 凭据应留在宿主环境或 Provider 自己的登录存储中。
 
-AgentDock 不再维护 ACP 项目根目录白名单。会话可以使用运行用户有权限访问的任意宿主机目录；需要更严格边界时，应使用操作系统权限或容器挂载限制 Coding Agent。
+旧 `AGENTDOCK_ACP_AGENT`、`AGENTDOCK_ACP_COMMAND`、`AGENTDOCK_ACP_ARGS_JSON`、`AGENTDOCK_ACP_ENV_FROM_ENV_JSON` 只在没有 Profile JSON 时作为旧单 Profile 配置的升级兼容入口。新配置统一使用 Profiles。
+
+Adapter 发现与验证流程见 [使用本地 Coding Agent](../guides/coding-agents.md)。
 
 ## 工作区规则
 
-AgentDock 不通过环境变量配置项目规则。全局规则固定为 `~/.agentdock/AGENTS.md`；项目规则使用 `<workspace>/AGENTS.md`，并可由子目录逐级继承。
+项目规则不通过环境变量配置。固定全局规则文件是 `~/.agentdock/AGENTS.md`；项目规则使用 `<workspace>/AGENTS.md`，并可通过子目录继承。
 
-操作具体项目、切换工作区或工作区规则可能变化时，先调用 `workspace_context`。可选 `workdir` 只影响本次请求，不会修改后续命令的默认工作目录。工具会返回当前生效的 `AGENTS.md` 链，以及 `<workspace>/.agents/skills/*/SKILL.md` 下的工作区 Skill 索引；需要完整 Skill 说明时，再用 `read_file` 读取返回的文件路径。
-
-MCP 初始化 Instructions 只保留稳定的 AgentDock 使用说明，不会嵌入任何 `AGENTS.md` 正文。
+操作项目、切换工作区或规则可能变化时调用 `workspace_context`。可选 `workdir` 只影响本次上下文选择。它还会索引 `<workspace>/.agents/skills/*/SKILL.md`，返回精确 Skill 来源和引用，但不直接注入 Skill 正文。
 
 ## 浏览器工具
 
-浏览器自动化默认关闭，可以这样启用：
+浏览器自动化默认关闭：
 
-```bash
-AGENTDOCK_BROWSER_ENABLED=true
-```
-
-或：
-
-```bash
-agentdock --browser-enabled
-```
-
-AgentDock 支持 Chrome、Chromium 和 Microsoft Edge。自动检测不适用时，可以显式配置浏览器可执行文件路径。
-
-| 环境变量 | 默认值 | 说明 |
+| 环境变量 | 默认值 | 用途 |
 | --- | --- | --- |
-| `AGENTDOCK_BROWSER_ENABLED` | `false` | 暴露 `browser_session`、`browser_act` 和 `browser_snapshot` |
-| `AGENTDOCK_BROWSER_EXECUTABLE_PATH` | 空 | 自动检测不合适时，可指定浏览器可执行文件绝对路径 |
+| `AGENTDOCK_BROWSER_ENABLED` | `false` | 暴露浏览器工具 |
+| `AGENTDOCK_BROWSER_EXECUTABLE_PATH` | 空 | 自动检测不适用时指定浏览器可执行文件绝对路径 |
+| `AGENTDOCK_BROWSER_CDP_URL` | 空 | 用户配置的现有 Chromium CDP 地址 |
+| `AGENTDOCK_BROWSER_REUSE_EXISTING_CDP` | `false` | 发现并复用唯一的本地 CDP 浏览器 |
 
-macOS 和 Windows 图形应用会在启用前检测已经安装的受支持浏览器。Docker browser 镜像直接包含 Chromium，并自动配置可执行文件路径。使用方式见 [浏览器自动化](../guides/browser-control.md)。
+AgentDock 支持 Chrome、Chromium 和 Microsoft Edge。不使用 CDP 复用时，AgentDock 会启动并管理独立浏览器进程；附着外部 CDP 浏览器时，AgentDock 会在其中创建自己的独立 target，关闭 AgentDock session 不会终止外部浏览器。
 
-## Skill 与动态 MCP 的独立环境
+单次 `browser_session` 调用传入的 `cdp_url` 仅允许回环地址。命名或远程 CDP 地址必须由用户在 AgentDock 设置中配置。外部 CDP 浏览器不能同时使用持久 `profile_id`、Cookie 注入或 localStorage 注入。
 
-Skill 和动态 MCP 的业务秘密不应长期放在 AgentDock 主进程环境中。优先使用各自的独立环境：
+使用方式和安全边界见 [浏览器自动化](../guides/browser-control.md)。
 
-```json
-{
-  "action": "env_set",
-  "skill": "example-skill",
-  "key": "EXAMPLE_API_KEY",
-  "value": "..."
-}
-```
+## managed Skill 与动态 MCP 的独立环境
 
-```json
-{
-  "action": "env_set",
-  "name": "example-mcp",
-  "key": "SERVICE_TOKEN",
-  "value": "..."
-}
-```
+managed Skill 和动态 MCP Server 的业务凭据应与包定义分开。使用 `skill_manage` 和 `mcp_manage` 的环境 action，而不是把秘密放进 Skill 包、MCP Registry 条目或永久全局环境。
 
-分别通过 `skill_package` 和 `mcp_manage` 调用。`env_list` 只返回变量名和是否已配置，不返回真实值。
+`env_list` 只返回变量名和配置状态，不返回明文。managed Skill 只有在命令使用精确 managed `skill_ref` 时才会收到保留的 `SKILL_DATA_DIR`；shared 和 workspace Skill 不会继承它。
 
 ## 私密笔记
 
-从 `v0.4.4` 开始，`private_note_manage` 通过 NexusDock Private Notes 接口工作，不再读取 AgentDock 本机的私密笔记目录或 `AGENTDOCK_PRIVATE_NOTES_*` 环境变量。需要先配置 `AGENTDOCK_NEXUS_ENDPOINT` 和可选 Token。
+当前 AgentDock 与 NexusDock 完成配对后才会提供 `private_note_manage`。它使用 NexusDock Private Notes 服务，不通过本地私密笔记目录进行配置。
 
-NexusDock 负责明文存储边界、age X25519 密文备份和 Git 忽略规则。可以通过维护动作初始化或检查加密：
+搜索只返回安全元数据；只有显式 `read` 才返回明文。写入和删除按工具契约要求确认。私密笔记加密材料、NexusDock 管理员凭据与 AgentDock 设备配置应分别保护。
 
-```json
-{
-  "action": "maintain",
-  "maintenance_action": "init-encryption"
-}
-```
+## 查看当前运行状态
 
-搜索只匹配标题、简介、标签、分类和路径等安全元数据，不搜索或返回正文。只有显式 `read` 才返回明文；`write` 和 `delete` 都需要 `confirmed=true`。
+调用 `agentdock_context` 可以查看当前连接的运行环境和能力启动上下文。直连 AgentDock 时会包含运行时版本、操作系统、架构、路径、Skill 来源、动态 MCP 摘要，以及可选的 ACP/Nexus 支持索引。
 
-## 查看当前状态
-
-调用 `agentdock_context` 可以查看当前连接的运行环境和能力启动上下文。直连 AgentDock 时会包含：
-
-- AgentDock 版本、操作系统和架构。
-- AgentDock Home、默认目录、当前默认工作目录和路径模型。
-- 已安装 Skill 摘要和已启用的动态 MCP Server。
-- 配置后可见的 ACP 状态，以及 Nexus 提供的 Workflow / Recall 索引。
-
-`agentdock_context` 不会重复内置 MCP 工具清单，也不会报告当前使用的认证方式。当前连接实际暴露哪些工具，以 MCP 客户端的 `tools/list` 为准；认证配置请从部署环境或桌面控制面板检查。
-
-`agentdock_context` 和 `tools/list` 都不会返回认证 Token、OAuth 密码、签名密钥或 NexusDock Token。
+当前连接实际暴露哪些工具，以 MCP 客户端的 `tools/list` 为准。`agentdock_context` 和 `tools/list` 都不会返回认证 Token、OAuth 密码、签名密钥、Provider Secret 或 NexusDock Device Token。
 
 ## 启动前检查
 
-配置错误会让 AgentDock 直接拒绝启动。常见检查包括：
+配置无效时 AgentDock 会拒绝启动。常见检查包括：
 
-- 端口是否位于 `1`～`65535`。
-- 日志级别是否有效。
-- 非回环监听是否已启用认证。
-- OAuth 所需变量是否齐全、长度是否满足要求。
-- 公网 `AGENTDOCK_SERVER_URL` 是否使用 HTTPS。
-- `AGENTDOCK_TRUSTED_PROXY_CIDRS` 是否都是合法 CIDR。
+- 端口位于 `1`～`65535`。
+- 日志级别有效。
+- 非回环 HTTP 监听已启用认证。
+- OAuth 所需变量齐全并满足最小长度。
+- 公网 `AGENTDOCK_SERVER_URL` 使用 HTTPS。
+- 可信代理配置都是合法 CIDR。
+- 已启用 ACP Profile 的 ID 唯一有效，并使用可执行的绝对命令路径。
+- 浏览器可执行文件和 CDP URL 配置结构有效。
 
 部署完成后至少验证：
 
@@ -304,4 +250,4 @@ NexusDock 负责明文存储边界、age X25519 密文备份和 Git 忽略规则
 curl -fsS http://127.0.0.1:8765/healthz
 ```
 
-再使用实际客户端完成一次 MCP `initialize` 和工具调用。安全边界与部署建议见 [安全模型](../operations/security.md)。
+再使用实际客户端完成一次 MCP `initialize` 和真实工具调用。安全边界见 [安全模型](../operations/security.md)。

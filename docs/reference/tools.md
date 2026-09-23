@@ -16,7 +16,7 @@ After connecting an MCP client, describe the goal and let the agent choose the a
 The tools actually visible to a client depend on the host configuration:
 
 - Core tools that do not depend on external integrations are always available.
-- Configuring `AGENTDOCK_NEXUS_ENDPOINT` adds `evolve`, `workflow_template_manage`, `recall_*`, and `private_note_manage`.
+- Pairing this AgentDock with NexusDock adds `evolve`, `workflow_template_manage`, `recall_*`, and `private_note_manage`.
 - Enabling `AGENTDOCK_BROWSER_ENABLED` or `--browser-enabled` adds `browser_*` tools.
 - Enabling `AGENTDOCK_ACP_ENABLED` adds `acp_session`, `acp_prompt`, and `acp_interaction`.
 - Upstream tools from dynamic MCP servers are not merged directly into AgentDock's `tools/list`; they are accessed through stable discovery and invocation entry points.
@@ -42,7 +42,7 @@ AgentDock uses the Host path model. Relative paths resolve from `~/AgentDock`; a
 
 | Tool | Purpose | Common parameters or actions |
 | --- | --- | --- |
-| `read_file` | Reads UTF-8 text in slices and supports `skill://<name>/<path>` | `path`, `start_line`, `end_line` |
+| `read_file` | Reads UTF-8 text in slices and supports host-issued `skill://...` resource URIs | `path`, `start_line`, `end_line` |
 | `list_dir` | Lists directories or finds files through one bounded tree/glob entry point | `path`, `max_depth`, `max_entries`, `patterns`, `exclude_patterns`, `entry_type` |
 | `search_text` | Searches file contents with text or regular expressions | `query`, `regex`, `include_globs`, `context_lines` |
 | `file_edit` | Performs text-file changes through one entry point | `replace`, `patch`, `add`, `delete`, `move` |
@@ -57,44 +57,46 @@ On Windows, file tools can use native WSL file semantics through `runtime=wsl`; 
 
 | Tool | Purpose | Common parameters or actions |
 | --- | --- | --- |
-| `exec_command` | Runs a command with timeout, output limits, and redaction | `cmd`, `workdir`, `timeout_ms`, `tty`, `skill` |
+| `exec_command` | Runs a command with timeout, output limits, and redaction | `cmd`, `workdir`, `timeout_ms`, `tty`, `skill_ref` |
 | `session_observe` | Reads the state of a long-running command session | `list`, `status` |
 | `session_act` | Writes input to or terminates a command session | `write`, `kill`, `kill_all` |
 
 When a command does not exit quickly, `exec_command` returns a `session_id`. Use `session_observe` to read later state. Use `session_act action=write` when interactive input is required.
 
-When a command runs with `skill=<name>`, AgentDock uses the active Skill root as the default working directory and injects that Skill's isolated environment only into the child process.
+When a command runs with a host-issued managed `skill_ref`, AgentDock uses that exact Skill root as the default working directory, injects its isolated environment, and provides the reserved `SKILL_DATA_DIR` for private persistent data. Shared and workspace candidates do not inherit a managed Skill's environment or data directory.
 
 On Windows, `exec_command` can explicitly select `runtime=windows` or `runtime=wsl`.
 
 ## Coding Agents (ACP)
 
-These tools are exposed only when ACP is enabled on the AgentDock host. Describe the coding task directly; the upstream agent manages the ACP session and progress flow.
+These tools are exposed only when ACP is enabled on the AgentDock host. All three accept optional `profile_id`; omitting it selects the configured default profile.
 
 | Tool | Purpose | Main actions |
 | --- | --- | --- |
-| `acp_session` | Checks the configured Coding Agent and creates, resumes, configures, inspects, or closes persistent sessions | `info`, `authenticate`, `new`, `load`, `resume`, `fork`, `set_mode`, `set_config`, `list`, `inspect`, `close`, `delete` |
-| `acp_prompt` | Starts a coding turn and reads progress, steering, or cancellation | `start`, `events`, `steer`, `cancel` |
-| `acp_interaction` | Handles explicit permission interactions raised by the Coding Agent | `list`, `inspect`, `respond`, `cancel` |
+| `acp_session` | Manages AgentDock and Adapter-native sessions | `info`, `new`, `list`, `inspect`, `open`, `update`, `close`, `delete` |
+| `acp_prompt` | Starts asynchronous prompt Runs, reads ordered events, and requests cancellation | `start`, `events`, `cancel` |
+| `acp_interaction` | Handles pending human permission interactions | `list`, `respond` |
 
-A prompt `start` returns a `run_id` quickly; progress is read through `events` instead of keeping one tool call open for the entire coding turn. Permission responses can only select an option currently offered by the Coding Agent and allowed by local AgentDock policy.
+`acp_session open` negotiates resume/load internally. `new` can fork through `from_session_id` when the Adapter advertises that capability, and `update` handles session modes or configuration options. Authentication can be requested through `info(auth_method_id=...)` or another session action that supplies the advertised method. Prompt steering is capability-driven and internal rather than a separate public action.
 
-See [Use local Coding Agents](../guides/coding-agents.md) for setup and project-access boundaries.
+`acp_prompt start` returns a `run_id` quickly; progress is read through `events`. Permission responses can select only an option offered by the Coding Agent and allowed by local policy, or cancel the pending interaction.
+
+See [Use local Coding Agents](../guides/coding-agents.md) for profiles, setup, and project-access boundaries.
 
 ## Recoverable tasks and Workflows
 
 | Tool | Purpose | Actions |
 | --- | --- | --- |
 | `task_manage` | Persists multi-step tasks, progress, blockers, and final verification evidence | `create`, `list`, `get`, `checkpoint`, `block`, `resume`, `final_review`, `complete` |
-| `workflow_template_manage` | Manages and matches reusable Workflow templates; visible only when NexusDock is configured | `publish`, `retire`, `list`, `get`, `get_many`, `match`, `vector_index` |
+| `workflow_template_manage` | Manages and matches reusable Workflow templates; visible only when this AgentDock device is paired with NexusDock | `publish`, `retire`, `list`, `get`, `get_many`, `match`, `vector_index` |
 
-`task_manage` stores state; it does not replace commands, tests, deployment, or browser verification. Ordinary tasks work entirely locally. Workflow templates live in the NexusDock Registry, so `workflow_template_manage` is absent from the tool list when NexusDock is not configured.
+`task_manage` stores state; it does not replace commands, tests, deployment, or browser verification. Ordinary tasks work entirely locally. Workflow templates live in the NexusDock Registry, so `workflow_template_manage` is absent from the tool list when this AgentDock device is not paired with NexusDock.
 
 `publish` accepts one complete template and validates it before making that version active. When several templates apply, `get_many` returns their full bodies but does not combine them automatically. The model must remove irrelevant steps, merge duplicates, order the result, and pass the composed steps and completion conditions to `task_manage create`.
 
 ## Knowledge evolution
 
-`evolve` is exposed when NexusDock is configured, but the Evolution lifecycle belongs to AgentDock. NexusDock provides shared storage and access paths; it does not decide whether learned knowledge becomes supported, contradicted, superseded, or retracted.
+`evolve` is exposed when this AgentDock device is paired with NexusDock, but the Evolution lifecycle belongs to AgentDock. NexusDock provides shared storage and access paths; it does not decide whether learned knowledge becomes supported, contradicted, superseded, or retracted.
 
 | Tool | Purpose | Intents |
 | --- | --- | --- |
@@ -102,21 +104,26 @@ See [Use local Coding Agents](../guides/coding-agents.md) for setup and project-
 
 `bind` is an advanced pre-execution learning check: the model must declare what a later Task success or failure would mean before execution starts. A Task outcome has no learning meaning by itself, and Evolution must not block normal Task completion.
 
-## Skill packages and isolated environments
+## Managed Skills and isolated environments
 
 | Tool | Purpose | Actions |
 | --- | --- | --- |
-| `skill_package` | Validates, installs, activates, and rolls back Skills, and manages each Skill's isolated environment | `validate`, `install`, `activate`, `rollback`, `env_set`, `env_unset`, `env_list` |
+| `skill_manage` | Installs or removes managed Skill current content and manages its isolated environment | `install`, `remove`, `env_set`, `env_unset`, `env_list` |
 
-A Skill is a document-based working method read by the model, not a hidden executor. A typical flow is:
+AgentDock does not expose a separate Skill-version, activation, or rollback lifecycle. Each managed Skill name has one current content tree. Reinstalling the same content is a no-op by `content_digest`; installing different reviewed content with the same name atomically replaces the current tree.
+
+A typical flow is:
 
 ```text
-agentdock_context
-→ read_file skill://<name>/SKILL.md
-→ execute through real file, command, browser, or MCP tools
+agentdock_context / workspace_context
+→ select one exact Skill candidate
+→ read_file <the candidate's returned file>
+→ execute through real tools using the same returned skill_ref when needed
 ```
 
-`skill_package env_list` returns variable names and configuration state, never secret values. See [Use Skills](../concepts/skills.md) for usage details.
+Do not reconstruct `skill_ref` or a `skill://` URI from a bare name. Managed, shared, and workspace candidates with the same name remain distinct. `skill_manage env_list` returns variable names and configuration state, never secret values. Normal `remove` preserves the managed Skill's environment and persistent data; `purge=true` removes those preserved resources too.
+
+See [Use Skills](../concepts/skills.md) for the user workflow.
 
 ## Dynamic MCP
 
@@ -155,7 +162,7 @@ Image-producing tools such as browser screenshots usually return a lightweight a
 
 ## NexusDock Recall
 
-These tools are exposed only when `AGENTDOCK_NEXUS_ENDPOINT` is configured:
+These tools are exposed on a direct AgentDock connection when that device is paired with NexusDock:
 
 | Tool | Purpose | Common parameters or actions |
 | --- | --- | --- |
@@ -175,7 +182,7 @@ Confirmation requirements depend on the action and destination. Destructive or p
 
 ## Private Notes
 
-`private_note_manage` is exposed only when `AGENTDOCK_NEXUS_ENDPOINT` is configured:
+`private_note_manage` is exposed on a direct AgentDock connection when that device is paired with NexusDock:
 
 | Tool | Purpose | Actions |
 | --- | --- | --- |
@@ -198,7 +205,7 @@ These tools are exposed only when browser capabilities are enabled:
 | `browser_act` | Navigates, clicks, types, scrolls, and waits for page conditions in a selected page | `page_id`, `goto`, `click`, `fill`, `wait_for_url`, `wait_for_text`, `wait_for_response` |
 | `browser_snapshot` | Captures selected-page and all-page metadata, text, screenshots, and errors | `session_id`, `page_id`, `full_page` |
 
-`browser_session` creates an AgentDock-managed Chrome, Chromium, or Edge session. It supports headless mode, dedicated `profile_id` values, cookies, and localStorage injection. A session returns `page_id` and `pages`; when a site opens a new tab, pass the target `page_id` to `browser_act` or `browser_snapshot`. It does not take over an already-open personal browser.
+`browser_session` can launch an AgentDock-owned Chrome, Chromium, or Edge process, or attach to an existing Chromium-family browser over CDP while managing only a dedicated AgentDock target. Owned sessions support headless mode, dedicated `profile_id` values, cookies, and localStorage injection. External CDP sessions do not use those owned-profile injection features, and closing the AgentDock session leaves the external browser running. A session returns `page_id` and `pages`; when a site opens a new tab, pass the target `page_id` to `browser_act` or `browser_snapshot`.
 
 AgentDock does not expose arbitrary page-script execution by default. Prefer observable clicks, typing, scrolling, and screenshots. See [Browser automation](../guides/browser-control.md) for details.
 
@@ -228,7 +235,7 @@ A failed command exit is still a normal tool result because AgentDock must prese
 }
 ```
 
-A failed domain check is not necessarily a tool-call error. For example, Skill validation can return `valid: false` with a list of issues. Callers should inspect MCP `isError` first, then read `command_ok`, `valid`, `changed`, or the relevant domain field.
+A failed domain check is not necessarily a tool-call error. For example, a completed domain operation can report `changed: false` without being a tool-call error. Callers should inspect MCP `isError` first, then read `command_ok`, `changed`, `configured`, or the relevant domain field.
 
 Internal or separate protocols such as HTTP health checks, the Runtime API, and WSL child processes may use their own state fields, but those fields are not exposed as generic success markers in MCP tool results.
 

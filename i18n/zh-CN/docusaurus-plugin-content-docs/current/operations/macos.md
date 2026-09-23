@@ -42,7 +42,8 @@ sh /tmp/agentdock-install.sh --register-service --version vX.Y.Z
 ## 修改安装目录
 
 ```bash
-sh /tmp/agentdock-install.sh --register-service --install-dir "$HOME/bin"
+AGENTDOCK_INSTALL_DIR="$HOME/bin" \
+  sh /tmp/agentdock-install.sh --register-service
 ```
 
 修改目录后要确保该目录已经加入 PATH，或始终使用完整路径启动。
@@ -122,30 +123,20 @@ tail -f "$HOME/Library/Logs/AgentDock/cloudflared.err.log"
 
 具体步骤见 [macOS 桌面自动化](../guides/desktop-automation.md)。
 
-## 更新与备份
+## 更新
 
-重新运行安装脚本即可升级。旧二进制会备份到：
-
-```text
-~/.agentdock/backups/bin
-```
-
-运行数据和默认工作目录不会被删除。
+重新运行同一个 `install.sh` 入口即可升级。安装器会事务性准备目标 Release、同步随 Release 发布的核心 Skill、验证新运行环境，并保留 AgentDock 状态和默认工作目录。安装失败由安装器执行回滚，不需要用户维护可选择的二进制或 Skill 历史版本。
 
 ## 卸载 AgentDock
 
-删除应用前，先在“高级设置”中关闭“登录后显示 AgentDock 菜单栏”，应用更改后退出 AgentDock。
-
-下载并运行官方卸载脚本：
+公开的 Unix 维护入口与安装时相同，统一使用 `install.sh`；AgentDock Release 不再单独发布 macOS 卸载脚本。需要时重新下载当前入口，然后执行：
 
 ```bash
-curl -fL https://github.com/uvwt/agentdock/releases/latest/download/uninstall-macos.sh \
-  -o /tmp/uninstall-agentdock.sh
-zsh /tmp/uninstall-agentdock.sh
+curl -fL https://github.com/uvwt/agentdock/releases/latest/download/install.sh \
+  -o /tmp/agentdock-install.sh
+sh /tmp/agentdock-install.sh --uninstall
 ```
 
-默认命令会删除后台服务、支持文件和日志，但保留二进制、`~/.agentdock` 与 `~/AgentDock`。
+普通 macOS 卸载会清理 AgentDock 后台服务、已安装 CLI/运行文件、图形应用以及 AgentDock 应用日志/配置，但保留 `~/.agentdock` 与 `~/AgentDock` 用户数据。
 
-需要同时删除安装的二进制时使用 `--remove-binary`。只有明确要删除二进制、全部 AgentDock 状态、浏览器支持和默认工作目录时，才使用 `--purge-data`。
-
-最后把“应用程序”中的 `AgentDock.app` 移到废纸篓。
+只有明确要把这些保留的 AgentDock 状态和默认工作目录内容也删除时才使用 `--purge-data`。自定义布局执行破坏性 purge 时要求显式提供用户数据路径，避免把继承的环境值误当成删除目标。
