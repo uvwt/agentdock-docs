@@ -30,7 +30,7 @@
     "message": "真正完成工作"
   },
   "homepage.hero.subtitle": {
-    "message": "把支持 MCP 的 AI 客户端连接到你的电脑或服务器，通过明确的工具边界使用文件、命令、Git、浏览器和外部服务。"
+    "message": "把支持 MCP 的 AI 客户端连接到你的电脑或服务器，让它可以操作文件、执行命令、使用 Git 和浏览器，并连接其他服务。"
   },
   "homepage.hero.chooseInstall": {
     "message": "选择安装方式"
@@ -39,7 +39,7 @@
     "message": "了解功能"
   },
   "homepage.hero.builtInTools": {
-    "message": "内置工具"
+    "message": "实用工具"
   },
   "homepage.hero.recoverable": {
     "message": "可恢复"
@@ -57,7 +57,7 @@
     "message": "AgentDock 文档"
   },
   "homepage.meta.description": {
-    "message": "AgentDock 官方文档：快速安装、连接客户端、使用 Skill、浏览器和外部 MCP。"
+    "message": "AgentDock 官方文档：安装、连接客户端、使用 Skill、Plugin、浏览器和外部 MCP 服务。"
   },
   "homepage.features.install.title": {
     "message": "安装并连接"
@@ -75,7 +75,7 @@
     "message": "使用 Skill"
   },
   "homepage.features.skills.description": {
-    "message": "安装可信 Skill，把成熟工作方法、依赖和安全边界交给 Agent 使用。"
+    "message": "按需安装可信 Skill 和 Plugin，为 Agent 增加可复用的工作方法与相关工具。"
   },
   "homepage.features.browser.title": {
     "message": "操作浏览器"
@@ -87,31 +87,19 @@
     "message": "连接外部服务"
   },
   "homepage.features.mcp.description": {
-    "message": "按需接入其他 MCP Server，凭据放在独立环境中，不写入注册信息。"
+    "message": "按需连接其他 MCP 服务，凭据保存在独立环境中。"
   },
   "homepage.features.tasks.title": {
     "message": "跟踪复杂任务"
   },
   "homepage.features.tasks.description": {
-    "message": "保存目标、步骤、进度和验证结果，中断后继续，不把“执行结束”误当成完成。"
+    "message": "保存目标、步骤、进度和验证结果，让较长任务在中断后继续。"
   },
   "homepage.features.heading": {
     "message": "从安装到完成真实任务"
   },
   "homepage.features.summary": {
-    "message": "先完成最短安装，再按需要启用 Skill、浏览器、外部 MCP 和长期任务能力。"
-  },
-  "homepage.quickStart.heading": {
-    "message": "按当前系统完成安装"
-  },
-  "homepage.quickStart.summary": {
-    "message": "普通用户优先选择 macOS、Windows 或 Linux 原生安装；已经使用 Docker 时再选择容器方式。"
-  },
-  "homepage.quickStart.chooseInstall": {
-    "message": "选择安装方式"
-  },
-  "homepage.quickStart.allDocs": {
-    "message": "查看全部文档"
+    "message": "先完成安装，再按需要启用 Skill、Plugin、浏览器自动化、外部 MCP 和可恢复任务。"
   },
   "theme.ErrorPageContent.title": {
     "message": "页面已崩溃。",
@@ -439,5 +427,41 @@
   "theme.tags.tagsPageTitle": {
     "message": "标签",
     "description": "The title of the tag list page"
+  },
+  "homepage.hero.builtIn": {
+    "message": "内置"
+  },
+  "homepage.nexus.heading": {
+    "message": "一个 MCP，连接多台设备"
+  },
+  "homepage.nexus.summary": {
+    "message": "把 Mac、Windows、Linux 主机和服务器上的 AgentDock 集中到 NexusDock，在一个地方管理设备状态。"
+  },
+  "homepage.nexus.explore": {
+    "message": "了解 NexusDock"
+  },
+  "homepage.nexus.install": {
+    "message": "安装 NexusDock"
+  },
+  "homepage.nexus.capability.mcp.title": {
+    "message": "一个 MCP 地址"
+  },
+  "homepage.nexus.capability.mcp.description": {
+    "message": "AI 客户端只需要连接一次，就可以通过 NexusDock 使用多台 AgentDock。"
+  },
+  "homepage.nexus.capability.devices.title": {
+    "message": "集中管理设备"
+  },
+  "homepage.nexus.capability.devices.description": {
+    "message": "在一个 Web 控制台中查看已经连接的设备和当前状态。"
+  },
+  "homepage.nexus.capability.data.title": {
+    "message": "共享记忆与工作流数据"
+  },
+  "homepage.nexus.capability.data.description": {
+    "message": "让多台 AgentDock 共同使用长期记忆和可复用的工作流。"
+  },
+  "homepage.nexus.tagline": {
+    "message": "共享记忆与工作流数据"
   }
 }

@@ -39,7 +39,7 @@ function getFeatures(): FeatureItem[] {
       description: translate({
         id: 'homepage.features.skills.description',
         message:
-          'Install trusted Skills so agents can follow proven workflows, dependencies, and safety boundaries.',
+          'Install trusted Skills and Plugins to add reusable workflows and related tools when you need them.',
       }),
       to: '/docs/concepts/skills',
     },
@@ -59,7 +59,7 @@ function getFeatures(): FeatureItem[] {
       description: translate({
         id: 'homepage.features.mcp.description',
         message:
-          'Connect additional MCP servers on demand and keep credentials in isolated environments instead of registry data.',
+          'Connect other MCP services as needed, with credentials kept in isolated environments.',
       }),
       to: '/docs/concepts/dynamic-mcp',
     },
@@ -69,7 +69,7 @@ function getFeatures(): FeatureItem[] {
       description: translate({
         id: 'homepage.features.tasks.description',
         message:
-          'Persist goals, steps, progress, and verification so interrupted work can continue without mistaking execution for completion.',
+          'Save goals, steps, progress, and verification so longer work can continue after an interruption.',
       }),
       to: '/docs/concepts/tasks',
     },
@@ -91,6 +91,37 @@ function Feature({label, title, description, to}: FeatureItem): ReactNode {
   );
 }
 
+
+function NexusDockPreview(): ReactNode {
+  return (
+    <div className={styles.nexusPreview} aria-hidden="true">
+      <div className={styles.nexusPreviewHeader}>
+        <span>NexusDock</span>
+        <span className={styles.nexusOnline}>MULTI-DEVICE</span>
+      </div>
+      <div className={styles.nexusHub}>
+        <div className={styles.nexusHubCore}>
+          <span className={styles.nexusHubMark}>N</span>
+          <div>
+            <strong>NexusDock</strong>
+            <span>ONE MCP ENDPOINT</span>
+          </div>
+        </div>
+        <div className={styles.nexusNodes}>
+          <div><span>●</span><strong>Mac</strong><small>AgentDock</small></div>
+          <div><span>●</span><strong>Windows</strong><small>AgentDock</small></div>
+          <div><span>●</span><strong>Linux</strong><small>AgentDock</small></div>
+        </div>
+      </div>
+      <div className={styles.nexusShared}>
+        <div><span>01</span><strong>Recall</strong><small>MEMORY</small></div>
+        <div><span>02</span><strong>Workflow</strong><small>SHARED DATA</small></div>
+        <div><span>03</span><strong>MCP</strong><small>ONE ENDPOINT</small></div>
+      </div>
+    </div>
+  );
+}
+
 export default function HomepageFeatures(): ReactNode {
   const features = getFeatures();
 
@@ -107,8 +138,8 @@ export default function HomepageFeatures(): ReactNode {
             </div>
             <p>
               <Translate id="homepage.features.summary">
-                Start with the shortest installation path, then enable Skills, browser automation,
-                external MCP servers, and long-running tasks as needed.
+                Start with installation, then add Skills, Plugins, browser automation, external
+                MCP services, and recoverable tasks only when you need them.
               </Translate>
             </p>
           </div>
@@ -120,28 +151,72 @@ export default function HomepageFeatures(): ReactNode {
         </div>
       </section>
 
-      <section className={styles.quickStart}>
-        <div className={`container ${styles.quickStartInner}`}>
-          <div>
-            <span className={styles.kicker}>GET STARTED</span>
-            <Heading as="h2">
-              <Translate id="homepage.quickStart.heading">Install for your current system</Translate>
-            </Heading>
-            <p>
-              <Translate id="homepage.quickStart.summary">
-                Most users should choose the native macOS, Windows, or Linux installer. Choose the
-                container option when Docker is already part of your environment.
-              </Translate>
-            </p>
+      <section className={styles.nexusSection}>
+        <div className="container">
+          <div className={styles.nexusGrid}>
+            <div className={styles.nexusCopy}>
+              <span className={styles.kicker}>NEXUSDOCK</span>
+              <Heading as="h2">
+                <Translate id="homepage.nexus.heading">One MCP, multiple devices</Translate>
+              </Heading>
+              <p className={styles.nexusTagline}>
+                <strong>
+                  <Translate id="homepage.nexus.tagline">Share Recall memory and Workflow data</Translate>
+                </strong>
+              </p>
+              <p>
+                <Translate id="homepage.nexus.summary">
+                  Bring AgentDock on Mac, Windows, Linux, and servers into one NexusDock and manage
+                  device status in one place.
+                </Translate>
+              </p>
+              <div className={styles.nexusActions}>
+                <Link className={styles.quickPrimary} to="/docs/concepts/nexusdock">
+                  <Translate id="homepage.nexus.explore">Explore NexusDock</Translate>
+                  <span aria-hidden="true">→</span>
+                </Link>
+                <Link className={styles.quickSecondary} to="/docs/operations/nexusdock">
+                  <Translate id="homepage.nexus.install">Install NexusDock</Translate>
+                </Link>
+              </div>
+            </div>
+            <NexusDockPreview />
           </div>
-          <div className={styles.quickLinks}>
-            <Link className={styles.quickPrimary} to="/docs/getting-started/install">
-              <Translate id="homepage.quickStart.chooseInstall">Choose an installation</Translate>
-              <span aria-hidden="true">→</span>
-            </Link>
-            <Link className={styles.quickSecondary} to="/docs/intro">
-              <Translate id="homepage.quickStart.allDocs">Browse all documentation</Translate>
-            </Link>
+
+          <div className={styles.nexusCapabilities}>
+            <div>
+              <span>01</span>
+              <strong>
+                <Translate id="homepage.nexus.capability.mcp.title">One MCP endpoint</Translate>
+              </strong>
+              <p>
+                <Translate id="homepage.nexus.capability.mcp.description">
+                  Connect the AI client once and reach multiple AgentDock devices through NexusDock.
+                </Translate>
+              </p>
+            </div>
+            <div>
+              <span>02</span>
+              <strong>
+                <Translate id="homepage.nexus.capability.devices.title">Manage devices together</Translate>
+              </strong>
+              <p>
+                <Translate id="homepage.nexus.capability.devices.description">
+                  See connected devices and their current status from one web console.
+                </Translate>
+              </p>
+            </div>
+            <div>
+              <span>03</span>
+              <strong>
+                <Translate id="homepage.nexus.capability.data.title">Share Recall and Workflow data</Translate>
+              </strong>
+              <p>
+                <Translate id="homepage.nexus.capability.data.description">
+                  Reuse long-term memory and repeatable workflows across your AgentDock devices.
+                </Translate>
+              </p>
+            </div>
           </div>
         </div>
       </section>

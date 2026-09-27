@@ -1,133 +1,46 @@
-# Advanced Docker configuration
+# Docker
 
-This page covers image variants, Cloudflare Tunnel, custom ports, host-directory mounts, upgrades, and old-data migration.
+Use the [Docker installation guide](../getting-started/docker.md) for first-time setup. This page covers the settings most often changed after installation.
 
-AgentDock uses a single `docker-compose.yml`. Optional capabilities (browser image, Cloudflare Tunnel) are enabled with environment variables and Compose profiles—no extra Compose overlay files.
+## Images
 
-## Image variants
+AgentDock publishes these Linux images for `amd64` and `arm64`:
 
-AgentDock publishes three image variants for `linux/amd64` and `linux/arm64`:
-
-| Tag | Use case |
+| Image | Use |
 | --- | --- |
-| `latest` / `vX.Y.Z` | Default runtime image for normal use |
-| `dev-latest` / `dev-vX.Y.Z` | Adds Go, C, C++, and the `pkg-config` build toolchain |
+| `latest` / `vX.Y.Z` | Normal runtime |
+| `dev-latest` / `dev-vX.Y.Z` | Adds Go and native build tools |
 | `browser-latest` / `browser-vX.Y.Z` | Adds Chromium for browser automation |
 
-The default Compose file uses the production runtime image. When you need to compile Go or native extensions inside the container, add this to `.env`:
-
-```dotenv
-AGENTDOCK_IMAGE=ghcr.io/uvwt/agentdock:dev-vX.Y.Z
-```
-
-Then recreate the container:
-
-```bash
-docker compose up -d --force-recreate
-```
-
-The `dev` and `browser` images serve different purposes. The browser image does not include the Go compiler by default.
-
-## Enable browser automation
-
-Point Compose at the browser image and enable browser tools in `.env`:
+Choose another image through `.env`:
 
 ```dotenv
 AGENTDOCK_IMAGE=ghcr.io/uvwt/agentdock:browser-latest
 AGENTDOCK_BROWSER_ENABLED=true
 ```
 
-Then recreate:
+See [Use the browser](../guides/browser-control.md) for browser behavior.
 
-```bash
-docker compose up -d --force-recreate
-```
+## Port and data
 
-The Compose file already sets `shm_size` to 1 GB for Chromium. Browser profiles, screenshots, and session state remain in the AgentDock data volume.
-
-Use a dedicated `profile_id` for browser sessions. Do not mount the complete profile directory from your daily browser.
-
-## Cloudflare Tunnel
-
-Tunnel services live in the same `docker-compose.yml` and are activated with Compose profiles. Optional sample variables are listed in [`.env.example`](https://raw.githubusercontent.com/uvwt/agentdock/main/.env.example) on the repository.
-
-### Quick Tunnel
-
-```bash
-docker compose --profile cloudflare-quick up -d
-docker compose logs -f cloudflared-quick
-```
-
-The URL in the log is temporary and changes after restart. Append `/mcp` and keep the Bearer Token from `.env` when configuring the client.
-
-### Named Tunnel
-
-Complete [Configure a fixed domain](../guides/fixed-domain.md) first. Then add the resulting public origin and Tunnel Token to the existing deployment `.env` without overwriting the current AgentDock token:
-
-```dotenv
-AGENTDOCK_SERVER_URL=https://agent.example.com
-TUNNEL_TOKEN=replace-with-cloudflare-tunnel-token
-```
-
-Restrict `.env` to the current user and start the named profile:
-
-```bash
-chmod 600 .env
-docker compose --profile cloudflare-named up -d
-```
-
-Use the Docker service URL from the fixed-domain guide. Compose passes `TUNNEL_TOKEN` only to the `cloudflared-named` container; the AgentDock container receives `AGENTDOCK_SERVER_URL` and its own authentication token, but not the Tunnel Token. The token is provided through the container environment and does not appear in the `cloudflared` command arguments.
-
-Use only one Tunnel profile at a time. To stop the deployment and remove the Tunnel container while preserving AgentDock data:
-
-```bash
-docker compose \
-  --profile cloudflare-quick \
-  --profile cloudflare-named \
-  down
-```
-
-## Change the local port
-
-The default MCP URL is `http://127.0.0.1:8765/mcp` (host and container both use port `8765`). When that host port conflicts, add this to `.env`:
+The default MCP URL is `http://127.0.0.1:8765/mcp`. To change the host port:
 
 ```dotenv
 AGENTDOCK_PUBLISH_PORT=18767
 ```
 
-Then restart:
-
-```bash
-docker compose up -d --force-recreate
-```
-
-The new MCP URL becomes `http://127.0.0.1:18767/mcp`.
-
-The default listener is bound only to the local loopback address. Do not change it directly to `0.0.0.0` for convenience. Read the [Security model](./security.md) before allowing LAN or public access.
-
-## Where data is stored
-
-The default Compose file uses two Docker named volumes:
+The default Compose file keeps persistent data in two named volumes:
 
 ```text
 agentdock_home       -> /home/agentdock/.agentdock
 agentdock_workspace  -> /home/agentdock/AgentDock
 ```
 
-- `agentdock_home`: tasks, Skills, dynamic MCP, isolated environments, and runtime artifacts.
-- `agentdock_workspace`: the default working directory for file, command, and Git tools.
+`docker compose down` preserves these volumes.
 
-Inspect the actual volume names:
+## Mount a host project
 
-```bash
-docker compose config --volumes
-```
-
-`docker compose down` does not delete this data.
-
-## Mount a host project directory
-
-To let AgentDock work directly with a host project, replace the workspace volume with a bind mount:
+Replace the workspace volume with a bind mount when AgentDock needs to work directly on host files:
 
 ```yaml
 services:
@@ -137,104 +50,34 @@ services:
       - ./AgentDock:/home/agentdock/AgentDock
 ```
 
-On Linux, make sure container UID/GID `10001` can write to the directory:
+On Linux, make sure container UID/GID `10001` can write to the mounted directory. Mount only the paths you want the container to access.
+
+## Public access
+
+Keep the normal service bound to the local host and use the supported Cloudflare Tunnel profile when remote access is required. See [Public access](./public-access.md) instead of duplicating Tunnel settings here.
+
+## Update and logs
 
 ```bash
-mkdir -p AgentDock
-sudo chown -R 10001:10001 AgentDock
-```
-
-Mount only the directories the task requires. AgentDock does not treat the working directory as a security sandbox; the container can access whatever you actually mount.
-
-## Pin a version
-
-Compose is maintained in the repository. The default image tag is `latest`. For a reproducible deploy, pin both the Compose revision (git tag) and the image tag.
-
-To download Compose from a specific git tag:
-
-```bash
-VERSION=vX.Y.Z
-curl -fL "https://raw.githubusercontent.com/uvwt/agentdock/$VERSION/docker-compose.yml" \
-  -o docker-compose.yml
-```
-
-Windows users can replace `curl -fL ... -o ...` with `Invoke-WebRequest ... -OutFile ...`.
-
-Pin the image in `.env` (runtime or browser):
-
-```dotenv
-AGENTDOCK_IMAGE=ghcr.io/uvwt/agentdock:vX.Y.Z
-# or browser:
-# AGENTDOCK_IMAGE=ghcr.io/uvwt/agentdock:browser-vX.Y.Z
-# AGENTDOCK_BROWSER_ENABLED=true
-```
-
-## Update AgentDock
-
-```bash
-curl -fL https://raw.githubusercontent.com/uvwt/agentdock/main/docker-compose.yml \
-  -o docker-compose.yml
 docker compose pull
 docker compose up -d --force-recreate
-```
-
-For browser deployments, keep `AGENTDOCK_IMAGE` and `AGENTDOCK_BROWSER_ENABLED` in `.env`. For Tunnel deployments, keep the same `--profile` on `pull` and `up`.
-
-After the update, run:
-
-```bash
 docker compose ps
 ```
 
-Confirm that the service returns to `healthy`.
-
-## Migrate from v0.4.1 or earlier
-
-Older Compose files bind-mounted `./AgentDockHome` and `./AgentDock` directly into the container. Do not delete those directories when they contain existing data.
-
-You can continue using them, but update the container paths to the new locations:
-
-```yaml
-services:
-  agentdock:
-    volumes:
-      - ./AgentDockHome:/home/agentdock/.agentdock
-      - ./AgentDock:/home/agentdock/AgentDock
-```
-
-On Linux, update ownership as well:
+Follow logs with:
 
 ```bash
-sudo chown -R 10001:10001 AgentDockHome AgentDock
-```
-
-After confirming that the new container can see the original tasks, Skills, MCP configuration, and project files, decide whether to migrate to named volumes. Never let two running AgentDock instances use the same state directory simultaneously.
-
-## View logs and stop the service
-
-```bash
-# Follow logs
 docker compose logs -f
+```
 
-# Stop and remove containers while preserving data
+Stop containers while preserving data:
+
+```bash
 docker compose down
 ```
 
-When a Tunnel profile is active, pass the same profile to these commands, for example:
-
-```bash
-docker compose --profile cloudflare-named logs -f
-docker compose --profile cloudflare-named down
-```
-
-## Delete all Docker data
-
-Run this only after confirming that you no longer need the tasks, Skills, MCP configuration, or project files:
+Delete the named volumes only when you intentionally want to remove AgentDock state and workspace data:
 
 ```bash
 docker compose down -v
 ```
-
-:::danger
-**Irreversible:** `-v` deletes the named volumes created by Compose. Back up any data you need before running it.
-:::

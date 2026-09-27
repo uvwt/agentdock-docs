@@ -1,95 +1,69 @@
 # 使用 Skill
 
-Skill 是一份给 Agent 阅读的文档型工作方法，用来说明什么时候使用某项能力、要遵循哪些步骤、需要哪些依赖，以及哪些操作需要确认。
+Skill 用来教 Agent 如何处理某一类任务，可以说明要遵循的步骤、需要的工具或账号，以及哪些操作必须先确认。
 
 ## 官方核心 Skill
 
-AgentDock 原生安装包和 Docker 镜像会随运行时提供这些核心 Skill：
+AgentDock 安装包和 Docker 镜像内置四个核心 Skill：
 
-- `agentdock-user-guide`
-- `skill-authoring`
-- `skill-installation`
+- `agentdock-user-guide` — 帮助配置和日常使用 AgentDock。
+- `skill-authoring` — 帮助创建和审查 Skill。
+- `skill-installation` — 帮助安全审查和安装 Skill。
+- `plugin-import` — 帮助把 Git、GitHub 或其他目录中的远程 Plugin 下载到本地，再交给 AgentDock 审查和安装。
 
-它们和其他 AgentDock managed Skill 使用相同模型：每个名称只保留一份当前内容。AgentDock 不维护可供选择的 Skill 历史版本，也没有 active-version 指针。
-
-需要额外账号、系统权限或第三方软件的 Skill 在实际需要时再单独安装。
+需要额外账号、系统权限或第三方软件的 Skill，在实际需要时再单独安装。
 
 ## 使用 Skill
 
-直接告诉 Agent 你的目标，例如：
+通常只需要直接描述目标：
 
 ```text
-Check current Codex allowance.
-Use the desktop Skill to operate this macOS app.
-Install and use this Skill: https://example.com/example-skill.zip
+查看我当前的 Codex 用量。
+使用桌面 Skill 操作这个 macOS 应用。
+审查并安装这个 Skill：https://example.com/example-skill
 ```
 
-Agent 通常会：
+AgentDock 会发现相关 Skill，只在真正需要时让 Agent 读取对应说明。项目也可以在 `.agents/skills/` 下提供自己的 Skill；即使名称相同，项目 Skill 和全局安装的 Skill 仍会作为不同来源处理。
 
-1. 用 `agentdock_context` 或 `workspace_context` 发现相关 Skill 候选及其来源。
-2. 选择一个精确候选，再用 `read_file` 读取宿主返回的 `file`。
-3. 检查需要的命令、账号、环境变量和安全边界。
-4. 使用真实工具执行任务；需要绑定 Skill 的命令会把该候选返回的 `skill_ref` 交给 `exec_command`。
-5. 对有副作用的操作进行确认并验证结果。
+## 安装或更新 Skill
 
-不要根据裸 Skill 名称自行拼接 `skill_ref`。宿主签发的引用用于区分同名的 managed、shared 和 workspace 候选。
-
-## 工作区 Skill
-
-项目可以在 `<workspace>/.agents/skills/<skill-name>/SKILL.md` 提供本地 Skill。`workspace_context` 会索引它们，并返回 `name`、`description`、`source_type`、`source_id`、`skill_ref`、`file` 等来源信息；不会把 Skill 正文直接注入上下文。
-
-即使名称相同，workspace Skill、AgentDock managed Skill 和 `~/.agents/skills` 下的 shared Skill 仍是不同候选。处理当前项目时通常会优先考虑 workspace 候选，但 Agent 必须使用实际选中候选自己的 `file` 和 `skill_ref`，而不是依靠全局名称优先级静默切换来源。
-
-## 安装或更新 managed Skill
-
-安装前先确认来源可信。可以让 Agent 先做审查：
+安装陌生 Skill 前，可以先让 Agent 审查：
 
 ```text
-Please review this Skill's source, files, portability, and permission requirements, then install it if the review is clean.
+检查这个 Skill 的来源、文件、可移植性和权限要求，审查没有问题后再安装。
 ```
 
-`skill_manage install` 支持本地 Skill 目录、本地 ZIP 包或 HTTPS 软件包地址，也可以提供可选的源文件 SHA-256 做完整性校验。
+由 AgentDock 安装的 Skill 支持本地目录、本地 ZIP 或 HTTPS 软件包地址。安装经过审查的新内容会替换同名 Skill 的当前内容；内容完全相同时不会重复安装。
 
-managed Skill 每个名称只有一份当前内容。同名但内容不同的包在校验后会原子替换当前内容；重复安装完全相同的内容是 no-op，并返回相同的 `content_digest`。AgentDock 不提供 Skill 的 `activate`、`rollback` 或版本选择 action。需要恢复到已知内容时，应重新审查并安装目标来源快照。
+正常升级 AgentDock 时，旧版 Skill 目录会自动迁移，不需要手工搬目录。
 
-从使用历史 Skill 布局的旧版 AgentDock 升级时，受支持的安装器和更新器会自动迁移 managed Skill 当前内容与 Skill 持久数据。外层安装/更新事务真正提交前，旧布局会继续保留，因此用户不需要手工移动 Skill 目录，也不需要执行迁移命令。
+## 账号、API Key 与私有数据
+
+已安装的 Skill 需要凭据时，让 Agent 保存到该 Skill 的独立环境，不要写进 Skill 包或代码仓库。例如：
+
+```text
+为 example-skill 配置 EXAMPLE_API_KEY，回复中不要回显真实值。
+```
+
+Skill 需要保存可变状态时，AgentDock 还可以为它提供独立的私有数据目录。普通更新和删除默认保留这些数据；只有明确执行 purge 才会一并清理。
 
 Skill 包不能包含 Token、Cookie、浏览器登录态、`.env`、缓存或设备私有数据。
 
-## 配置账号或 API Key
+## Skill、Plugin 还是 MCP？
 
-managed Skill 需要凭据时，让 Agent 保存到该 Skill 的独立环境，例如：
+| 方式 | 适合场景 |
+| --- | --- |
+| **Skill** | 想教 Agent 一套可复用的任务处理方法。 |
+| **Plugin** | 想一次安装一个可以包含多个 Skill 和 MCP 连接的扩展包。 |
+| **动态 MCP** | 想让 AgentDock 直接连接一个外部或本地 MCP 服务。 |
 
-```text
-Set EXAMPLE_API_KEY for example-skill without echoing the actual value in the reply.
-```
+另外两种方式见 [使用 Plugin](./plugins.md) 和 [连接外部 MCP](./dynamic-mcp.md)。
 
-`skill_manage env_list` 只返回变量名和配置状态，不回显秘密值。只有通过该 managed 候选自己的 `skill_ref` 运行命令时才会注入独立环境；它不会写进 Skill 包，也不会永久污染系统环境。
+## 安全注意事项
 
-## Skill 持久数据
+- 第三方 Skill 安装前先审查来源和内容。
+- 发送、删除、上传、支付、授权等敏感操作应先确认。
+- Skill 不能突破 AgentDock 进程、容器挂载或操作系统用户本身的权限。
+- 不要把秘密放进 Skill 包、公开日志或代码仓库。
 
-managed Skill 命令需要可变的持久状态时，AgentDock 会创建私有数据目录，并通过保留环境变量 `SKILL_DATA_DIR` 提供给该进程。
-
-Skill 应把 `SKILL_DATA_DIR` 视为可选的 AgentDock 适配，而不是跨宿主的必需前提。shared 和 workspace 候选不会继承 managed Skill 的环境或数据目录。普通 managed Skill 更新以及 `skill_manage remove` 会保留独立环境和持久数据；执行带 `purge=true` 的 `skill_manage remove` 才会一并清理这些保留资源。
-
-使用受支持的 AgentDock 安装器或内置更新器进行正常升级时，旧 managed Skill 布局会自动迁移，不需要用户手工搬目录。
-
-## 使用时要注意
-
-- 删除、发送、上传、支付或授权前应确认目标和副作用。
-- Skill 说明不能突破 AgentDock 进程、容器 volume 或操作系统的权限边界。
-- 第三方 Skill 可能调用外部服务，安装前应检查来源和能力范围。
-- 不要把秘密粘贴到公开日志，也不要随 Skill 打包。
-- `content_digest` 表示内容身份和审计证据，不是产品版本号。
-
-## 查看已安装 Skill
-
-可以直接询问：
-
-```text
-What Skills are available here, and where does each candidate come from?
-```
-
-Agent 可以用 `agentdock_context` 查看 managed/shared 候选，用 `workspace_context` 查看当前项目候选，只在真正需要时读取完整 Skill 文档。
-
-创建和维护 Skill 属于开发者工作，见 [开发者指南](../contributing/development.md#skill-开发)。
+想查看当前可用 Skill，可以直接询问 Agent 有哪些 Skill、分别来自哪里。创建和维护 Skill 见 [开发者指南](../contributing/development.md#skill-开发)。

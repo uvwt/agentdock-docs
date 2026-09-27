@@ -1,93 +1,92 @@
 # 使用本地 Coding Agent
 
-AgentDock 可以通过 ACP（Agent Client Protocol）把 MCP 客户端连接到本地 Coding Agent，让 ChatGPT 或其他 MCP 客户端把编码任务交给项目所在电脑上的 Codex、Claude、Grok Build 或自定义 ACP Adapter。
+AgentDock 可以把 ChatGPT 或其他 MCP 客户端里的编码任务交给项目所在电脑上的本地 Coding Agent。它可以是 Codex、Claude、Grok Build，也可以是自定义编码工具。
 
-ACP 是可选能力，默认关闭。
+这项功能默认关闭。只有需要让 AgentDock 调用本机编码工具处理仓库任务时再启用即可。
 
-## 支持的 Profile
+## 可以使用哪些编码工具
 
-macOS 和 Windows 应用提供内置 Profile，也支持自定义 Adapter：
+AgentDock 已提供以下选项：
 
-| Profile 类型 | AgentDock 使用的本地 Adapter |
-| --- | --- |
-| Codex | `codex-acp` 或 `@agentclientprotocol/codex-acp` 包 |
-| Claude | `claude-agent-acp` 或 `@agentclientprotocol/claude-agent-acp` 包 |
-| Grok Build | `grok agent stdio` |
-| Custom | Adapter 的绝对可执行路径和可选参数 |
+- **Codex**
+- **Claude**
+- **Grok Build**
+- **自定义编码工具**
 
-内置 Profile ID 固定为 `codex`、`claude`、`grok`，因此每个内置类型只有一个 Profile；Custom 可以用不同 ID 创建多个 Profile。已启用的 Profile 中会选一个默认项，也可以在调用时用 `profile_id` 明确选择其他 Profile。
+启用后选择一个作为默认编码工具即可。你也可以添加多个自定义工具，并在某次任务中直接说明希望使用哪一个。
 
-启用 Adapter 前，先安装并登录准备使用的 Provider。AgentDock 负责启动 Adapter，不管理 Provider 账号，也不会把 Provider 凭据复制进自己的配置。
+启用前，先在运行 AgentDock 的同一台电脑上安装并登录准备使用的编码工具。AgentDock 负责启动本地连接，但不会替你管理这些服务的账号，也不会把账号凭据复制到 AgentDock 配置中。
+
+## 安装前准备
+
+- **Codex**：安装并登录 Codex，同时还需要 `codex-acp`。
+- **Claude**：安装并登录 Claude Code，同时还需要 `claude-agent-acp`。
+- **Grok Build**：安装并登录 Grok，不需要额外的连接组件。
+- **自定义编码工具**：准备好可执行程序路径和需要的启动参数。
+
+Codex 和 Claude 的连接组件通过 npm 安装，因此电脑上还需要 Node.js 和 npm：
+
+```bash
+npm install -g @agentclientprotocol/codex-acp
+npm install -g @agentclientprotocol/claude-agent-acp
+```
+
+如果系统级 npm 目录不可写，优先使用当前用户自己的 npm 安装目录，不要为了全局安装直接使用 `sudo npm`。
 
 ## macOS 和 Windows
 
-1. 在运行 AgentDock 的同一台电脑上安装目标 Coding Agent，以及它需要的 ACP Adapter。
+1. 按上面的说明准备好要使用的编码工具。
 2. macOS 打开“高级设置”，Windows 打开 AgentDock 控制面板。
 3. 启用 **Coding Agent (ACP)**。
-4. 新增或启用内置 Profile，或者为 Custom Profile 配置 Adapter 命令和参数。
-5. 从已启用 Profile 中选择一个默认项。
-6. 确认 AgentDock 能检测到 Adapter，保存设置，并让 AgentDock 重启 Core。
+4. 启用 Codex、Claude 或 Grok Build，或者添加一个自定义编码工具。
+5. 选择默认编码工具。
+6. 保存设置，让 AgentDock 完成重启。
+7. 重新连接 MCP 客户端，或者新建一个对话。
 
-重新连接 MCP 客户端后，`agentdock_context` 会返回 `default_profile` 和已启用的 `profiles`。当前连接的 `tools/list` 应包含 `acp_session`、`acp_prompt`、`acp_interaction`。
+使用图形应用时，通常不需要手工填写内部 ID，也不需要理解 ACP 的工具参数。
 
-## 可以直接提出什么任务
+## 直接提出编码任务
 
 直接描述目标即可，例如：
 
 ```text
-Use the local Coding Agent on this computer to inspect the repository, fix the failing tests, and verify the change.
+使用这台电脑上的本地 Coding Agent 检查这个仓库，修复失败的测试，并在修改后完成验证。
 ```
 
-AgentDock 对外只暴露精简的管理语义，不把 ACP 协议每个底层方法都映射成 action：
+如果启用了多个编码工具，也可以在任务里直接点名，例如：
 
-- `acp_session`：`info`、`new`、`list`、`inspect`、`open`、`update`、`close`、`delete`。
-- `acp_prompt`：`start`、`events`、`cancel`。
-- `acp_interaction`：`list`、`respond`。
-
-`open` 会在内部处理 resume/load 协商；Adapter 支持时，`new` 可以通过 `from_session_id` 从另一个 managed session fork；`update` 负责修改 Adapter 声明的 session mode 或配置项。支持 steering 时由 Prompt 流程在内部处理，不提供单独的公开 steering action。
-
-长 Prompt 会异步启动并返回 Run ID，上游 Agent 持续读取有序事件，直到 Run 收敛。权限请求仍保持显式，只能选择 Adapter 当前提供且 AgentDock 本地策略允许的选项。
-
-## 项目目录
-
-Coding Agent session 可以使用 AgentDock 操作系统用户有权限访问的目录。AgentDock 不额外维护项目目录白名单。
-
-这不是操作系统沙箱。需要把 Coding Agent 限制在特定项目时，应通过操作系统账号、文件权限、容器挂载或其他宿主机边界实现。
-
-## 无界面或服务部署
-
-没有桌面 UI 时，在 Core 启动环境中配置一个或多个 ACP Profile。例如 Codex Profile：
-
-```bash
-AGENTDOCK_ACP_ENABLED=true
-AGENTDOCK_ACP_PROFILES_JSON='[{"id":"codex","kind":"codex","command":"/absolute/path/to/codex-acp","enabled":true}]'
-AGENTDOCK_ACP_DEFAULT_PROFILE=codex
+```text
+这个仓库任务用 Claude 处理，完成后验证修改结果。
 ```
 
-自定义 Adapter 使用 `kind=custom`、唯一 `id`、绝对路径 `command`，并按需配置 `args` 和 `env_from_env`。秘密值保留在宿主环境中；`env_from_env` 只映射变量名，不把秘密写进 Adapter 参数。
+AgentDock 会在后台处理本地会话和工具通信。遇到权限请求时，仍然需要从允许的选项中明确确认后才能继续。
 
-`AGENTDOCK_ACP_AGENT`、`AGENTDOCK_ACP_COMMAND`、`AGENTDOCK_ACP_ARGS_JSON`、`AGENTDOCK_ACP_ENV_FROM_ENV_JSON` 只用于旧单 Profile 配置的升级兼容。新配置应使用 `AGENTDOCK_ACP_PROFILES_JSON` 和 `AGENTDOCK_ACP_DEFAULT_PROFILE`。
+## 可以访问哪些项目
 
-## 验证连接
+本地 Coding Agent 只能访问运行 AgentDock 的系统用户本来就有权限访问的目录。
 
-完整验证不能只看“配置已保存”：
+AgentDock 不会额外给编码工具增加一层操作系统沙箱。如果只希望它访问指定项目，应通过系统账号、文件权限、容器挂载等方式限制访问范围。
 
-1. Adapter 命令真实存在，并且 AgentDock 运行用户可以执行。
-2. 配置变更后 AgentDock Core 健康。
-3. `agentdock_context` 显示预期的默认 Profile 和已启用 Profile。
-4. MCP 连接暴露 `acp_session`、`acp_prompt`、`acp_interaction`。
-5. `acp_session info` 能启动选中的 Adapter，并返回实际能力或认证方式。
+## 确认是否可用
 
-使用非默认 Profile 时，其 session、prompt 和 interaction 后续调用要持续传同一个 `profile_id`。
+保存设置后重新连接客户端，可以先做一个不会修改文件的测试：
 
-## 故障排查
+```text
+使用本地 Coding Agent 查看这个仓库的结构并做一个简要说明，不要修改文件。
+```
 
-如果 Coding Agent 无法启用或启动：
+如果这个任务能够正常完成，就说明 AgentDock 已经可以启动所选编码工具并把结果返回到当前对话。
 
-- 分开确认 Provider CLI 和 ACP Adapter；找到 `codex` 不代表已经有 `codex-acp`，找到 `claude` 也不代表已经有 `claude-agent-acp`。
-- 在真正运行 AgentDock 的同一操作系统用户和服务环境中验证 Adapter，不要只在另一个交互 Shell 中测试。
-- 无界面部署要确认每个已启用 Profile 都有绝对可执行 `command`，并确认 `env_from_env` 引用的宿主变量真实存在。
-- 用 `agentdock_context` 确认目标 Profile 已启用，再用 `acp_session info` 直接测试 Adapter。
-- 如果客户端缓存了旧工具 Schema，启用 ACP 后刷新 AgentDock 连接并新建会话。
+## 常见问题
 
-公开工具契约见 [工具参考](../reference/tools.md#coding-agentacp)，宿主配置见 [配置参考](../reference/configuration.md#coding-agentacp)。
+如果 Coding Agent 无法启动：
+
+- 确认编码工具已经安装并登录，而且与 AgentDock 运行在同一台电脑、同一个系统用户环境中。
+- 如果该工具需要 ACP 连接组件，确认它已经安装并能被 AgentDock 找到。
+- 确认 **Coding Agent (ACP)** 已启用，并且已经选择一个启用的默认编码工具。
+- 保存设置并让 AgentDock 重启，然后重新连接 MCP 客户端或新建对话。
+- 使用自定义编码工具时，检查配置的可执行文件路径和启动参数是否正确。
+
+## 高级与无界面配置
+
+无界面部署、自定义连接命令、内部 ID、环境变量以及 ACP 底层会话工具都属于高级配置。需要这些内容时，查看 [配置参考](../reference/configuration.md) 和 [工具参考](../reference/tools.md)。

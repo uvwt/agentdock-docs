@@ -31,7 +31,7 @@ A step moves forward only after the underlying work is complete. A tool returnin
 
 A task is marked blocked only when work truly cannot continue, such as when a target computer is offline, required permissions are missing, or an external service remains unavailable.
 
-An ordinary test failure is not a blocker; the agent should continue troubleshooting. After the blocker is resolved, say:
+An ordinary test failure does not mark the task as blocked; troubleshooting can continue. After the blocker is resolved, you can say:
 
 ```text
 The device is available again. Continue the previous task.
@@ -39,23 +39,23 @@ The device is available again. Continue the previous task.
 
 ## How completion is determined
 
-Before completing a task, the agent should verify:
+A task is considered complete only when:
 
 1. Every step is actually complete.
 2. Each completion condition has verifiable evidence.
-3. No remaining risk or temporary workaround is left unexplained.
+3. Remaining risks or temporary workarounds are explained.
 4. The modified service, page, or program works in the real environment.
 
 “Code changed” and “command finished” do not mean the task is complete.
 
 ## Workflow templates
 
-Common development, deployment, and operations processes can be saved as templates. The agent matches templates first, then removes, combines, or adjusts steps for the current task.
+Common development, deployment, and operations processes can be saved and reused as Workflow templates. Templates are workflow guidance; they do not execute commands automatically.
 
-A template is workflow guidance. It does not execute commands automatically and does not replace inspection of the current environment.
+See [Workflow](./workflow.md) for the shared NexusDock workflow library.
 
 ## Data scope
 
 Task state belongs to the current AgentDock instance and is not synchronized across devices automatically. Long-term conclusions should be moved into project documentation or NexusDock Recall rather than left only in old task records.
 
-See [Tools](../reference/tools.md#recoverable-tasks-and-workflows) for exact actions and fields.
+See [Tools](../reference/tools.md) for complete operations and fields.

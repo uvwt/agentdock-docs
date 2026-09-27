@@ -1,4 +1,4 @@
-# 在 macOS 上安装 AgentDock
+# MacOS 安装
 
 使用 macOS 图形应用安装和管理 AgentDock。
 
@@ -23,15 +23,11 @@ Apple 芯片和 Intel Mac 使用同一个 DMG。
 
 ## 2. 第一次打开
 
-当前版本还没有经过 Apple 公证，第一次启动需要手动确认一次：
-
-1. 在 Finder 中打开“应用程序”。
-2. 右键点击 `AgentDock.app`，选择“打开”。
-3. 在确认窗口中再次点击“打开”。
-
-不需要关闭 Gatekeeper，也不要修改系统全局安全设置。成功打开一次后，以后可以正常双击启动。
+在 Finder 中打开“应用程序”，启动 `AgentDock.app`。
 
 AgentDock 启动后会出现在菜单栏。点击图标并选择“安装 AgentDock”或“打开 AgentDock”，即可显示主窗口。
+
+如果 macOS 第一次启动时拦截应用，参阅下方的 [macOS 提示无法验证开发者](#macos-提示无法验证开发者)。
 
 ## 3. 选择连接方式
 
@@ -47,7 +43,7 @@ MCP 客户端也在这台 Mac 上时选择。该模式不需要域名或 Cloudfl
 
 ### 固定域名
 
-需要长期使用稳定地址时，先按 [固定域名配置教程](../guides/fixed-domain.md) 完成 Cloudflare 侧设置。然后在 AgentDock 中选择“固定域名”，填写该教程得到的 HTTPS 公网地址和 Tunnel Token。公网地址不要添加 `/mcp`。
+需要长期使用稳定地址时，先按 [公网访问](../operations/public-access.md) 完成 Cloudflare 侧设置。然后在 AgentDock 中选择“固定域名”，填写该教程得到的 HTTPS 公网地址和 Tunnel Token。公网地址不要添加 `/mcp`。
 
 点击“安装并启动”，保持窗口打开，直到状态显示“运行正常”。安装完成后，可以直接在控制面板切换公网访问方式，不需要重新运行安装器。
 
@@ -63,7 +59,11 @@ MCP 客户端也在这台 Mac 上时选择。该模式不需要域名或 Cloudfl
 
 凭据默认会被遮罩，需要时点击“显示”。长地址和凭据可以直接点击“复制”。
 
-客户端也在这台 Mac 上时，使用本地 MCP 地址；ChatGPT 或其他远程客户端使用公网 MCP 地址。传输方式选择 **Streamable HTTP**。
+客户端也在这台 Mac 上时，使用本地 MCP 地址；其他设备或云端客户端使用公网 MCP 地址。传输方式选择 **Streamable HTTP**。
+
+不同客户端的添加入口和认证方式略有不同。支持 OAuth 的客户端可以通过浏览器完成授权；支持自定义 HTTP Header 的客户端也可以使用 Bearer Token。
+
+Claude Desktop、ChatGPT、Claude Code、Cursor、VS Code、Codex、TRAE、WorkBuddy 等客户端的连接方式见 [在不同客户端中连接](../guides/mcp-clients.md) 与 [使用 ChatGPT 连接](../guides/chatgpt.md)。
 
 不要把 Bearer Token 或 OAuth 密码放进截图、Issue 或公开聊天。
 
@@ -89,9 +89,7 @@ MCP 客户端也在这台 Mac 上时选择。该模式不需要域名或 Cloudfl
 4. 确认 AgentDock 已检测到受支持的浏览器。
 5. 点击“应用并重启”。
 
-AgentDock 默认使用独立会话和 Profile。通过 CDP 附着已有 Chromium 系浏览器属于显式的高级模式，使用前请先阅读浏览器指南。
-
-登录态和安全边界见 [浏览器自动化](../guides/browser-control.md)。
+AgentDock 默认使用独立的浏览器会话。登录状态和安全边界见 [浏览器自动化](../guides/browser-control.md)。
 
 ## 可选：设置登录后自动启动
 
@@ -126,4 +124,4 @@ AgentDock 默认使用独立会话和 Profile。通过 CDP 附着已有 Chromium
 
 确认已经安装 Google Chrome、Chromium 或 Microsoft Edge，然后关闭再重新启用浏览器工具。
 
-指定版本、自定义安装目录、手动服务命令和卸载步骤见 [macOS 进阶配置](../operations/macos.md)。需要控制屏幕、键盘和鼠标时，继续阅读 [macOS 桌面自动化](../guides/desktop-automation.md)。
+指定版本、自定义安装目录、手动服务命令和卸载步骤见 [桌面端高级设置](../operations/desktop.md)。

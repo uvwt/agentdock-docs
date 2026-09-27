@@ -18,7 +18,7 @@ const algolia =
 
 const config: Config = {
   title: 'AgentDock',
-  tagline: 'A secure, recoverable runtime for local and remote AI agent work',
+  tagline: 'Connect AI agents to tools on your computers and servers',
   favicon: 'img/favicon.svg',
   url: 'https://uvwt.github.io',
   baseUrl: '/agentdock-docs/',
@@ -97,6 +97,11 @@ const config: Config = {
           position: 'left',
         },
         {
+          to: '/docs/concepts/nexusdock',
+          label: 'NexusDock',
+          position: 'left',
+        },
+        {
           type: 'localeDropdown',
           position: 'right',
         },
@@ -122,6 +127,7 @@ const config: Config = {
           title: 'Capabilities',
           items: [
             {label: 'Skills', to: '/docs/concepts/skills'},
+            {label: 'Plugins', to: '/docs/concepts/plugins'},
             {label: 'Dynamic MCP', to: '/docs/concepts/dynamic-mcp'},
             {label: 'Recoverable tasks', to: '/docs/concepts/tasks'},
           ],

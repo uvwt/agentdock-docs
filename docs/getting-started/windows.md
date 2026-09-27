@@ -44,7 +44,7 @@ Temporary addresses may change when Windows or the tunnel restarts. When changed
 
 ### Fixed Cloudflare domain
 
-For a permanent address, first complete the [fixed domain setup guide](../guides/fixed-domain.md). Then select **Fixed domain** and enter the HTTPS public origin and Tunnel Token from that setup. Do not append `/mcp` to the public origin.
+For a permanent address, first complete the [Public access](../operations/public-access.md). Then select **Fixed domain** and enter the HTTPS public origin and Tunnel Token from that setup. Do not append `/mcp` to the public origin.
 
 After installation, you can switch between Local only, Temporary address, and Fixed domain in the **Public Access** section of the control panel without rerunning the installer.
 
@@ -69,15 +69,11 @@ In the control panel **Overview** tab, check:
 
 Credentials are masked by default; click **Show** when needed.
 
-Use the local MCP URL when the client is on the same computer; use the public MCP URL for ChatGPT or other remote clients. Select **Streamable HTTP** as the transport.
+Use the local MCP URL when the client is on the same computer; use the public MCP URL for clients on other devices or in the cloud. Select **Streamable HTTP** as the transport.
 
-If you selected a temporary or fixed public address and want to connect web ChatGPT:
+Connection menus and authentication options vary by client. OAuth-capable clients can authorize in the browser, while clients that support custom HTTP headers can also use a Bearer Token.
 
-1. Copy the public MCP URL and OAuth password from the control panel.
-2. In ChatGPT, open **Settings > Plugins**, and enable developer mode.
-3. Create a plugin, enter the public MCP URL, and authorize with the OAuth password.
-
-For full instructions, see [Connect ChatGPT to AgentDock](../guides/chatgpt.md). For other clients, see [Connect AgentDock from different clients](../guides/mcp-clients.md).
+Connection guides for Claude Desktop, ChatGPT, Claude Code, Cursor, VS Code, Codex, TRAE, WorkBuddy, and other clients are available in [Connect from different clients](../guides/mcp-clients.md) and [Connect with ChatGPT](../guides/chatgpt.md).
 
 Do not include Bearer Tokens or OAuth passwords in screenshots, issues, or public conversations.
 
@@ -99,4 +95,4 @@ Uninstall AgentDock from Windows **Settings > Apps > Installed apps**, or use **
 
 For browser automation, install Chrome, Chromium, or Microsoft Edge first, then enable browser tools in the control panel. Docker browser images are needed only when you want Chromium contained in Docker. See [Browser automation](../guides/browser-control.md).
 
-For PowerShell automation, pinned versions, WSL, and file locations, see [Advanced Windows configuration](../operations/windows.md). If startup fails, see [Troubleshooting](../operations/troubleshooting.md).
+For PowerShell automation, pinned versions, WSL, and file locations, see [Desktop advanced settings](../operations/desktop.md). If startup fails, see [Troubleshooting](../operations/troubleshooting.md).

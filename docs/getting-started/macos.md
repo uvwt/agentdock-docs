@@ -23,15 +23,11 @@ Apple Silicon and Intel Macs use the same DMG.
 
 ## 2. First launch
 
-The current release is not yet notarized by Apple, requiring a one-time manual confirmation on first launch:
-
-1. Open **Applications** in Finder.
-2. Right-click `AgentDock.app` and select **Open**.
-3. Click **Open** again in the confirmation prompt.
-
-Do not disable Gatekeeper or alter global system security settings. After opening successfully once, you can launch normally.
+Open **Applications** in Finder and launch `AgentDock.app`.
 
 AgentDock runs in the menu bar. Click the menu bar icon and choose **Install AgentDock** or **Open AgentDock** to open the main window.
+
+If macOS blocks the first launch, see [macOS says developer cannot be verified](#macos-says-developer-cannot-be-verified) below.
 
 ## 3. Choose connection option
 
@@ -47,7 +43,7 @@ This address may change when the Mac or tunnel restarts. When changed, copy the 
 
 ### Fixed domain
 
-For a permanent address, first complete the [fixed domain setup guide](../guides/fixed-domain.md). Then select **Fixed domain** and enter the HTTPS public origin and Tunnel Token from that setup. Do not append `/mcp` to the public origin.
+For a permanent address, first complete the [Public access](../operations/public-access.md). Then select **Fixed domain** and enter the HTTPS public origin and Tunnel Token from that setup. Do not append `/mcp` to the public origin.
 
 Click **Install and Start**, keeping the window open until the status shows "Healthy". You can switch connection modes later directly from the control panel without rerunning the installer.
 
@@ -63,7 +59,11 @@ After setup, the main window displays:
 
 Credentials are masked by default; click **Show** when needed. Use the **Copy** button for URLs and credentials.
 
-Use the local MCP URL when the client is on the same Mac; use the public MCP URL for ChatGPT or other remote clients. Select **Streamable HTTP** as the transport.
+Use the local MCP URL when the client is on the same Mac; use the public MCP URL for clients on other devices or in the cloud. Select **Streamable HTTP** as the transport.
+
+Connection menus and authentication options vary by client. OAuth-capable clients can authorize in the browser, while clients that support custom HTTP headers can also use a Bearer Token.
+
+Connection guides for Claude Desktop, ChatGPT, Claude Code, Cursor, VS Code, Codex, TRAE, WorkBuddy, and other clients are available in [Connect from different clients](../guides/mcp-clients.md) and [Connect with ChatGPT](../guides/chatgpt.md).
 
 Do not include Bearer Tokens or OAuth passwords in screenshots, issues, or public conversations.
 
@@ -89,9 +89,7 @@ Quitting the menu bar application does not stop the AgentDock background service
 4. Verify that AgentDock detects a supported browser.
 5. Click **Apply and Restart**.
 
-AgentDock uses isolated sessions and profiles by default. Attaching to an existing Chromium-family browser over CDP is an explicit advanced choice; see the browser guide before using that mode.
-
-For sessions and security boundaries, see [Browser automation](../guides/browser-control.md).
+AgentDock uses a separate browser session by default. For login state and security boundaries, see [Browser automation](../guides/browser-control.md).
 
 ## Optional: Launch at login
 
@@ -126,4 +124,4 @@ Copy the new public MCP URL from the control panel and update your client; re-au
 
 Verify that Google Chrome, Chromium, or Microsoft Edge is installed, then disable and re-enable browser tools.
 
-For custom versions, directories, manual commands, and uninstallation, see [Advanced macOS configuration](../operations/macos.md). For screen, keyboard, and mouse control, see [macOS desktop automation](../guides/desktop-automation.md).
+For custom versions, directories, manual commands, and uninstallation, see [Desktop advanced settings](../operations/desktop.md).

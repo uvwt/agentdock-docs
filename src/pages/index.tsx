@@ -116,8 +116,8 @@ function HomepageHeader(): ReactNode {
           </Heading>
           <p className={styles.heroSubtitle}>
             <Translate id="homepage.hero.subtitle">
-              Connect an MCP-compatible AI client to your computers and servers, then use files,
-              commands, Git, browsers, and external services through explicit tool boundaries.
+              Connect an MCP-compatible AI client to your computers and servers so it can work
+              with files, run commands, use Git and browsers, and connect other services.
             </Translate>
           </p>
           <div className={styles.actions}>
@@ -131,9 +131,11 @@ function HomepageHeader(): ReactNode {
           </div>
           <div className={styles.proofRow}>
             <div>
-              <strong>30</strong>
+              <strong>
+                <Translate id="homepage.hero.builtIn">Built-in</Translate>
+              </strong>
               <span>
-                <Translate id="homepage.hero.builtInTools">built-in tools</Translate>
+                <Translate id="homepage.hero.builtInTools">tools for real work</Translate>
               </span>
             </div>
             <div>
@@ -167,7 +169,7 @@ export default function Home(): ReactNode {
       description={translate({
         id: 'homepage.meta.description',
         message:
-          'Official AgentDock documentation for installation, MCP clients, Skills, browser automation, and external MCP servers.',
+          'Official AgentDock documentation for installation, client connections, Skills, Plugins, browser automation, and external MCP services.',
       })}>
       <HomepageHeader />
       <main>

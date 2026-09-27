@@ -1,8 +1,8 @@
-# Browser automation
+# Use the browser
 
 With browser capabilities enabled, the agent can navigate pages, click, type, scroll, capture screenshots, and check page console, network, and page errors.
 
-AgentDock supports Google Chrome, Chromium, and Microsoft Edge. By default, browser automation launches isolated AgentDock-managed sessions. Advanced users can instead attach to an existing Chromium-family browser over CDP; that mode is opt-in and has different isolation boundaries.
+AgentDock supports Google Chrome, Chromium, and Microsoft Edge. Browser automation uses an isolated AgentDock-managed browser session by default.
 
 ## Before you start
 
@@ -29,7 +29,7 @@ Install Chrome, Chromium, or Microsoft Edge on the host, then enable browser too
 To have Chromium contained within Docker, use the browser image:
 
 1. Complete [Docker installation](../getting-started/docker.md).
-2. Start the browser image per [Advanced Docker configuration](../operations/docker.md#enable-browser-automation).
+2. Start the browser image per [Advanced Docker configuration](../operations/docker.md).
 3. After connecting the client, confirm the agent can see `browser_*` tools.
 
 ## Ask the agent directly
@@ -42,23 +42,23 @@ Log in, search for the specified content, but ask for my confirmation before sub
 Take a screenshot of the final page.
 ```
 
-The agent observes the page first, executes actions, and verifies the final state.
+Browser automation keeps the page state observable before and after actions, so the final result can be checked instead of inferred.
 
-## Login state, profiles, and existing CDP browsers
+## Login state
 
-For an AgentDock-owned browser, use a dedicated `profile_id` when persistent login state is needed. AgentDock stores that profile in its own browser data directory for reuse across later sessions; do not point an owned session at your daily browser profile.
+AgentDock uses its own browser environment by default, separate from the browser you use every day.
 
-Advanced setups can attach to an already-running Chromium-family browser. A per-session `cdp_url` is limited to loopback endpoints; named or remote CDP endpoints must be configured by the user through AgentDock settings. `AGENTDOCK_BROWSER_CDP_URL` selects a configured endpoint, while `AGENTDOCK_BROWSER_REUSE_EXISTING_CDP=true` asks AgentDock to reuse one uniquely discovered local CDP browser.
+If you want a site to stay signed in, AgentDock can keep that browser login state for later sessions. Some sites may still require a captcha, QR-code scan, or 2FA confirmation the first time you sign in.
 
-When attached over CDP, AgentDock creates and manages a dedicated target inside the external browser and leaves that browser running when the AgentDock session closes. External CDP sessions cannot use AgentDock persistent `profile_id`, cookie injection, or localStorage injection. Because the external browser may contain unrelated logged-in state, attach only to a browser instance you intentionally exposed for automation.
+If the host already has an available CDP browser, AgentDock can prefer reusing it and continue using its existing login state. If no reusable browser is available, AgentDock falls back to its own isolated browser. See [Configuration](../reference/configuration.md) for the setting.
 
-Initial logins may still require manual captcha completion, QR code scans, or 2FA confirmations. Do not let the agent echo passwords, cookies, or Authorization headers in chats or logs.
+Do not paste passwords, cookies, or other login credentials into chats or logs.
 
 ## Security boundaries
 
 - Confirm before uploading files, sending messages, submitting forms, deleting content, or authorizing.
-- Prefer AgentDock-owned dedicated profiles. If you explicitly use CDP attachment, expose only a browser instance intended for automation.
+- Keep browser automation separate from your everyday browsing environment.
 - Grant access only to websites and files required by the task.
-- Clean up persistent profiles when login sessions are no longer needed.
+- Clear saved browser login state when you no longer need it.
 
-For tool boundaries, see [Tools reference](../reference/tools.md#browser-automation); for host configuration, see [Configuration reference](../reference/configuration.md#browser-tools).
+For tool boundaries, see [Tools reference](../reference/tools.md); for host configuration, see [Configuration reference](../reference/configuration.md).

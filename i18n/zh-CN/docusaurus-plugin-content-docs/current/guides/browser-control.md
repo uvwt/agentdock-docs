@@ -1,8 +1,8 @@
-# 浏览器自动化
+# 使用浏览器
 
 启用浏览器能力后，Agent 可以打开网页、点击、输入、滚动、截图，并检查页面控制台、网络和页面错误。
 
-AgentDock 支持 Google Chrome、Chromium 和 Microsoft Edge。默认情况下，浏览器自动化会启动由 AgentDock 管理的独立会话；高级用户也可以选择通过 CDP 附着已有 Chromium 系浏览器，但这是显式开启的另一种隔离边界。
+AgentDock 支持 Google Chrome、Chromium 和 Microsoft Edge。浏览器自动化默认使用由 AgentDock 管理的独立浏览器会话。
 
 ## 开始前
 
@@ -29,7 +29,7 @@ AgentDock 支持 Google Chrome、Chromium 和 Microsoft Edge。默认情况下�
 如果希望容器直接包含 Chromium，使用 browser 镜像：
 
 1. 完成 [Docker 安装](../getting-started/docker.md)。
-2. 按 [Docker 进阶配置](../operations/docker.md#启用浏览器自动化) 启动 browser 镜像。
+2. 按 [Docker 进阶配置](../operations/docker.md) 启动 browser 镜像。
 3. 连接客户端后，确认 Agent 可以看到 `browser_*` 工具。
 
 ## 直接提出任务
@@ -42,23 +42,23 @@ AgentDock 支持 Google Chrome、Chromium 和 Microsoft Edge。默认情况下�
 把最终页面截图给我看。
 ```
 
-Agent 应先观察页面，再执行动作，最后重新检查页面状态。
+浏览器自动化会保留操作前后的可观察页面状态，便于确认最终结果，而不是只根据操作是否发出进行判断。
 
-## 登录态、Profile 与已有 CDP 浏览器
+## 登录状态
 
-AgentDock 自有浏览器需要保持登录时，使用专用 `profile_id`。Profile 会保存在 AgentDock 自己的浏览器数据目录中，后续会话可以继续复用；不要把自有会话指向日常浏览器主 Profile。
+AgentDock 默认使用自己的独立浏览器环境，不会和你日常上网使用的浏览器混在一起。
 
-高级配置也可以附着已经运行的 Chromium 系浏览器。单次 session 传入的 `cdp_url` 只允许回环地址；命名或远程 CDP 地址必须由用户在 AgentDock 设置中配置。`AGENTDOCK_BROWSER_CDP_URL` 用来指定已配置地址，`AGENTDOCK_BROWSER_REUSE_EXISTING_CDP=true` 则让 AgentDock 尝试复用唯一检测到的本地 CDP 浏览器。
+如果希望网站保持登录，AgentDock 可以保存这份浏览器登录状态，后续会话继续使用。部分网站第一次登录时，仍可能需要你手动完成验证码、扫码或 2FA。
 
-通过 CDP 附着时，AgentDock 会在外部浏览器中创建并管理独立 target，关闭 AgentDock session 不会退出外部浏览器。外部 CDP session 不能使用 AgentDock 持久 `profile_id`、Cookie 注入或 localStorage 注入。外部浏览器可能还包含其他登录态，因此只应附着你明确用于自动化的浏览器实例。
+如果宿主机上已经有可使用的CDP浏览器，也可以在设置中选择优先复用它，这样可以继续使用其中已有的登录状态。找不到可复用的浏览器时，AgentDock 会自动使用自己的独立浏览器。具体设置见 [配置参考](../reference/configuration.md)。
 
-首次登录仍可能需要你手动完成验证码、扫码或安全确认。不要让 Agent 在聊天或日志中回显密码、Cookie 或 Authorization Header。
+不要把密码、Cookie 或其他登录凭据发到聊天或日志中。
 
 ## 安全边界
 
 - 上传文件、发送消息、提交表单、删除内容和授权前要确认目标与副作用。
-- 优先使用 AgentDock 自有专用 Profile；如果显式使用 CDP 附着，只暴露专门用于自动化的浏览器实例。
+- 浏览器自动化和日常上网环境保持分开。
 - 只给自动化访问任务需要的网站和文件。
-- 不再需要登录态时，及时清理持久 Profile。
+- 不再需要保持登录时，可以清理保存的浏览器登录状态。
 
-浏览器工具边界见 [工具介绍](../reference/tools.md#浏览器自动化)，宿主机配置见 [配置参考](../reference/configuration.md#浏览器工具)。
+浏览器工具边界见 [工具参考](../reference/tools.md)，宿主机配置见 [配置参考](../reference/configuration.md)。

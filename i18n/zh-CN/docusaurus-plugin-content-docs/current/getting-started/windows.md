@@ -44,7 +44,7 @@ MCP 客户端也在这台电脑上时选择。该模式不需要域名或 Cloudf
 
 ### 使用自己的 Cloudflare 域名
 
-需要长期使用稳定地址时，先按 [固定域名配置教程](../guides/fixed-domain.md) 完成 Cloudflare 侧设置。然后在 AgentDock 中选择“固定域名”，填写该教程得到的 HTTPS 公网地址和 Tunnel Token。公网地址不要添加 `/mcp`。
+需要长期使用稳定地址时，先按 [公网访问](../operations/public-access.md) 完成 Cloudflare 侧设置。然后在 AgentDock 中选择“固定域名”，填写该教程得到的 HTTPS 公网地址和 Tunnel Token。公网地址不要添加 `/mcp`。
 
 安装完成后，可以直接在 AgentDock 控制面板的 **公网访问** 中切换仅本机、临时地址和固定域名；仅修改公网访问方式时不需要重新运行安装器。
 
@@ -69,15 +69,11 @@ MCP 客户端也在这台电脑上时选择。该模式不需要域名或 Cloudf
 
 凭据默认会被遮罩，需要时点击“显示”。文本框中的内容可以使用 Windows 的标准复制操作。
 
-同一台电脑上的客户端使用本地 MCP 地址；ChatGPT 或其他远程客户端使用公网 MCP 地址。传输方式选择 **Streamable HTTP**。
+同一台电脑上的客户端使用本地 MCP 地址；其他设备或云端客户端使用公网 MCP 地址。传输方式选择 **Streamable HTTP**。
 
-如果安装时选择了临时或固定公网地址，并想连接网页版 ChatGPT：
+不同客户端的添加入口和认证方式略有不同。支持 OAuth 的客户端可以通过浏览器完成授权；支持自定义 HTTP Header 的客户端也可以使用 Bearer Token。
 
-1. 从控制面板复制公网 MCP 地址和 OAuth 密码。
-2. 在 ChatGPT 中打开 **设置 > 插件**，开启开发人员模式。
-3. 创建插件，填入公网 MCP 地址，再用 OAuth 密码完成授权。
-
-完整步骤见 [使用 ChatGPT 连接 AgentDock](../guides/chatgpt.md)。其他客户端见 [在不同客户端中连接 AgentDock](../guides/mcp-clients.md)。
+Claude Desktop、ChatGPT、Claude Code、Cursor、VS Code、Codex、TRAE、WorkBuddy 等客户端的连接方式见 [在不同客户端中连接](../guides/mcp-clients.md) 与 [使用 ChatGPT 连接](../guides/chatgpt.md)。
 
 不要把 Bearer Token 或 OAuth 密码放进截图、Issue 或公开聊天。
 
@@ -99,4 +95,4 @@ MCP 客户端也在这台电脑上时选择。该模式不需要域名或 Cloudf
 
 使用浏览器自动化时，先安装 Chrome、Chromium 或 Microsoft Edge，再在控制面板中启用浏览器工具。只有希望容器直接包含 Chromium 时才需要 Docker browser 镜像。见 [浏览器自动化](../guides/browser-control.md)。
 
-PowerShell 自动化、固定版本、WSL 和详细文件位置见 [Windows 进阶配置](../operations/windows.md)。启动失败时查看 [故障排查](../operations/troubleshooting.md)。
+PowerShell 自动化、固定版本、WSL 和详细文件位置见 [桌面端高级设置](../operations/desktop.md)。启动失败时查看 [故障排查](../operations/troubleshooting.md)。

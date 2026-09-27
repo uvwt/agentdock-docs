@@ -5,9 +5,9 @@ slug: /intro
 
 # AgentDock
 
-AgentDock 让支持 MCP 的 AI 客户端可以在你的电脑或服务器上读取文件、执行命令、操作 Git、使用浏览器自动化并连接其他服务。
+AgentDock 把支持 MCP 的 AI 客户端连接到你的电脑和服务器，让它们可以操作文件、执行命令、使用 Git 和浏览器，并连接其他服务。
 
-可访问范围由运行 AgentDock 的系统用户、Docker 挂载目录和你启用的功能决定。
+AgentDock 本身不是聊天应用，也不负责模型推理。连接的 AI 客户端决定要做什么，AgentDock 在运行它的设备上执行被允许的操作。可访问范围由系统用户权限、Docker 挂载目录和你启用的功能决定。
 
 ## 第一次使用
 
@@ -29,13 +29,13 @@ AgentDock 让支持 MCP 的 AI 客户端可以在你的电脑或服务器上读�
 - “检查这个项目为什么启动失败，并修好后验证。”
 - “读取这份仓库，修改代码并提交。”
 - “打开网页完成查询，并把结果整理成文件。”
-- “安装并使用一个 Skill，或接入一个外部 MCP 服务。”
+- “安装并使用一个 Skill、审查并安装一个 Plugin，或接入一个外部 MCP 服务。”
 - “控制浏览器、桌面自动化，或调用 Codex、Claude、Grok 等编码工具。”
 - “把长任务拆成步骤，并持续更新进度。”
 
 Agent 会根据任务选择合适的工具。
 
-如果主要想用网页版 ChatGPT 操控自己的电脑，安装时开启公网地址后，按 [使用 ChatGPT 连接 AgentDock](./guides/chatgpt.md) 继续即可。
+如果主要想用网页版 ChatGPT 操控自己的电脑，安装时开启公网地址后，按 [使用 ChatGPT 连接](./guides/chatgpt.md) 继续即可。
 
 ## 数据保存在哪里
 
@@ -50,9 +50,10 @@ Docker 默认把这两类数据保存在 Docker volume。删除程序或容器�
 
 ## 常用入口
 
-- [在不同客户端中连接 AgentDock](./guides/mcp-clients.md)
-- [使用 ChatGPT 连接 AgentDock](./guides/chatgpt.md)
+- [在不同客户端中连接](./guides/mcp-clients.md)
+- [使用 ChatGPT 连接](./guides/chatgpt.md)
 - [使用 Skill](./concepts/skills.md)
+- [使用 Plugin](./concepts/plugins.md)
 - [任务与进度](./concepts/tasks.md)
 - [浏览器自动化](./guides/browser-control.md)
 - [使用本地 Coding Agent](./guides/coding-agents.md)
