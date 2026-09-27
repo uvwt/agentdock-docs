@@ -37,6 +37,36 @@ Default user data:
 
 For screen, keyboard, or mouse automation, grant the app that actually runs AgentDock the required permissions under **System Settings → Privacy & Security**.
 
+### Verify desktop automation readiness
+
+The [Desktop Skill](https://github.com/uvwt/agentdock-skills/tree/main/skills/desktop)
+provides `skill_action=status` or `skill_action=observe` with `action=preflight`.
+Run the installed Skill through AgentDock's `exec_command` path using the exact
+Skill reference returned by `agentdock_context`. Checks from a separate SSH or
+terminal process do not prove the AgentDock process has permission.
+
+When the installed Skill returns `readiness`, it reports `screen_capture`,
+`apple_events`, and `accessibility` separately as `passed`, `failed`, or
+`not_checked`. Screen capture must produce a PNG header with nonzero
+dimensions. Accessibility checks read actual window properties from the
+frontmost application. Listing System Events processes alone cannot establish
+AX access. Temporary preflight captures are removed and window names are not
+returned.
+
+All three checks run by default. Skipping one with `check_screenshot=false`,
+`check_applescript=false`, or `check_accessibility=false` leaves it unverified
+and makes overall `ok` false. These checks read state without injecting input;
+a pass does not guarantee every target application or input action succeeds.
+If an older Skill omits `readiness` or `accessibility_ok`, update it or treat
+Accessibility as unverified.
+
+If Apple Events passes but real AX reading fails, verify Accessibility
+permission for the current AgentDock process and an active graphical session.
+After an update, permission switches may refer to an older code identity.
+Reauthorize the current process and repeat the real check. A System Events
+restart can interrupt other automation and requires user confirmation.
+Preflight does not reset TCC, change permissions, or restart system processes.
+
 The graphical app can update AgentDock directly. Command-line installations can use:
 
 ```bash

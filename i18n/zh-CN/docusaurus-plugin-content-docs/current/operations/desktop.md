@@ -37,6 +37,30 @@ sh /tmp/agentdock-install.sh --register-service
 
 需要屏幕、键盘或鼠标自动化时，只给实际运行 AgentDock 的应用授予 **系统设置 → 隐私与安全性** 中对应的权限。
 
+### 验证桌面自动化是否可用
+
+[Desktop Skill](https://github.com/uvwt/agentdock-skills/tree/main/skills/desktop)
+支持 `skill_action=status`，或 `skill_action=observe` 搭配 `action=preflight`。
+使用 `agentdock_context` 返回的准确 Skill 引用，通过 AgentDock 的
+`exec_command` 执行已安装的 Skill。单独从 SSH 或终端检查通过，不能证明
+AgentDock 进程拥有权限。
+
+当已安装的 Skill 返回 `readiness` 时，分别用 `passed`、`failed`、`not_checked`
+报告 `screen_capture`、`apple_events` 和 `accessibility`。截图必须产生尺寸
+非零的 PNG 文件头；Accessibility 检查实际读取前台应用的窗口属性。仅列出
+System Events 进程不能证明 AX 可用。临时检查截图会删除，窗口名称不会返回。
+
+三项默认全部检查。用 `check_screenshot=false`、`check_applescript=false` 或
+`check_accessibility=false` 跳过任一项时，该项仍未验证，整体 `ok` 为 `false`。
+这些检查只读取状态，不注入输入；通过不代表每个目标应用或输入动作都会成功。
+旧 Skill 若没有 `readiness` 或 `accessibility_ok`，应更新 Skill，或将
+Accessibility 视为未验证。
+
+Apple Events 通过但真实 AX 读取失败时，检查当前 AgentDock 进程的辅助功能授权
+和活动图形会话。升级后系统权限开关可能仍关联旧的代码身份；重新授权当前进程，
+再做真实检查。重启 System Events 可能中断其他自动化，应先获得用户确认。
+Preflight 不重置 TCC、不修改权限、不重启系统进程。
+
 图形客户端可以直接更新。命令行安装也可以使用：
 
 ```bash

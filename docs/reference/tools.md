@@ -16,6 +16,44 @@ AgentDock exposes tools to connected AI clients over MCP. The tools visible on a
 | `session_observe` | Inspect long-running command sessions |
 | `session_act` | Send input to or stop command sessions |
 
+### Replay command output after a disconnect
+
+When the connected runtime's `session_observe` schema includes `action=read`,
+use it to retrieve output with independent client-owned byte offsets. Older
+runtimes only expose `list` and `status`; inspect `tools/list` before using this
+action.
+
+Start a command with `exec_command` and `execution_mode=async`, then read its
+returned session:
+
+```json
+{
+  "action": "read",
+  "session_id": "session-...",
+  "stdout_offset": 0,
+  "stderr_offset": 0,
+  "max_output_bytes": 65536
+}
+```
+
+After receiving a page, pass its `stdout_next_offset` and `stderr_next_offset`
+as the next request's offsets. Retry the same offsets if a response is lost.
+Each stream has its own page limit. Read requires `max_output_bytes` of at
+least four bytes and preserves UTF-8 page boundaries. After the process exits,
+continue until both `stdout_truncated` and `stderr_truncated` are false.
+
+`*_missed_bytes` report output evicted before the requested offset, or bytes
+skipped when the offset starts inside a UTF-8 character. Offsets count raw
+process bytes before JSON encoding. The first read starts at zero by default
+and can include output already returned by `exec_command`.
+
+Read leaves the legacy observation cursors and completed session intact.
+Output remains in memory, bounded to four MiB per stream; completed sessions
+are eligible for eviction after one hour or when the existing session count
+limit is reached. An AgentDock restart loses those sessions. The existing
+`status` and mutation actions keep their behavior and can consume output or
+remove the session, so use `read` consistently for retryable observation.
+
 ## Skills, Plugins, and external MCP
 
 | Tool | Purpose | Main actions |

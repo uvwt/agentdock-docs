@@ -16,6 +16,38 @@ AgentDock 通过 MCP 向 AI 客户端提供工具。具体连接能看到哪些�
 | `session_observe` | 查看长时间运行的命令会话 |
 | `session_act` | 向命令会话输入内容或终止会话 |
 
+### 断线后重读命令输出
+
+当当前运行端的 `session_observe` Schema 包含 `action=read` 时，可以使用客户端
+独立保存的字节偏移读取输出。旧版只提供 `list` 和 `status`，调用前先检查
+`tools/list`。
+
+通过 `exec_command` 的 `execution_mode=async` 启动命令，再读取返回的会话：
+
+```json
+{
+  "action": "read",
+  "session_id": "session-...",
+  "stdout_offset": 0,
+  "stderr_offset": 0,
+  "max_output_bytes": 65536
+}
+```
+
+收到一页后，把结果中的 `stdout_next_offset` 和 `stderr_next_offset` 作为下次
+请求的偏移；响应丢失时重试原偏移。每条输出流分别受分页上限约束；`read` 要求
+`max_output_bytes` 至少为 4，并保持 UTF-8 字符分页边界。命令退出后继续读取，
+直到 `stdout_truncated` 和 `stderr_truncated` 都为 `false`。
+
+`*_missed_bytes` 表示请求位置之前的输出已被淘汰，或偏移落在 UTF-8 字符中间而
+跳过了部分字节。偏移按 JSON 编码前的原始进程输出字节计算。首次读取默认从零
+开始，可能包含 `exec_command` 已返回的输出。
+
+`read` 不推进旧的观察游标，也不删除已完成会话。每条输出流仍只保留最多 4 MiB；
+已完成会话在一小时后或触及既有会话数量上限时可能被淘汰。会话只存在于内存，
+AgentDock 重启后不保留。既有 `status` 和写入、停止等动作仍可能消费输出或删除
+会话；需要支持重试时，应持续使用 `read` 观察。
+
 ## Skill、Plugin 与外部 MCP
 
 | 工具 | 用途 | 主要 action |
