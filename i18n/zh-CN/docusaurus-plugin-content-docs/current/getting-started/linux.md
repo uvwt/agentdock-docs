@@ -11,7 +11,7 @@ AgentDock 提供 Linux x64 和 ARM64 预编译版本。
 ```bash
 curl -fsSL https://github.com/uvwt/agentdock/releases/latest/download/install.sh \
   -o /tmp/install-agentdock.sh
-sudo env AGENTDOCK_NONINTERACTIVE=true sh /tmp/install-agentdock.sh
+sudo sh /tmp/install-agentdock.sh
 ```
 
 安装器会自动选择 systemd 或 OpenRC，创建低权限运行用户，生成 Bearer Token，启动服务并完成健康检查。
@@ -76,20 +76,27 @@ sudo sh /tmp/install-agentdock.sh
 安装器会询问是否已有接入 Cloudflare 的域名：
 
 - 没有域名：自动创建临时 `trycloudflare.com` 地址，适合快速使用。
-- 已有域名：先按 [固定域名配置教程](../guides/fixed-domain.md) 完成 Cloudflare 侧设置，再在安装器提示时填写得到的 HTTPS 公网地址和 Tunnel Token。
+- 已有域名：先按 [公网访问](../operations/public-access.md) 完成 Cloudflare 侧设置，再在安装器提示时填写得到的 HTTPS 公网地址和 Tunnel Token。
 
-安装完成后，终端会显示公网 MCP 地址和连接凭据。临时地址可能在服务重启后变化；地址变化时重新运行安装器，并替换客户端中的旧地址。已有 Bearer Token 和 OAuth 凭据会保留。
+安装完成后，终端会显示公网 MCP 地址和连接凭据。临时地址在重启后可能变化；需要新地址时执行 `sudo /opt/agentdock/bin/agentdock tunnel regenerate --runtime-root /etc/agentdock`，再替换客户端中的旧 MCP URL 并重新完成 OAuth 授权。已有 Bearer Token 和 OAuth 凭据会保留。
 
-公网访问必须保留认证。详细参数和日志位置见 [Linux 进阶配置](../operations/linux.md#cloudflare-tunnel)。
+公网访问必须保留认证。详细参数和日志位置见 [公网访问](../operations/public-access.md)。
 
 ## 更新
 
-重新下载并运行第 1 步即可。任务、Skill、配置和工作目录会保留。
+先检查，再安装最新版本：
+
+```bash
+sudo /opt/agentdock/bin/agentdock update --check
+sudo /opt/agentdock/bin/agentdock update
+```
+
+任务、Skill、配置和工作目录会保留。只有需要修复安装或安装指定版本时，再重新运行安装器。
 
 ## 按需继续
 
 - 使用浏览器自动化：在宿主机安装 Chrome、Chromium 或 Microsoft Edge 并启用浏览器工具；自动检测不到时可设置 `AGENTDOCK_BROWSER_EXECUTABLE_PATH`。只有希望容器直接包含 Chromium 时才需要 Docker browser 镜像。见 [浏览器自动化](../guides/browser-control.md)。
-- Alpine、自定义目录或端口、手动服务管理和卸载：见 [Linux 进阶配置](../operations/linux.md)。
-- 需要完全手动维护 systemd、反向代理和 OAuth 时：见 [Linux 手动部署](./vps.md)。
+- Alpine、自定义目录或端口、手动服务管理和卸载：见 [Linux 与服务器](../operations/linux.md)。
+- 需要完全手动维护 systemd、反向代理和 OAuth 时：见 [Linux 与服务器](../operations/linux.md)。
 - 启动失败：查看 [故障排查](../operations/troubleshooting.md)。
-- 需要公网访问：先阅读 [安全模型](../operations/security.md)。
+- 需要公网访问：见 [公网访问](../operations/public-access.md)。

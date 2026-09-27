@@ -1,199 +1,74 @@
-# Advanced Linux configuration
+# Linux and servers
 
-This page covers interactive installation, Cloudflare Tunnel, custom directories and ports, service-manager selection, optional NexusDock pairing, and installation without a managed system service.
+For a normal Linux installation, start with [Install on Linux](../getting-started/linux.md). This page covers server-oriented settings and service management.
 
-## Alpine and minimal systems
+## Install
 
-The unified `install.sh` entry needs a POSIX shell, Bash, CA certificates, and either curl or wget. Install the missing tools first:
-
-```sh
-apk add --no-cache bash curl ca-certificates
-```
-
-Then run the same `install.sh` command shown below. There is no separate bootstrap installer.
-
-## Interactive installation
-
-Without `AGENTDOCK_NONINTERACTIVE`, the installer asks for each setting:
+The public installer detects the architecture and can register systemd or OpenRC automatically:
 
 ```bash
 curl -fsSL https://github.com/uvwt/agentdock/releases/latest/download/install.sh \
   -o /tmp/install-agentdock.sh
-sh /tmp/install-agentdock.sh
+sudo sh /tmp/install-agentdock.sh
 ```
 
-The public installer uses the prebuilt release archive for the detected architecture. Building AgentDock from source is a contributor workflow, not an installer mode.
+On Alpine or another minimal system, install Bash, CA certificates, and curl or wget first.
 
-## Cloudflare Tunnel
-
-The installer asks whether you already have a domain managed by Cloudflare:
-
-| User answer | Installer mode | Result |
-| --- | --- | --- |
-| Domain available | Fixed (`named`) | Stable HTTPS hostname for long-running clients and OAuth |
-| No domain | Temporary (`quick`) | Generated `trycloudflare.com` URL for immediate testing |
-
-For fixed mode, complete [Configure a fixed domain](../guides/fixed-domain.md) first, then enter the resulting HTTPS public origin and Tunnel Token when the installer asks.
-
-A temporary installation starts `cloudflared`, reads the generated URL from the service log, writes it to `AGENTDOCK_SERVER_URL`, enables OAuth, and restarts AgentDock. Both modes generate or reuse these credentials:
-
-- `AGENTDOCK_AUTH_TOKEN`
-- `AGENTDOCK_OAUTH_PASSWORD`
-- `AGENTDOCK_OAUTH_TOKEN_SECRET`
-
-The completion panel prints the public URL, MCP URL, Bearer Token, and OAuth login password. The OAuth signing secret is not printed. The Tunnel Token is written only to root-only `/etc/agentdock/cloudflared.env`; it is not written to `agentdock.env`, passed to AgentDock, or placed in the `cloudflared` command line.
-
-If a temporary URL changes, rerun the same installer. Existing host, port, advanced settings, Bearer Token, OAuth password, and signing secret are preserved. A previously paired NexusDock device identity lives in AgentDock state and is not replaced by rerunning the installer. The new URL is written back automatically and AgentDock is restarted. The client must replace the old MCP URL and authorize OAuth again.
-
-The default Tunnel service is `agentdock-cloudflared`:
-
-```bash
-# systemd
-sudo systemctl status agentdock-cloudflared --no-pager
-sudo journalctl -u agentdock-cloudflared -n 100 --no-pager
-
-# OpenRC
-sudo rc-service agentdock-cloudflared status
-sudo tail -n 100 /var/log/agentdock-cloudflared.log \
-  /var/log/agentdock-cloudflared.err
-```
-
-Non-interactive installation remains private unless the mode is explicitly supplied. For a temporary Tunnel:
-
-```bash
-sudo env \
-  AGENTDOCK_NONINTERACTIVE=true \
-  AGENTDOCK_TUNNEL_MODE=quick \
-  sh /tmp/install-agentdock.sh
-```
-
-For fixed mode, set `AGENTDOCK_TUNNEL_MODE=named`, `AGENTDOCK_SERVER_URL`, and `AGENTDOCK_CLOUDFLARE_TUNNEL_TOKEN`. `AGENTDOCK_OAUTH_PASSWORD` and `AGENTDOCK_OAUTH_TOKEN_SECRET` are optional first-install overrides; otherwise the installer generates them. Inject secrets from a protected environment or secret manager.
-
-## Default directories
+Default system installation:
 
 ```text
-Installation directory  /opt/agentdock
-Runtime data directory  /srv/agentdock
-Environment file        /etc/agentdock/agentdock.env
-Service user            agentdock
-Listen address          127.0.0.1:8765
+Binary           /opt/agentdock/bin/agentdock
+Runtime data     /srv/agentdock
+Environment      /etc/agentdock/agentdock.env
+Service user     agentdock
+Listen address   127.0.0.1:8765
 ```
 
-A typical systemd installation creates:
-
-```text
-/opt/agentdock/bin/agentdock
-/srv/agentdock/.agentdock
-/srv/agentdock/AgentDock
-/etc/agentdock/agentdock.env
-/etc/systemd/system/agentdock.service
-```
-
-OpenRC creates `/etc/init.d/agentdock` instead.
-
-## Non-interactive configuration
-
-Override defaults through environment variables in automated deployments:
-
-```bash
-sudo env \
-  AGENTDOCK_NONINTERACTIVE=true \
-  AGENTDOCK_RELEASE_VERSION=latest \
-  AGENTDOCK_PORT=8765 \
-  sh /tmp/install-agentdock.sh
-```
-
-Common variables:
-
-| Variable | Purpose |
-| --- | --- |
-| `AGENTDOCK_RELEASE_VERSION` | `latest` or `vX.Y.Z` |
-| `AGENTDOCK_SOURCE_DIR` | Binary installation root |
-| `AGENTDOCK_DATA_DIR` | State and working-directory root |
-| `AGENTDOCK_ENV_FILE` | Service environment file |
-| `AGENTDOCK_SERVICE_NAME` | systemd or OpenRC service name |
-| `AGENTDOCK_SERVICE_USER` | Low-privilege runtime user |
-| `AGENTDOCK_SERVICE_MANAGER` | `auto`, `systemd`, `openrc`, or `none` |
-| `AGENTDOCK_HOST` | Listen address |
-| `AGENTDOCK_PORT` | Listen port |
-| `AGENTDOCK_AUTH_TOKEN` | Custom Bearer Token |
-| `AGENTDOCK_TUNNEL_MODE` | `none`, `quick`, or `named` |
-| `AGENTDOCK_SERVER_URL` | Fixed HTTPS origin for Named Tunnel and OAuth |
-| `AGENTDOCK_CLOUDFLARE_TUNNEL_TOKEN` | Named Tunnel Token; stored only in `cloudflared.env` |
-| `AGENTDOCK_CLOUDFLARED_INSTALL_PATH` | Custom `cloudflared` binary path |
-
-Do not commit real tokens. When `AGENTDOCK_AUTH_TOKEN` is omitted, the installer generates one and writes it to a root-only environment file.
-
-## Pair NexusDock
-
-NexusDock is paired after installation; it is not configured through installer environment variables. For the default Linux service account and install root, generate a one-time code in **NexusDock → Settings → System & Nodes**, then run:
-
-```bash
-sudo -u agentdock -H /opt/agentdock/bin/agentdock nexus pair --endpoint https://nexus.example.com --code <pairing-code>
-sudo systemctl restart agentdock
-```
-
-On OpenRC, restart the corresponding `agentdock` service instead of systemd. If you changed the service user or install root, use those actual values. Do not reintroduce the legacy Nexus endpoint/token environment variables.
-
-## Install without a system service
-
-To avoid registering a system service:
-
-```bash
-sudo env \
-  AGENTDOCK_NONINTERACTIVE=true \
-  AGENTDOCK_SERVICE_MANAGER=none \
-  sh /tmp/install-agentdock.sh
-```
-
-This mode still installs the release runtime and bundled core Skills, but does not register or start a system service. Run `/opt/agentdock/bin/agentdock` manually when needed.
-
-## Change the port or token
-
-Edit the environment file:
-
-```bash
-sudoedit /etc/agentdock/agentdock.env
-```
-
-Restart the service afterward:
-
-```bash
-sudo systemctl restart agentdock
-sudo systemctl status agentdock --no-pager
-```
-
-For OpenRC:
-
-```sh
-sudo rc-service agentdock restart
-sudo rc-service agentdock status
-```
-
-## View logs
+## Service and logs
 
 For systemd:
 
 ```bash
-sudo journalctl -u agentdock -n 100 --no-pager
+sudo systemctl status agentdock --no-pager
+sudo systemctl restart agentdock
 sudo journalctl -u agentdock -f
 ```
 
 For OpenRC:
 
 ```sh
-sudo tail -n 100 /var/log/agentdock.log /var/log/agentdock.err
+sudo rc-service agentdock status
+sudo rc-service agentdock restart
 ```
+
+If you manage the service yourself, keep AgentDock bound to loopback and run it under a dedicated low-privilege account. Put environment values in a protected service environment file rather than in the unit command line.
+
+## Public servers
+
+For remote use, keep AgentDock on `127.0.0.1` and provide HTTPS through a trusted reverse proxy or Cloudflare Tunnel. Do not expose plaintext `/mcp` directly to the Internet.
+
+See [Public access](./public-access.md) for temporary and fixed Cloudflare addresses, and [Configuration](../reference/configuration.md) for authentication settings.
+
+## NexusDock
+
+Pair NexusDock after AgentDock is installed. On the default service account:
+
+```bash
+sudo -u agentdock -H /opt/agentdock/bin/agentdock nexus pair \
+  --endpoint https://nexus.example.com \
+  --code <pairing-code>
+sudo systemctl restart agentdock
+```
+
+See [Connect AgentDock](./nexusdock-connect.md) for the complete pairing flow.
 
 ## Update
 
-Rerun the installer to replace the binary. Runtime data and the environment file are preserved. To install a fixed version:
+For a standard installation:
 
 ```bash
-sudo env \
-  AGENTDOCK_NONINTERACTIVE=true \
-  AGENTDOCK_RELEASE_VERSION=vX.Y.Z \
-  sh /tmp/install-agentdock.sh
+sudo /opt/agentdock/bin/agentdock update --check
+sudo /opt/agentdock/bin/agentdock update
 ```
 
-To maintain systemd, the environment file, reverse proxy, and OAuth entirely yourself, see [Manual Linux deployment](../getting-started/vps.md).
+The runtime data and service environment remain separate from the binary. Use [Troubleshooting](./troubleshooting.md) if the service does not return to a healthy state after an update.

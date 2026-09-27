@@ -1,17 +1,18 @@
-# NexusDock Recall
+# Recall memory
 
-NexusDock Recall is an optional long-term knowledge service for AgentDock. It stores stable project notes, experience, decisions, and problem logs so later tasks can find reliable context.
+NexusDock Recall is an optional long-term memory service for AgentDock. It keeps information, preferences, experience, and knowledge that are worth reusing later, so future tasks can continue with useful context.
 
-Without NexusDock, file, command, command-line Git, Skill, dynamic MCP, and local task tools remain fully available; Recall, workflow template, knowledge evolution, and private note tools are unavailable. See [NexusDock](./nexusdock.md) for the multi-device control plane and unified MCP gateway.
+Without NexusDock, file, command, command-line Git, Skill, dynamic MCP, and local task tools remain fully available; Recall, workflow template, knowledge evolution, and private note tools are unavailable. See [NexusDock](./nexusdock.md) for multi-device management and the unified MCP endpoint.
 
 ## When to use it
 
 Store:
 
-- Long-lived project structure and runtime steps.
-- Verified deployment or troubleshooting notes.
-- Decisions and preferences meant to be reused across sessions.
-- Open questions and learning notes.
+- Personal preferences, recurring habits, and long-term goals.
+- Learning notes, reading takeaways, and knowledge you want to build over time.
+- Information you may reuse for travel, shopping, hobbies, or everyday decisions.
+- Background, decisions, and experience from work or personal projects.
+- Verified development, deployment, or troubleshooting lessons.
 
 Do not store:
 
@@ -22,32 +23,27 @@ Do not store:
 
 ## Setup
 
-You need an accessible NexusDock URL and an optional token. Ask your agent:
+Pair the AgentDock device with NexusDock first. In NexusDock, open **Settings → System & Nodes**, create a one-time pairing code, then run the generated `agentdock nexus pair ...` command on the AgentDock device and restart AgentDock.
 
-```text
-Connect AgentDock to NexusDock Recall at https://nexus.example.com using a secure environment variable for the token.
-```
-
-For exact environment variables, see [Configuration reference](../reference/configuration.md).
+Recall does not need a separate AgentDock-side URL or token after pairing. See [Connect AgentDock](../operations/nexusdock-connect.md) for the full setup.
 
 ## How to use it
 
 Speak directly:
 
 ```text
-Check existing deployment notes for this project before starting.
-Update verified conclusions to long-term project docs; do not record temporary logs.
-Search earlier troubleshooting notes about OAuth.
+Remember that I prefer places to stay with convenient public transit when I travel.
+Save the key points from this study session so I can continue reviewing them later.
+Find the camera-buying criteria I summarized before.
+Save the long-term conclusion we just confirmed for this project.
 ```
 
-`agentdock_context` already includes a compact Recall startup index, so models do not need a separate bootstrap call. Read directly when the index already provides the exact path; otherwise use `recall_search` to search Markdown and Cards. When NexusDock has embeddings configured, it adds semantic recall behind the same search tool transparently.
-
-The agent searches existing content first, then decides whether to read, update, or create, avoiding duplicates and conflicts.
+AgentDock can use existing Recall content to carry useful context into later tasks. With Embeddings configured, semantic search can also find related information even when it is phrased differently.
 
 ## Content types
 
-- **Markdown:** stable project documentation, runbooks, learning records, and structured long-term facts.
-- **Card:** one atomic, reusable experience, preference, or decision.
+- **Markdown:** long-term notes, learning records, project documentation, and structured knowledge.
+- **Card:** one atomic, reusable experience, preference, fact, or decision.
 
 Private Notes are a separate store rather than a Recall content type.
 

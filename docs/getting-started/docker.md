@@ -15,27 +15,13 @@ Make sure both commands display version numbers before continuing.
 
 ## 2. Download Compose configuration
 
-Choose the command block for your operating system.
-
-### macOS / Linux
+Run:
 
 ```bash
 mkdir -p agentdock && cd agentdock
 curl -fL https://raw.githubusercontent.com/uvwt/agentdock/main/docker-compose.yml \
   -o docker-compose.yml
 printf 'AGENTDOCK_AUTH_TOKEN=%s\n' "$(openssl rand -hex 32)" > .env
-```
-
-### Windows PowerShell
-
-```powershell
-New-Item -ItemType Directory -Force agentdock | Out-Null
-Set-Location agentdock
-Invoke-WebRequest `
-  https://raw.githubusercontent.com/uvwt/agentdock/main/docker-compose.yml `
-  -OutFile docker-compose.yml
-$token = [guid]::NewGuid().ToString("N") + [guid]::NewGuid().ToString("N")
-"AGENTDOCK_AUTH_TOKEN=$token" | Set-Content -Encoding ascii .env
 ```
 
 The connection token is stored in `.env`. Do not commit it to Git or share it publicly.
@@ -66,13 +52,7 @@ The token is the value of `AGENTDOCK_AUTH_TOKEN=` in `.env`.
 To view the token:
 
 ```bash
-# macOS / Linux
 cat .env
-```
-
-```powershell
-# Windows PowerShell
-Get-Content .env
 ```
 
 :::tip
@@ -95,7 +75,7 @@ docker compose logs -f cloudflared-quick
 
 Look for `https://...trycloudflare.com` in the logs. Append `/mcp` to the address in your client and use the Bearer Token from `.env` for authentication.
 
-This temporary URL may change when the container or tunnel restarts. It is suitable for testing, not OAuth or long-term use. For a fixed domain, see [Advanced Docker configuration](../operations/docker.md#cloudflare-tunnel).
+This temporary URL may change when the container or tunnel restarts. It is suitable for testing, not OAuth or long-term use. For a fixed domain, see [Advanced Docker configuration](../operations/public-access.md).
 
 ## Update
 
@@ -117,4 +97,4 @@ docker compose --profile cloudflare-quick up -d --force-recreate
 
 - For browser images, dev tools images, port changes, mounting projects, or data migration: see [Advanced Docker configuration](../operations/docker.md).
 - If startup fails: see [Troubleshooting](../operations/troubleshooting.md).
-- For LAN or public access: read the [Security model](../operations/security.md) first.
+- For LAN or public access: see [Public access](../operations/public-access.md).

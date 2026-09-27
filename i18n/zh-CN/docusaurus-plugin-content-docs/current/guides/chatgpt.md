@@ -1,4 +1,4 @@
-# 使用 ChatGPT 连接 AgentDock
+# 使用 ChatGPT 连接
 
 通过网页版 ChatGPT 操作电脑上的文件、执行命令、管理 Git、使用浏览器自动化，或调用本机编码工具。
 
@@ -9,6 +9,10 @@
 3. 在 ChatGPT 中使用公网 MCP 地址与 OAuth 密码完成连接。
 
 Windows 和 macOS 图形安装程序已自动集成 Cloudflare Tunnel 与 OAuth 配置。
+
+:::note
+本页中的“**插件**”指 ChatGPT 界面里的连接入口，不是 [AgentDock Plugin 扩展包](../concepts/plugins.md)。
+:::
 
 ## 快速上手（Windows / macOS 图形应用）
 
@@ -21,7 +25,11 @@ Windows 和 macOS 图形安装程序已自动集成 Cloudflare Tunnel 与 OAuth 
 - 还没有域名、想先连通测试时，选择 **临时公网地址**。
 - 有自己的域名、希望长期稳定使用时，建议选择 **使用自己的 Cloudflare 域名**。
 
+<div className="chatgpt-guide-image">
+
 ![安装时选择临时公网地址或固定 Cloudflare 域名](/img/guides/chatgpt/01-install-connection-option.png)
+
+</div>
 
 :::tip
 教学和第一次连接时，临时 `trycloudflare.com` 地址就够用。临时地址可能在 Windows 或 Tunnel 重启后变化；变化后请从控制面板复制新的公网地址，并更新 ChatGPT 插件中的旧地址。
@@ -36,7 +44,11 @@ Windows 和 macOS 图形安装程序已自动集成 Cloudflare Tunnel 与 OAuth 
 - **公网 MCP 地址**，以 `/mcp` 结尾
 - **OAuth 密码**
 
+<div className="chatgpt-guide-image">
+
 ![控制面板概览页中的公网 MCP 地址和 OAuth 密码](/img/guides/chatgpt/02-copy-public-url-oauth.png)
+
+</div>
 
 凭据默认会被遮罩，需要时再点击“显示”。不要把密码放进截图、Issue 或公开聊天。
 
@@ -49,11 +61,19 @@ Windows 和 macOS 图形安装程序已自动集成 Cloudflare Tunnel 与 OAuth 
 1. 在浏览器中打开 ChatGPT。
 2. 进入 **设置 > 插件 > 高级设置**，开启 **开发人员模式**。
 
+<div className="chatgpt-guide-image">
+
 ![ChatGPT 设置 > 插件中开启开发人员模式](/img/guides/chatgpt/03-chatgpt-developer-mode.png)
+
+</div>
 
 3. 返回 ChatGPT 首页的插件页面，点击 **➕** / **创建插件**。
 
+<div className="chatgpt-guide-image">
+
 ![ChatGPT 插件页面并高亮添加按钮](/img/guides/chatgpt/04-plugins-add-button.png)
+
+</div>
 
 4. 插件名称填写 `AgentDock`。
 5. MCP Server URL 填写刚才复制的公网地址，例如：
@@ -62,12 +82,20 @@ Windows 和 macOS 图形安装程序已自动集成 Cloudflare Tunnel 与 OAuth 
    https://your-public-host.example/mcp
    ```
 
+<div className="chatgpt-guide-image">
+
 ![创建插件对话框中填写名称和公网 MCP 地址](/img/guides/chatgpt/05-fill-name-and-url.png)
+
+</div>
 
 6. 点击创建并发起连接。
 7. 浏览器跳转到 AgentDock 授权页后，填入刚才复制的 OAuth 密码并完成授权。
 
+<div className="chatgpt-guide-image">
+
 ![AgentDock 授权页输入 OAuth 密码](/img/guides/chatgpt/06-create-enter-password.png)
+
+</div>
 
 8. 返回 ChatGPT，确认 AgentDock 插件已经可用。
 
@@ -97,12 +125,12 @@ ChatGPT 会自动发现 AgentDock 的 OAuth 元数据、注册客户端，并通
 
 1. **公网 HTTPS 访问**：AgentDock 必须部署在 ChatGPT 可访问的公网地址，且公网入口配置有效 HTTPS 证书。
 2. **MCP 地址格式**：MCP 地址必须以 `/mcp` 结尾（例如 `https://agentdock.example.com/mcp`）。
-3. **启用 OAuth**：需配置 `AGENTDOCK_OAUTH_ENABLED=true`、`AGENTDOCK_SERVER_URL`、`AGENTDOCK_OAUTH_PASSWORD` 与 `AGENTDOCK_OAUTH_TOKEN_SECRET`。完整环境变量字典与密钥生成说明见 [OAuth 配置](../reference/configuration.md#oauth-配置)。
+3. **启用 OAuth**：需配置 `AGENTDOCK_OAUTH_ENABLED=true`、`AGENTDOCK_SERVER_URL`、`AGENTDOCK_OAUTH_PASSWORD` 与 `AGENTDOCK_OAUTH_TOKEN_SECRET`。完整环境变量字典与密钥生成说明见 [OAuth 配置](../reference/configuration.md)。
 4. **代理路由转发**：反向代理需原样转发 `/mcp`、`/register`、`/oauth/*` 和 `/.well-known/*`。
 
 修改环境变量配置后重启 AgentDock（例如 `sudo systemctl restart agentdock` 或 `docker compose up -d`）。
 
-完整的 VPS 部署流程见 [Linux 手动部署](../getting-started/vps.md)。
+完整的 VPS 部署流程见 [Linux 与服务器](../operations/linux.md)。
 
 ## 验证 OAuth 入口
 
@@ -159,4 +187,4 @@ OAuth 授权成功时，`POST /oauth/authorize` 会返回 `302` 跳转到 ChatGP
 - 反向代理不要记录 Authorization Header、OAuth Code 或请求正文。
 - AgentDock 会以其运行用户或容器权限操作真实资源，只授予完成任务所需的目录和命令权限。
 
-完整环境变量说明见 [配置参考](../reference/configuration.md#oauth-配置)，不使用桌面安装程序时的公网部署见 [Linux 手动部署](../getting-started/vps.md)。
+完整环境变量说明见 [配置参考](../reference/configuration.md)，不使用桌面安装程序时的公网部署见 [Linux 与服务器](../operations/linux.md)。

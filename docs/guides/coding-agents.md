@@ -1,93 +1,92 @@
 # Use local Coding Agents
 
-AgentDock can optionally connect an MCP client to local Coding Agents through ACP (Agent Client Protocol). This lets ChatGPT or another MCP client hand a coding task to Codex, Claude, Grok Build, or a custom ACP adapter on the computer where the project actually lives.
+AgentDock can hand coding work from ChatGPT or another MCP client to a local Coding Agent running on the same computer as your project. This can be Codex, Claude, Grok Build, or a custom coding tool.
 
-ACP is optional and disabled by default.
+This feature is optional and disabled by default. Enable it only when you want AgentDock to use a local coding tool for repository work.
 
-## Supported profiles
+## What you can use
 
-The macOS and Windows apps provide built-in profiles and also allow custom adapters:
+AgentDock includes ready-to-configure options for:
 
-| Profile kind | Local adapter AgentDock uses |
-| --- | --- |
-| Codex | `codex-acp` or the `@agentclientprotocol/codex-acp` package |
-| Claude | `claude-agent-acp` or the `@agentclientprotocol/claude-agent-acp` package |
-| Grok Build | `grok agent stdio` |
-| Custom | An absolute adapter executable path plus optional arguments |
+- **Codex**
+- **Claude**
+- **Grok Build**
+- **Custom coding tools**
 
-Built-in profile IDs are fixed as `codex`, `claude`, and `grok`, so each built-in kind has one profile. You can create multiple custom profiles with different IDs. One enabled profile is selected as the default; calls can choose another profile explicitly with `profile_id`.
+Choose one enabled tool as the default. You can also add multiple custom tools and ask for a different one when a task needs it.
 
-Install and sign in to the provider you intend to use before enabling its adapter. AgentDock starts the adapter but does not manage provider accounts or copy provider credentials into its own configuration.
+Before enabling a coding tool, install it on the same computer and sign in to its provider if required. AgentDock starts the local integration, but it does not manage the provider account or copy provider credentials into AgentDock settings.
+
+## Installation preparation
+
+- **Codex:** install and sign in to Codex. AgentDock also needs `codex-acp`.
+- **Claude:** install and sign in to Claude Code. AgentDock also needs `claude-agent-acp`.
+- **Grok Build:** install and sign in to Grok. No extra connection component is required.
+- **Custom coding tool:** prepare the executable path and any startup arguments it needs.
+
+The Codex and Claude connection components are installed with npm, so Node.js and npm must be available:
+
+```bash
+npm install -g @agentclientprotocol/codex-acp
+npm install -g @agentclientprotocol/claude-agent-acp
+```
+
+If your system-wide npm directory is not writable, use a user-owned npm prefix instead of running npm with `sudo`.
 
 ## macOS and Windows
 
-1. Install the desired Coding Agent and any required ACP adapter on the same computer as AgentDock.
-2. Open **Advanced Settings** on macOS or the AgentDock control panel on Windows.
+1. Complete the preparation above for the coding tool you want to use.
+2. On macOS, open **Advanced Settings**. On Windows, open the AgentDock control panel.
 3. Enable **Coding Agent (ACP)**.
-4. Add or enable a built-in profile, or add a Custom profile with its adapter command and arguments.
-5. Choose one enabled profile as the default.
-6. Confirm AgentDock detects the adapter, save the settings, and let AgentDock restart Core.
+4. Enable Codex, Claude, or Grok Build, or add a custom coding tool.
+5. Choose the default coding tool.
+6. Save the settings and let AgentDock restart.
+7. Reconnect your MCP client or start a new conversation.
 
-After reconnecting the MCP client, `agentdock_context` reports `default_profile` and the enabled `profiles`. The current connection's `tools/list` should include `acp_session`, `acp_prompt`, and `acp_interaction`.
+You normally do not need to configure internal IDs or ACP tool parameters when using the desktop application.
 
-## What you can ask for
+## Ask for coding work directly
 
-Describe the outcome directly, for example:
+Describe the outcome you want, for example:
 
 ```text
 Use the local Coding Agent on this computer to inspect the repository, fix the failing tests, and verify the change.
 ```
 
-AgentDock exposes a small management surface instead of mirroring every ACP protocol method:
+If several coding tools are enabled, you can name the one you want in the request, for example:
 
-- `acp_session`: `info`, `new`, `list`, `inspect`, `open`, `update`, `close`, `delete`.
-- `acp_prompt`: `start`, `events`, `cancel`.
-- `acp_interaction`: `list`, `respond`.
-
-`open` handles resume/load negotiation internally, `new` can fork from another managed session through `from_session_id` when the adapter supports it, and `update` changes advertised session modes or configuration options. Prompt steering is handled internally when supported; there is no separate public steering action.
-
-A long prompt starts asynchronously and returns a Run ID. The upstream agent reads ordered events until the Run settles. Permission responses stay explicit and can only choose options offered by the adapter and allowed by AgentDock policy.
-
-## Project directories
-
-A Coding Agent session can use any directory that the AgentDock operating-system user can access. AgentDock does not maintain a separate project-directory whitelist.
-
-This is not an operating-system sandbox. If a Coding Agent should access only selected projects, enforce that boundary with the operating-system account, file permissions, container mounts, or other host controls.
-
-## Headless or service deployments
-
-For deployments without the desktop UI, configure one or more ACP profiles in the Core startup environment. For example, a Codex profile can be configured as:
-
-```bash
-AGENTDOCK_ACP_ENABLED=true
-AGENTDOCK_ACP_PROFILES_JSON='[{"id":"codex","kind":"codex","command":"/absolute/path/to/codex-acp","enabled":true}]'
-AGENTDOCK_ACP_DEFAULT_PROFILE=codex
+```text
+Use Claude for this repository task and verify the change when finished.
 ```
 
-Custom adapters use `kind=custom`, a unique `id`, an absolute `command`, and optional `args` and `env_from_env`. Keep secret values in the host environment; `env_from_env` maps variable names and does not embed secret values in adapter arguments.
+AgentDock handles the local session and tool communication in the background. Permission requests still require an explicit allowed choice before work continues.
 
-`AGENTDOCK_ACP_AGENT`, `AGENTDOCK_ACP_COMMAND`, `AGENTDOCK_ACP_ARGS_JSON`, and `AGENTDOCK_ACP_ENV_FROM_ENV_JSON` are legacy single-profile compatibility inputs. Current configurations should use `AGENTDOCK_ACP_PROFILES_JSON` and `AGENTDOCK_ACP_DEFAULT_PROFILE`.
+## Project access
 
-## Verify the connection
+A local Coding Agent can work only in directories that the operating-system user running AgentDock can access.
 
-A complete check covers more than whether settings were saved:
+AgentDock does not add a separate operating-system sandbox around the coding tool. If it should only access selected projects, use operating-system accounts, file permissions, container mounts, or other host controls to enforce that boundary.
 
-1. The adapter command exists and is executable by the user running AgentDock.
-2. AgentDock Core is healthy after the configuration change.
-3. `agentdock_context` shows the expected default and enabled profiles.
-4. The MCP connection exposes `acp_session`, `acp_prompt`, and `acp_interaction`.
-5. `acp_session info` can start the selected adapter and return its actual capabilities or authentication methods.
+## Check that it works
 
-When using a non-default profile, keep passing the same `profile_id` for its session, prompt, and interaction calls.
+After saving the settings, reconnect the client and start with a harmless task such as:
+
+```text
+Use the local Coding Agent to inspect this repository and summarize its structure. Do not modify files.
+```
+
+If that succeeds, AgentDock can start the selected coding tool and return its result through the current conversation.
 
 ## Troubleshooting
 
-If a Coding Agent cannot be enabled or started:
+If the Coding Agent does not start:
 
-- Verify the provider CLI and required ACP adapter separately; finding `codex` does not imply `codex-acp` exists, and finding `claude` does not imply `claude-agent-acp` exists.
-- Verify the adapter under the same operating-system user and service environment that run AgentDock, not only in another interactive shell.
-- For headless deployments, confirm every enabled profile has an absolute executable `command` and that any host variable referenced by `env_from_env` exists.
-- Use `agentdock_context` to confirm the expected profile is enabled, then use `acp_session info` to test the adapter itself.
-- If a client cached an older tool schema, refresh the AgentDock connection and start a new conversation after ACP is enabled.
+- Confirm the coding tool is installed and signed in on the same computer and under the same operating-system user that runs AgentDock.
+- If that tool requires an ACP connection component, confirm it is installed and available to AgentDock.
+- Confirm **Coding Agent (ACP)** is enabled and an enabled tool is selected as the default.
+- Save the settings, let AgentDock restart, then reconnect the MCP client or start a new conversation.
+- For a custom coding tool, verify its configured executable path and startup arguments.
 
-See [Tools](../reference/tools.md#coding-agents-acp) for the public tool contract and [Configuration](../reference/configuration.md#coding-agents-acp) for host configuration.
+## Advanced and headless configuration
+
+Headless deployments, custom adapter commands, profile IDs, environment variables, and the low-level ACP session tools are advanced configuration details. See [Configuration](../reference/configuration.md) for host setup and [Tools](../reference/tools.md) for the tool contract.

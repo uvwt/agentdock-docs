@@ -15,27 +15,13 @@ docker compose version
 
 ## 2. 下载启动配置
 
-根据当前系统选择一组命令。
-
-### macOS / Linux
+在终端中执行：
 
 ```bash
 mkdir -p agentdock && cd agentdock
 curl -fL https://raw.githubusercontent.com/uvwt/agentdock/main/docker-compose.yml \
   -o docker-compose.yml
 printf 'AGENTDOCK_AUTH_TOKEN=%s\n' "$(openssl rand -hex 32)" > .env
-```
-
-### Windows PowerShell
-
-```powershell
-New-Item -ItemType Directory -Force agentdock | Out-Null
-Set-Location agentdock
-Invoke-WebRequest `
-  https://raw.githubusercontent.com/uvwt/agentdock/main/docker-compose.yml `
-  -OutFile docker-compose.yml
-$token = [guid]::NewGuid().ToString("N") + [guid]::NewGuid().ToString("N")
-"AGENTDOCK_AUTH_TOKEN=$token" | Set-Content -Encoding ascii .env
 ```
 
 `.env` 中保存的是连接 Token。不要把它提交到 Git 或发给别人。
@@ -66,13 +52,7 @@ Token 是 `.env` 文件中 `AGENTDOCK_AUTH_TOKEN=` 后面的内容。
 查看 Token：
 
 ```bash
-# macOS / Linux
 cat .env
-```
-
-```powershell
-# Windows PowerShell
-Get-Content .env
 ```
 
 :::tip
@@ -95,7 +75,7 @@ docker compose logs -f cloudflared-quick
 
 日志中会出现 `https://…trycloudflare.com`。在地址后追加 `/mcp`，并继续使用 `.env` 中的 Bearer Token 认证。
 
-这个临时地址在容器或 Tunnel 重启后可能变化，适合测试，不适合 OAuth 或长期使用。固定域名配置见 [Docker 进阶配置](../operations/docker.md#cloudflare-tunnel)。
+这个临时地址在容器或 Tunnel 重启后可能变化，适合测试，不适合 OAuth 或长期使用。固定域名配置见 [Docker 进阶配置](../operations/public-access.md)。
 
 ## 更新
 
@@ -115,6 +95,6 @@ docker compose --profile cloudflare-quick up -d --force-recreate
 
 ## 按需继续
 
-- 需要浏览器镜像、开发工具镜像、修改端口、挂载项目或迁移旧数据：阅读 [Docker 进阶配置](../operations/docker.md)。
+- 需要浏览器镜像、开发工具镜像、修改端口、挂载项目或迁移旧数据：阅读 [Docker](../operations/docker.md)。
 - 启动失败：查看 [故障排查](../operations/troubleshooting.md)。
-- 需要局域网或公网访问：先阅读 [安全模型](../operations/security.md)。
+- 需要局域网或公网访问：见 [公网访问](../operations/public-access.md)。

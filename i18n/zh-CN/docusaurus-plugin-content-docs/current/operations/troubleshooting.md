@@ -1,101 +1,64 @@
 # 故障排查
 
-## 先做这三步
+## 先检查这些
 
-1. 确认 AgentDock 进程或容器仍在运行。
-2. 使用安装指南中的端口访问 `/healthz`。
-3. 检查客户端 MCP 地址是否以 `/mcp` 结尾，以及 Token 是否与当前实例一致。
+先确认：
 
-连接仍然失败时，记录以下信息再继续排查：
+1. AgentDock 进程或容器仍在运行。
+2. 本机 `http://127.0.0.1:8765/healthz` 可以访问。
+3. MCP 客户端地址以 `/mcp` 结尾。
+4. 客户端使用的是当前 Bearer Token，或已经完成 OAuth。
+5. 实际运行的 AgentDock 版本就是你预期的版本。
 
-- 使用的安装方式和操作系统。
-- AgentDock 版本。
-- 客户端名称和 MCP 地址，隐藏 Token。
-- 服务日志中的具体错误。
-- 问题发生前最后一次修改。
+反馈问题时尽量提供安装方式、操作系统、AgentDock 版本、客户端名称和相关错误日志，并隐藏 Token 和私有地址。
 
-不要只提供“不能用”的截图，也不要公开环境文件或完整请求头。
+## 客户端已连接但看不到工具
 
-## 服务运行，但客户端看不到工具
+重新连接 MCP，或新建会话清理客户端缓存的旧工具 Schema。确认认证后，再实际完成一次 MCP 连接，不要只根据 `/healthz` 判断。
 
-先确认实际进程和健康状态：
+## 401 Unauthorized
 
-```bash
-curl -fsS http://127.0.0.1:8765/healthz
-```
+确认客户端发送的是当前 Bearer Token，或重新完成 OAuth。如果经过反向代理，确认代理没有丢掉 `Authorization` header。
 
-然后检查：
+## 公网地址无法访问
 
-1. 客户端 MCP URL 是否指向 `/mcp`。
-2. Bearer Token 或 OAuth 是否与服务端一致。
-3. 客户端是否仍缓存旧连接；重新连接或新建会话。
-4. 实际运行二进制是否是刚安装或刚更新的版本。
+使用 Cloudflare Tunnel 时检查：
 
-`/healthz` 正常只代表进程存活，不能替代一次真实 MCP 初始化和工具调用。
+- Tunnel 是否在线；
+- 原生安装通常转发到 `http://127.0.0.1:8765`；
+- Docker 转发到 `http://agentdock:8765`；
+- AgentDock 公网地址只填写 HTTPS Origin，不带 `/mcp`；
+- MCP 客户端地址再追加 `/mcp`。
 
-## 返回 401 Unauthorized
+Cloudflare 返回 `502` 通常说明 Tunnel 本身可达，但无法连接本机 AgentDock。
 
-- 确认服务是否配置 `AGENTDOCK_AUTH_TOKEN`。
-- 确认客户端发送 `Authorization: Bearer <token>`。
-- 检查反代是否保留 Authorization Header。
-- 不要把 Token 粘贴到公开日志或 Issue。
-
-## Docker 仍运行旧镜像
-
-从 `main` 重新下载最新 Compose 文件，再拉取和重建容器：
+## Docker 仍在使用旧镜像
 
 ```bash
-curl -fL https://raw.githubusercontent.com/uvwt/agentdock/main/docker-compose.yml \
-  -o docker-compose.yml
 docker compose pull
 docker compose up -d --force-recreate
+docker compose ps
 ```
 
-浏览器部署保留 `.env` 中的 `AGENTDOCK_IMAGE` 与 `AGENTDOCK_BROWSER_ENABLED`。再检查 `docker compose ps`、`docker compose images` 和容器日志，确认镜像标签、摘要和健康状态符合预期。
+新容器没有恢复 healthy 时查看 `docker compose logs`。
 
-## 动态 MCP 无法调用
+## 动态 MCP 无法连接
 
-依次检查：
+确认连接已经启用、所需环境变量已经配置，并且上游 URL 或本地命令可以访问。修改环境后重新刷新 MCP 连接。
 
-1. `mcp_manage list` 中 Server 是否启用。
-2. `mcp_manage env_list` 中所需变量是否已配置。
-3. 更新环境后是否执行了 `refresh`。
-4. HTTP URL、stdio 命令、工作目录和上游服务是否可达。
-5. `mcp_tool_search` 能否列出工具，再用 `mcp_tool_inspect` 检查参数。
+## 浏览器无法启动
 
-不要在错误信息中回显完整 Token、Cookie 或 Header。
+确认已经安装 Chrome、Chromium 或 Edge。Docker 使用 browser 镜像并启用浏览器工具；原生无界面 Linux 自动识别失败时配置浏览器可执行文件路径。
 
-## 浏览器会话启动失败
+## macOS 桌面操作没有效果
 
-- 确认 AgentDock 所在主机已经安装 Chrome、Chromium 或 Microsoft Edge。
-- macOS 或 Windows 上重新打开 AgentDock 设置，确认界面能检测到受支持的浏览器。
-- Linux 或其他无图形界面的原生部署如果自动检测失败，可以设置 `AGENTDOCK_BROWSER_EXECUTABLE_PATH`。
-- Docker 环境通过 `AGENTDOCK_IMAGE` 选择 browser 镜像，并设置 `AGENTDOCK_BROWSER_ENABLED=true`。
-- 持久 Profile 损坏或不再需要时，换一个新的 `profile_id` 重试，不要把 AgentDock 指向日常浏览器主 Profile。
+确认 AgentDock 运行在当前登录会话中，并且实际承载 AgentDock 的应用已经获得屏幕录制和辅助功能权限。执行后重新检查屏幕状态，不要只看命令是否成功。
 
-## 桌面操作没有效果
-
-- 确认 AgentDock 在当前 macOS 登录会话中运行。
-- 检查屏幕录制和辅助功能权限。
-- 用 `agentdock_context` 找到当前 `desktop` Skill 候选，再重新读取宿主返回的 Skill 文件。
-- 操作前后分别观察应用状态或截图，不要只依赖命令返回成功。
-- 坐标可能因窗口位置、缩放或多显示器变化而失效，应优先使用辅助功能元素。
-
-## Git push 失败
-
-```bash
-git remote -v
-git status --short --branch
-git config --show-origin --get credential.helper
-```
-
-确认远端地址、当前分支、凭据和仓库权限。不要把访问 Token 写进 remote URL、README 或终端截图。
-
-## Linux 服务启动失败
+## Linux 服务无法启动
 
 ```bash
 sudo systemctl status agentdock --no-pager
 sudo journalctl -u agentdock -n 100 --no-pager
 ```
 
-常见原因包括环境文件权限、二进制路径错误、端口占用、运行用户无权访问工作目录，以及非回环监听但未配置认证。
+常见原因包括端口冲突、环境变量错误、文件权限错误，或服务账号无法访问工作目录。

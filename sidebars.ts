@@ -33,15 +33,15 @@ const sidebars: SidebarsConfig = {
       link: {
         type: 'generated-index',
         title: 'Capabilities',
-        description: 'Use Skills, tasks, browser and desktop automation, Coding Agents, and external MCP servers.',
+        description: 'Extend AgentDock with Skills and Plugins, track tasks, use browsers, and connect external tools.',
       },
       items: [
         'concepts/skills',
-        'concepts/tasks',
+        'concepts/dynamic-mcp',
+        'concepts/plugins',
         'guides/browser-control',
         'guides/coding-agents',
-        'guides/desktop-automation',
-        'concepts/dynamic-mcp',
+        'concepts/tasks',
       ],
     },
     {
@@ -50,9 +50,15 @@ const sidebars: SidebarsConfig = {
       link: {
         type: 'generated-index',
         title: 'NexusDock',
-        description: 'Connect multiple AgentDock devices and share Recall and Workflow data.',
+        description: 'Connect multiple AgentDock devices and share Recall memory and Workflow data.',
       },
-      items: ['concepts/nexusdock', 'operations/nexusdock', 'concepts/recalldock'],
+      items: [
+        'concepts/nexusdock',
+        'operations/nexusdock',
+        'operations/nexusdock-connect',
+        'concepts/recalldock',
+        'concepts/workflow',
+      ],
     },
     {
       type: 'category',
@@ -61,16 +67,13 @@ const sidebars: SidebarsConfig = {
         type: 'generated-index',
         title: 'Operations',
         description:
-          'Configure platforms, public access, manual deployment, security boundaries, and troubleshooting.',
+          'Manage desktop, Linux, Docker, public access, and troubleshooting.',
       },
       items: [
-        'operations/macos',
-        'operations/windows',
+        'operations/desktop',
         'operations/linux',
         'operations/docker',
-        {type: 'doc', id: 'getting-started/vps', label: 'Manual Linux deployment'},
-        'guides/fixed-domain',
-        'operations/security',
+        'operations/public-access',
         'operations/troubleshooting',
       ],
     },

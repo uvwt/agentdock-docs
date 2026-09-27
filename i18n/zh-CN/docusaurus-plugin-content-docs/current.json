@@ -28,7 +28,7 @@
     "description": "The generated-index page title for category 'Capabilities' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.Capabilities.link.generated-index.description": {
-    "message": "使用 Skill、任务、浏览器与桌面自动化、Coding Agent 和外部 MCP 服务。",
+    "message": "使用 Skill 与 Plugin 扩展 AgentDock，跟踪任务、操作浏览器并连接外部工具。",
     "description": "The generated-index page description for category 'Capabilities' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.NexusDock": {
@@ -40,7 +40,7 @@
     "description": "The generated-index page title for category 'NexusDock' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.NexusDock.link.generated-index.description": {
-    "message": "连接多台 AgentDock 设备，并共享 Recall 和 Workflow 数据。",
+    "message": "连接多台 AgentDock 设备，并共享 Recall 记忆和 Workflow 工作流数据。",
     "description": "The generated-index page description for category 'NexusDock' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.Operations": {

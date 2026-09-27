@@ -1,4 +1,4 @@
-# 在不同客户端中连接 AgentDock
+# 在不同客户端中连接
 
 AgentDock 通过 Streamable HTTP MCP 接入 Claude Desktop、ChatGPT、Claude Code、Cursor、VS Code、Codex、TRAE 和 WorkBuddy。本页示例统一使用：
 
@@ -18,7 +18,7 @@ https://agentdock.example.com/mcp
 
 - AgentDock 已通过公网 HTTPS 域名提供服务。
 - MCP 地址以 `/mcp` 结尾（例如 `https://agentdock.example.com/mcp`）。
-- 认证方式已就绪：远程客户端通常需要 OAuth 浏览器授权或通过 HTTP Header 传入 Bearer Token。具体环境变量配置见 [OAuth 配置](../reference/configuration.md#oauth-配置)。
+- 认证方式已就绪：远程客户端通常需要 OAuth 浏览器授权或通过 HTTP Header 传入 Bearer Token。具体环境变量配置见 [OAuth 配置](../reference/configuration.md)。
 - 反向代理会转发 `/mcp`、`/register`、`/oauth/*` 和 `/.well-known/*`。
 
 对于与 AgentDock 运行在同一台电脑上的本地客户端，也可以连接：
@@ -53,7 +53,7 @@ Claude Desktop 是否支持自定义 MCP，以及可添加的服务器数量，�
 
 ChatGPT 通过流式 HTTP MCP 连接 AgentDock，要求使用公网 HTTPS 地址并通过浏览器完成 OAuth 授权。自定义 MCP 插件需要在 ChatGPT 设置中开启开发人员模式。
 
-完整图文教程、连接模式与排障说明见 [使用 ChatGPT 连接 AgentDock](./chatgpt.md)。
+完整图文教程、连接模式与排障说明见 [使用 ChatGPT 连接](./chatgpt.md)。
 
 ## Claude Code
 
@@ -266,4 +266,4 @@ curl -fsS https://agentdock.example.com/.well-known/oauth-protected-resource/mcp
 
 如果授权页面返回 `302`，通常表示 AgentDock 正在跳转回客户端，这是 OAuth 正常流程。页面没有继续跳转时，再检查反向代理是否保留 `Location` Header，以及客户端回调地址是否被浏览器或网络策略拦截。
 
-完整认证配置见 [配置](../reference/configuration.md#oauth-配置)，公网部署见 [Linux 手动部署](../getting-started/vps.md)。
+完整认证配置见 [配置](../reference/configuration.md)，公网部署见 [Linux 与服务器](../operations/linux.md)。

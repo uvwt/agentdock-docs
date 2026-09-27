@@ -336,7 +336,7 @@ body {
 /* 表格保持语义结构，窄屏只滚动表格自身。 */
 .markdown table {
   display: block;
-  width: 100%;
+  width: fit-content;
   max-width: 100%;
   margin: 1.5rem 0 2rem;
   overflow-x: auto;
@@ -392,6 +392,27 @@ body {
 
 .markdown table tbody tr:last-child td {
   border-bottom: 0;
+}
+
+/* ChatGPT 连接教程截图保持适中的阅读尺寸，并在正文中居中。 */
+.chatgpt-guide-image {
+  display: flex;
+  justify-content: center;
+  margin: 1.5rem 0;
+}
+
+.chatgpt-guide-image > p {
+  width: 100%;
+  margin: 0;
+}
+
+.chatgpt-guide-image img {
+  display: block;
+  width: auto;
+  max-width: min(100%, 680px);
+  max-height: 760px;
+  margin: 0 auto;
+  object-fit: contain;
 }
 
 .alert {

@@ -1,95 +1,69 @@
 # Use Skills
 
-A Skill is a document-based working method for an agent. It explains when to use a capability, what steps to follow, what dependencies are required, and which operations need confirmation.
+A Skill teaches an agent how to handle a kind of task. It can describe the steps to follow, required tools or accounts, and actions that need confirmation.
 
 ## Official core Skills
 
-AgentDock native installers and Docker images ship these core Skills with the runtime:
+AgentDock installers and Docker images include four core Skills:
 
-- `agentdock-user-guide`
-- `skill-authoring`
-- `skill-installation`
+- `agentdock-user-guide` — helps with AgentDock setup and day-to-day use.
+- `skill-authoring` — helps create and review Skills.
+- `skill-installation` — helps review and install Skills safely.
+- `plugin-import` — helps bring remote Plugins from Git, GitHub, or other catalogs into AgentDock for review and installation.
 
-They are managed like other AgentDock-managed Skills: each name has one current content tree. AgentDock does not keep a selectable Skill-version history or an active-version pointer.
+Skills that need extra accounts, system permissions, or third-party software are installed separately when needed.
 
-Skills that require extra accounts, system permissions, or third-party software are installed separately when needed.
+## How to use a Skill
 
-## How to use Skills
-
-Tell the agent your goal directly, for example:
+Usually you only need to describe the goal:
 
 ```text
-Check current Codex allowance.
+Check my current Codex allowance.
 Use the desktop Skill to operate this macOS app.
-Install and use this Skill: https://example.com/example-skill.zip
+Review and install this Skill: https://example.com/example-skill
 ```
 
-The agent typically:
+AgentDock finds relevant Skills and lets the agent read the instructions only when they are needed. A project can also provide its own Skills under `.agents/skills/`; those project-specific instructions stay separate from globally installed Skills even when the names match.
 
-1. Uses `agentdock_context` or `workspace_context` to discover relevant Skill candidates and their source.
-2. Selects one exact candidate and reads the `file` returned by the host with `read_file`.
-3. Checks required commands, accounts, environment variables, and safety boundaries.
-4. Uses real tools to perform the task; commands bound to a Skill use that candidate's returned `skill_ref` with `exec_command`.
-5. Confirms and verifies operations with side effects.
+## Install or update a Skill
 
-Do not reconstruct a `skill_ref` from a bare Skill name. The host-issued reference keeps managed, shared, and workspace candidates with the same name distinct.
-
-## Workspace-local Skills
-
-A project can expose local Skills at `<workspace>/.agents/skills/<skill-name>/SKILL.md`. `workspace_context` indexes them and returns provenance such as `name`, `description`, `source_type`, `source_id`, `skill_ref`, and `file`; it does not inject the Skill body into context.
-
-A workspace Skill, an AgentDock-managed Skill, and a shared Skill under `~/.agents/skills` remain separate candidates even when their names match. For project work, a workspace candidate is often the relevant choice, but the agent must use the selected candidate's own `file` and `skill_ref` instead of silently applying a global name-based priority.
-
-## Installing or updating a managed Skill
-
-Confirm the source is trustworthy before installing. Ask the agent to review the package first:
+Ask the agent to review an unfamiliar Skill before installing it:
 
 ```text
-Please review this Skill's source, files, portability, and permission requirements, then install it if the review is clean.
+Review this Skill's source, files, portability, and permission requirements. Install it only if the review is clean.
 ```
 
-`skill_manage install` accepts a local Skill directory, a local ZIP archive, or an HTTPS package URL. An optional source SHA-256 can be supplied for integrity checking.
+A Skill installed through AgentDock can come from a local directory, a local ZIP file, or an HTTPS package URL. Installing reviewed new content with the same name replaces the current copy. Reinstalling identical content does nothing.
 
-A managed Skill has one current content tree. Installing different content with the same Skill name atomically replaces that current content after validation; reinstalling identical content is a no-op and returns the same `content_digest`. AgentDock does not expose `activate`, `rollback`, or version-selection actions for Skills. To restore known content, review and reinstall the desired source snapshot.
+Normal AgentDock upgrades migrate older Skill layouts automatically. You do not need to move Skill directories by hand.
 
-When upgrading from an older AgentDock release that used the historical Skill layout, supported installers and updaters migrate managed Skill content and persistent Skill data automatically. The old layout is kept intact until the outer install/update transaction commits, so users do not need to move Skill directories or run migration commands manually.
+## Accounts, API keys, and private data
+
+When an installed Skill needs a credential, ask the agent to save it in that Skill's isolated environment instead of putting it in the Skill package or a repository. For example:
+
+```text
+Set EXAMPLE_API_KEY for example-skill without echoing the value in the reply.
+```
+
+AgentDock can also give an installed Skill its own private data directory when the Skill needs to keep state. Normal updates and removal keep that data by default; an explicit purge removes it.
 
 Skill packages must not contain tokens, cookies, browser sessions, `.env` files, caches, or device-private data.
 
-## Configure accounts or API keys
+## Skill, Plugin, or MCP?
 
-When a managed Skill requires credentials, ask the agent to save them in that Skill's isolated environment, for example:
+| Use | When it fits |
+| --- | --- |
+| **Skill** | You want to teach the agent a reusable way to perform a task. |
+| **Plugin** | You want to install a package that can include one or more Skills and MCP connections. |
+| **Dynamic MCP** | You want AgentDock to connect directly to one external or local MCP service. |
 
-```text
-Set EXAMPLE_API_KEY for example-skill without echoing the actual value in the reply.
-```
+See [Use Plugins](./plugins.md) and [Connect external MCP services](./dynamic-mcp.md) for the other two options.
 
-`skill_manage env_list` reports variable names and configuration state without returning secret values. The isolated environment is injected only when a command runs with that managed candidate's `skill_ref`; it is not written into the Skill package or the permanent system environment.
+## Safety
 
-## Persistent Skill data
+- Review third-party Skills before installation.
+- Confirm sensitive actions such as sending, deleting, uploading, paying, or granting access.
+- A Skill cannot exceed the permissions of the AgentDock process, container mounts, or operating-system user.
+- Keep secrets out of Skill packages, public logs, and repositories.
 
-When a managed Skill command needs mutable persistent state, AgentDock creates a private data directory and exposes it to that process as the reserved `SKILL_DATA_DIR` environment variable.
-
-The Skill should treat `SKILL_DATA_DIR` as an optional AgentDock integration, not as a portable requirement. Shared and workspace candidates do not inherit a managed Skill's environment or data directory. Normal managed-Skill updates and `skill_manage remove` preserve isolated environment and persistent data; `skill_manage remove` with `purge=true` removes those preserved resources as well.
-
-Supported AgentDock installers and self-updaters migrate older managed-Skill layouts automatically during a normal upgrade, so no manual directory migration is required.
-
-## Usage precautions
-
-- Confirm before deleting, sending, uploading, paying, or authorizing.
-- Skill instructions cannot exceed the permissions of the AgentDock process, container volumes, or the operating system.
-- Third-party Skills may call external services; verify source and capabilities before installation.
-- Do not paste secrets into public logs or package them with the Skill.
-- Treat `content_digest` as content identity and audit evidence, not as a product version number.
-
-## Viewing installed Skills
-
-Ask directly:
-
-```text
-What Skills are available here, and where does each candidate come from?
-```
-
-The agent can use `agentdock_context` for managed/shared candidates and `workspace_context` for the active project, then read full Skill documentation only when needed.
-
-Creating and maintaining Skills is a developer workflow; see [Contributor guide](../contributing/development.md#skill-development).
+To see what is available, ask the agent which Skills it can use and where each one comes from. Creating and maintaining Skills is covered in the [Contributor guide](../contributing/development.md#skill-development).

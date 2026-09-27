@@ -1,4 +1,4 @@
-# Connect AgentDock from different clients
+# Connect from different clients
 
 AgentDock connects to Claude Desktop, ChatGPT, Claude Code, Cursor, VS Code, Codex, TRAE, and WorkBuddy over Streamable HTTP MCP. Every example on this page uses:
 
@@ -18,7 +18,7 @@ For a public client or cloud service, confirm that:
 
 - AgentDock is available through a public HTTPS domain.
 - The MCP URL ends with `/mcp` (for example, `https://agentdock.example.com/mcp`).
-- Authentication is configured: remote clients typically require OAuth browser authorization or a Bearer Token in the HTTP request header. For full environment variable setup, see [OAuth configuration](../reference/configuration.md#oauth-configuration).
+- Authentication is configured: remote clients typically require OAuth browser authorization or a Bearer Token in the HTTP request header. For full environment variable setup, see [OAuth configuration](../reference/configuration.md).
 - The reverse proxy forwards `/mcp`, `/register`, `/oauth/*`, and `/.well-known/*`.
 
 A local client running on the same computer as AgentDock may also connect to:
@@ -53,7 +53,7 @@ Availability of custom MCP connections and the number of servers you can add dep
 
 ChatGPT connects to AgentDock over Streamable HTTP MCP using a public HTTPS URL and OAuth browser authorization. Custom MCP plugins require Developer mode to be enabled in ChatGPT settings.
 
-For the complete step-by-step walkthrough, screenshots, and troubleshooting, see [Connect ChatGPT to AgentDock](./chatgpt.md).
+For the complete step-by-step walkthrough, screenshots, and troubleshooting, see [Connect with ChatGPT](./chatgpt.md).
 
 ## Claude Code
 
@@ -266,4 +266,4 @@ curl -fsS https://agentdock.example.com/.well-known/oauth-protected-resource/mcp
 
 A `302` from the authorization page usually means AgentDock is redirecting to the client as expected. If the browser does not continue, confirm that the reverse proxy preserves the `Location` header and that the browser or network policy does not block the callback URL.
 
-See [Configuration](../reference/configuration.md#oauth-configuration) for complete authentication settings and [Manual Linux deployment](../getting-started/vps.md) for public deployment.
+See [Configuration](../reference/configuration.md) for complete authentication settings and [Linux and servers](../operations/linux.md) for public deployment.

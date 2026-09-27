@@ -11,7 +11,7 @@ Run in terminal:
 ```bash
 curl -fsSL https://github.com/uvwt/agentdock/releases/latest/download/install.sh \
   -o /tmp/install-agentdock.sh
-sudo env AGENTDOCK_NONINTERACTIVE=true sh /tmp/install-agentdock.sh
+sudo sh /tmp/install-agentdock.sh
 ```
 
 The installer automatically detects systemd or OpenRC, creates a low-privilege runtime user, generates a Bearer Token, starts the service, and verifies health.
@@ -76,20 +76,27 @@ sudo sh /tmp/install-agentdock.sh
 The installer asks if you have a Cloudflare-managed domain:
 
 - No domain: automatically creates a temporary `trycloudflare.com` address for quick testing.
-- Have a domain: complete the [fixed domain setup guide](../guides/fixed-domain.md), then enter the resulting HTTPS public origin and Tunnel Token when the installer asks.
+- Have a domain: complete the [Public access](../operations/public-access.md), then enter the resulting HTTPS public origin and Tunnel Token when the installer asks.
 
-After installation, the terminal displays the public MCP URL and connection credentials. Temporary addresses may change after service restarts; rerun the installer and update the client when that happens. Existing Bearer Token and OAuth credentials will be preserved.
+After installation, the terminal displays the public MCP URL and connection credentials. A temporary address may change after a restart. Generate a new one with `sudo /opt/agentdock/bin/agentdock tunnel regenerate --runtime-root /etc/agentdock`, then replace the old MCP URL in the client and authorize OAuth again. Existing Bearer Token and OAuth credentials are preserved.
 
-Public access requires authentication. For detailed parameters and log locations, see [Advanced Linux configuration](../operations/linux.md#cloudflare-tunnel).
+Public access requires authentication. For detailed parameters and log locations, see [Public access](../operations/public-access.md).
 
 ## Update
 
-Download and run Step 1 again. Tasks, Skills, configuration, and working directories are preserved.
+Check first, then install the latest release:
+
+```bash
+sudo /opt/agentdock/bin/agentdock update --check
+sudo /opt/agentdock/bin/agentdock update
+```
+
+Tasks, Skills, configuration, and working directories are preserved. Rerun the installer only when you need to repair the installation or install a specific version.
 
 ## Next steps
 
 - For browser automation: install Chrome, Chromium, or Microsoft Edge on the host and enable browser tools; set `AGENTDOCK_BROWSER_EXECUTABLE_PATH` if not detected automatically. Docker browser images are needed only when you want Chromium contained in Docker. See [Browser automation](../guides/browser-control.md).
-- For Alpine, custom directories/ports, manual service management, and uninstallation: see [Advanced Linux configuration](../operations/linux.md).
-- For manual systemd, reverse proxy, and OAuth maintenance: see [Manual Linux deployment](./vps.md).
+- For Alpine, custom directories/ports, manual service management, and uninstallation: see [Linux and servers](../operations/linux.md).
+- For manual systemd, reverse proxy, and OAuth maintenance: see [Linux and servers](../operations/linux.md).
 - If startup fails: see [Troubleshooting](../operations/troubleshooting.md).
-- For public access: read the [Security model](../operations/security.md) first.
+- For public access: see [Public access](../operations/public-access.md).
