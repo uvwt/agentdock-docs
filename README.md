@@ -4,8 +4,8 @@ English | [简体中文](./README.zh-CN.md)
 
 Official public documentation for AgentDock, built with Docusaurus, TypeScript, and pnpm.
 
-- Documentation: <https://uvwt.github.io/agentdock-docs/>
-- Simplified Chinese documentation: <https://uvwt.github.io/agentdock-docs/zh-CN/>
+- Documentation: <https://agentdock-docs-8bs.pages.dev/>
+- Simplified Chinese documentation: <https://agentdock-docs-8bs.pages.dev/zh-CN/>
 - AgentDock source: <https://github.com/uvwt/agentdock>
 
 This repository is the source of truth for installation, configuration, concepts, operations, and troubleshooting. The AgentDock source repository README keeps only the project overview and shortest onboarding path.
@@ -85,7 +85,7 @@ The site still builds and deploys normally when search variables are absent.
 
 ## Deployment
 
-`.github/workflows/docs.yml` checks pull requests and publishes GitHub Pages after `main` changes.
+`.github/workflows/docs.yml` validates pull requests and `main` updates. Same-repository pull requests get Cloudflare Pages preview deployments, and validated `main` updates are deployed to production with Wrangler.
 
 ## License
 
