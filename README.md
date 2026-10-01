@@ -4,8 +4,8 @@ English | [简体中文](./README.zh-CN.md)
 
 Official public documentation for AgentDock, built with Docusaurus, TypeScript, and pnpm.
 
-- Documentation: <https://agentdock-docs-8bs.pages.dev/>
-- Simplified Chinese documentation: <https://agentdock-docs-8bs.pages.dev/zh-CN/>
+- Documentation: <https://docs.nexusdock.co/agentdock/>
+- Simplified Chinese documentation: <https://docs.nexusdock.co/agentdock/zh-CN/>
 - AgentDock source: <https://github.com/uvwt/agentdock>
 
 This repository is the source of truth for installation, configuration, concepts, operations, and troubleshooting. The AgentDock source repository README keeps only the project overview and shortest onboarding path.
@@ -26,7 +26,7 @@ pnpm start -- --locale zh-CN
 The local development server runs at:
 
 ```text
-http://localhost:3000/agentdock-docs/
+http://localhost:3000/agentdock/
 ```
 
 ## Quality checks
