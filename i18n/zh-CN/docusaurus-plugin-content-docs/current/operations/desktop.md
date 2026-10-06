@@ -21,12 +21,12 @@
 需要自动化或命令行安装时：
 
 ```bash
-curl -fL https://github.com/uvwt/agentdock/releases/latest/download/install.sh \
+curl -fL https://download.nexusdock.co/latest/install.sh \
   -o /tmp/agentdock-install.sh
 sh /tmp/agentdock-install.sh --register-service
 ```
 
-常用覆盖包括 `--version vX.Y.Z` 和 `AGENTDOCK_INSTALL_DIR=<path>`。CLI 默认安装到 `~/.local/bin/agentdock`。
+常用覆盖包括 `AGENTDOCK_INSTALL_DIR=<path>`。CLI 默认安装到 `~/.local/bin/agentdock`。
 
 默认用户数据：
 
@@ -59,7 +59,7 @@ sh /tmp/agentdock-install.sh --uninstall
 ```powershell
 $script = Join-Path $env:TEMP 'install-agentdock.ps1'
 Invoke-WebRequest `
-  https://github.com/uvwt/agentdock/releases/latest/download/install.ps1 `
+  https://download.nexusdock.co/latest/install.ps1 `
   -OutFile $script
 powershell -ExecutionPolicy Bypass -File $script -RegisterStartup
 ```
