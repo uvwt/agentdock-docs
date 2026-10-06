@@ -6,10 +6,10 @@ AgentDock supports Windows 11 x64 and ARM64.
 
 ## 1. Download installer
 
-Open [AgentDock Latest Release](https://github.com/uvwt/agentdock/releases/latest) and download the package for your architecture:
+Download the installer for your architecture:
 
-- Most Intel or AMD PCs: `AgentDockSetup-amd64.exe`
-- Windows ARM PCs: `AgentDockSetup-arm64.exe`
+- Most Intel or AMD PCs: [Download the x64 installer](https://download.nexusdock.co/latest/windows-x64)
+- Windows ARM PCs: [Download the ARM64 installer](https://download.nexusdock.co/latest/windows-arm64)
 
 If unsure, choose `amd64`.
 
@@ -95,4 +95,4 @@ Uninstall AgentDock from Windows **Settings > Apps > Installed apps**, or use **
 
 For browser automation, install Chrome, Chromium, or Microsoft Edge first, then enable browser tools in the control panel. Docker browser images are needed only when you want Chromium contained in Docker. See [Browser automation](../guides/browser-control.md).
 
-For PowerShell automation, pinned versions, WSL, and file locations, see [Desktop advanced settings](../operations/desktop.md). If startup fails, see [Troubleshooting](../operations/troubleshooting.md).
+For PowerShell automation, WSL, and file locations, see [Desktop advanced settings](../operations/desktop.md). If startup fails, see [Troubleshooting](../operations/troubleshooting.md).

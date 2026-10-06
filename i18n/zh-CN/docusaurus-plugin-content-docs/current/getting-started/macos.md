@@ -7,17 +7,16 @@
 ## 开始前准备
 
 - 使用 macOS 13 或更高版本。
-- 只从官方 [GitHub Release 页面](https://github.com/uvwt/agentdock/releases/latest)下载 AgentDock。
+- 只从官方 [AgentDock 下载入口](https://download.nexusdock.co/latest/macos)下载 AgentDock。
 - 固定公网地址需要已经接入 Cloudflare 的域名和对应的 Tunnel Token。没有这些条件时，先选择临时公网地址。
 - 需要浏览器自动化时，请先安装 Google Chrome、Chromium 或 Microsoft Edge。
 
 ## 1. 下载并安装应用
 
-1. 打开 [AgentDock 最新版本](https://github.com/uvwt/agentdock/releases/latest)。
-2. 下载 `AgentDock-macos-universal.dmg`。
-3. 双击 DMG。
-4. 把 `AgentDock.app` 拖到“应用程序”。
-5. 复制完成后推出磁盘映像。
+1. 下载最新的 [AgentDock macOS 安装包](https://download.nexusdock.co/latest/macos)。
+2. 双击 `AgentDock-macos-universal.dmg`。
+3. 把 `AgentDock.app` 拖到“应用程序”。
+4. 复制完成后推出磁盘映像。
 
 Apple 芯片和 Intel Mac 使用同一个 DMG。
 
@@ -124,4 +123,4 @@ AgentDock 默认使用独立的浏览器会话。登录状态和安全边界见 
 
 确认已经安装 Google Chrome、Chromium 或 Microsoft Edge，然后关闭再重新启用浏览器工具。
 
-指定版本、自定义安装目录、手动服务命令和卸载步骤见 [桌面端高级设置](../operations/desktop.md)。
+自定义安装目录、手动服务命令和卸载步骤见 [桌面端高级设置](../operations/desktop.md)。

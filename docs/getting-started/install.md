@@ -43,7 +43,7 @@ Add them to the MCP, Tools, or Connectors settings in your client and choose **S
 - Temporary public URL changed: replace the old URL in the client and authorize OAuth again when prompted.
 
 :::tip
-For your first use, complete only the numbered steps on the page for your operating system. Custom ports, pinned versions, automation flags, and manual service management can wait until later.
+For your first use, complete only the numbered steps on the page for your operating system. Custom ports, automation flags, and manual service management can wait until later.
 :::
 
 If you installed with a public address so web ChatGPT can operate your computer, continue with [Connect with ChatGPT](../guides/chatgpt.md).

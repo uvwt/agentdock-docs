@@ -7,7 +7,7 @@ For a normal Linux installation, start with [Install on Linux](../getting-starte
 The public installer detects the architecture and can register systemd or OpenRC automatically:
 
 ```bash
-curl -fsSL https://github.com/uvwt/agentdock/releases/latest/download/install.sh \
+curl -fsSL https://download.nexusdock.co/latest/install.sh \
   -o /tmp/install-agentdock.sh
 sudo sh /tmp/install-agentdock.sh
 ```

@@ -6,10 +6,10 @@ AgentDock 支持 Windows 11 x64 和 ARM64。
 
 ## 1. 下载安装包
 
-打开 [AgentDock 最新版本](https://github.com/uvwt/agentdock/releases/latest)，根据电脑类型下载：
+根据电脑类型下载安装包：
 
-- 大多数 Intel 或 AMD 电脑：`AgentDockSetup-amd64.exe`
-- Windows ARM 电脑：`AgentDockSetup-arm64.exe`
+- 大多数 Intel 或 AMD 电脑：[下载 x64 安装包](https://download.nexusdock.co/latest/windows-x64)
+- Windows ARM 电脑：[下载 ARM64 安装包](https://download.nexusdock.co/latest/windows-arm64)
 
 不确定时，通常选择 `amd64`。
 
@@ -95,4 +95,4 @@ Claude Desktop、ChatGPT、Claude Code、Cursor、VS Code、Codex、TRAE、WorkB
 
 使用浏览器自动化时，先安装 Chrome、Chromium 或 Microsoft Edge，再在控制面板中启用浏览器工具。只有希望容器直接包含 Chromium 时才需要 Docker browser 镜像。见 [浏览器自动化](../guides/browser-control.md)。
 
-PowerShell 自动化、固定版本、WSL 和详细文件位置见 [桌面端高级设置](../operations/desktop.md)。启动失败时查看 [故障排查](../operations/troubleshooting.md)。
+PowerShell 自动化、WSL 和详细文件位置见 [桌面端高级设置](../operations/desktop.md)。启动失败时查看 [故障排查](../operations/troubleshooting.md)。

@@ -7,17 +7,16 @@ A single universal installer supports both Apple Silicon and Intel Macs.
 ## Prerequisites
 
 - macOS 13 or later.
-- Download AgentDock only from the official [GitHub Releases page](https://github.com/uvwt/agentdock/releases/latest).
+- Download AgentDock only from the official [AgentDock download endpoint](https://download.nexusdock.co/latest/macos).
 - A fixed public address requires a Cloudflare-managed domain and Tunnel Token. If you do not have these yet, choose a temporary public address.
 - For browser automation, install Google Chrome, Chromium, or Microsoft Edge first.
 
 ## 1. Download and install
 
-1. Open [AgentDock Latest Release](https://github.com/uvwt/agentdock/releases/latest).
-2. Download `AgentDock-macos-universal.dmg`.
-3. Double-click the DMG.
-4. Drag `AgentDock.app` to **Applications**.
-5. Eject the disk image once copied.
+1. Download the latest [AgentDock macOS installer](https://download.nexusdock.co/latest/macos).
+2. Double-click `AgentDock-macos-universal.dmg`.
+3. Drag `AgentDock.app` to **Applications**.
+4. Eject the disk image once copied.
 
 Apple Silicon and Intel Macs use the same DMG.
 
