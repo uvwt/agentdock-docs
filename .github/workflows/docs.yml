@@ -9,6 +9,8 @@ on:
 
 permissions:
   contents: read
+  pages: write
+  id-token: write
 
 concurrency:
   group: docs-${{ github.ref }}
@@ -78,3 +80,51 @@ jobs:
           npx --yes wrangler@4.145.0 pages deploy pages-dist
           --project-name=agentdock-docs
           --branch=${{ github.head_ref || github.ref_name }}
+
+
+  deploy-legacy-github-pages:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Prepare legacy redirect site
+        run: |
+          mkdir -p legacy-pages
+          cat > legacy-pages/404.html <<'EOF'
+          <!doctype html>
+          <html lang="en">
+            <head>
+              <meta charset="utf-8">
+              <meta name="robots" content="noindex">
+              <title>AgentDock Docs moved</title>
+              <script>
+                const legacyBase = '/agentdock-docs';
+                const suffix = location.pathname.startsWith(legacyBase)
+                  ? location.pathname.slice(legacyBase.length)
+                  : location.pathname;
+                location.replace(
+                  'https://docs.nexusdock.co/agentdock' +
+                  (suffix || '/') +
+                  location.search +
+                  location.hash
+                );
+              </script>
+            </head>
+            <body>
+              <p>AgentDock documentation has moved to <a href="https://docs.nexusdock.co/agentdock/">docs.nexusdock.co</a>.</p>
+            </body>
+          </html>
+          EOF
+          cp legacy-pages/404.html legacy-pages/index.html
+
+      - name: Upload legacy GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: legacy-pages
+
+      - name: Deploy legacy GitHub Pages redirect
+        id: deployment
+        uses: actions/deploy-pages@v4
