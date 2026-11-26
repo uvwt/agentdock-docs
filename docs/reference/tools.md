@@ -40,7 +40,6 @@ See [Use Skills](../concepts/skills.md), [Use Plugins](../concepts/plugins.md), 
 | `recall_write` | NexusDock paired | Create or update Recall content |
 | `recall_maintain` | NexusDock paired | Inspect and maintain Recall indexes/content |
 | `evolve` | NexusDock paired | Manage reusable learned knowledge |
-| `private_note_manage` | NexusDock paired | Access Private Notes |
 
 See [Tasks and progress](../concepts/tasks.md), [Recall memory](../concepts/recalldock.md), and [Workflow](../concepts/workflow.md).
 

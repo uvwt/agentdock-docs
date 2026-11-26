@@ -68,13 +68,23 @@ curl http://127.0.0.1:18777/health
 
 不要运行两个 NexusDock 实例同时写同一份 Nexus 数据。
 
+### 存量 `private-notes/` 目录说明
+
+升级到移除 `private_note_manage` 的版本后，现有 `<RecallRepoDir>/private-notes/` 目录会原地保留，并继续与普通 Recall 隔离，**不会被自动迁入普通 Recall**。
+
+如需保留其中的敏感信息，请自行转存到专用密码管理器。如果仅存有 `.md.age` 密文，可通过标准 `age` CLI 离线解密：
+
+```bash
+age -d -i private-notes/.keys/private-notes-age-identity.txt <file>.md.age
+```
+
 ## 备份与恢复
 
 快速安装使用两个 Docker Volume 保存持久化数据：
 
 ```text
 nexus-data   NexusDock 账号、设备、设置、密钥和 Workflow 数据
-recall       Recall 内容与私密笔记数据
+recall       Recall 内容
 ```
 
 升级或迁移前同时备份这两个 Volume。如果你改成了宿主机目录挂载，则完整备份对应的两个目录。

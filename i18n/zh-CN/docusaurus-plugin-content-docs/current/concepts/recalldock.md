@@ -2,7 +2,7 @@
 
 NexusDock Recall 是 AgentDock 的可选长期记忆服务。它可以保存值得长期保留的信息、偏好、经验和知识，让以后处理类似事情时能够继续使用这些上下文。
 
-没有 NexusDock 时，文件、命令、命令行 Git、Skill、动态 MCP 和本地任务仍可正常使用；Recall、Workflow 模板、知识 Evolution 和私密笔记工具不可用。多设备管理和统一 MCP 入口见 [NexusDock](./nexusdock.md)。
+没有 NexusDock 时，文件、命令、命令行 Git、Skill、动态 MCP 和本地任务仍可正常使用；Recall、Workflow 模板和知识 Evolution 工具不可用。多设备管理和统一 MCP 入口见 [NexusDock](./nexusdock.md)。
 
 ## 什么时候适合使用
 
@@ -44,17 +44,6 @@ AgentDock 会利用已有 Recall 内容帮助后续任务继续使用这些信�
 
 - **Markdown**：长期资料、学习记录、项目文档和结构化知识。
 - **Card**：单一、可复用的经验、偏好、事实或决策。
-
-Private Notes 是独立存储，不是 Recall 的一种内容类型。
-
-## 私密笔记与 Recall 的区别
-
-私密笔记使用独立的 NexusDock Private Notes 存储，不属于 Recall 搜索范围：
-
-- Recall 保存可复用的项目知识，不应包含 Token、密码、Cookie 或私钥。
-- Private Notes 用于用户明确要求保存的敏感信息，并维护 age 加密备份。
-- 私密笔记搜索只返回安全元数据；正文必须显式读取。
-- `recall_*` 不能读取、修改或列出私密笔记，必须使用 `private_note_manage`。
 
 ## 与任务进度的区别
 

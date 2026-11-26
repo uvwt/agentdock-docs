@@ -40,7 +40,6 @@ AgentDock 通过 MCP 向 AI 客户端提供工具。具体连接能看到哪些�
 | `recall_write` | 已配对 NexusDock | 创建或更新 Recall 内容 |
 | `recall_maintain` | 已配对 NexusDock | 检查和维护 Recall 内容与索引 |
 | `evolve` | 已配对 NexusDock | 管理可复用知识 |
-| `private_note_manage` | 已配对 NexusDock | 访问私密笔记 |
 
 使用方式见 [任务与进度](../concepts/tasks.md)、[Recall 记忆](../concepts/recalldock.md) 和 [Workflow 工作流](../concepts/workflow.md)。
 

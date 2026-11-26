@@ -68,13 +68,23 @@ curl http://127.0.0.1:18777/health
 
 Do not run two NexusDock instances that write to the same Nexus data store.
 
+### Legacy `private-notes/` directory
+
+After upgrading to a version that removes `private_note_manage`, any existing `<RecallRepoDir>/private-notes/` directory stays in place and remains isolated from standard Recall. It is **never automatically migrated into standard Recall**.
+
+Move any sensitive information you still need into a dedicated password manager. If you only have `.md.age` ciphertext files, decrypt them offline with the standard `age` CLI:
+
+```bash
+age -d -i private-notes/.keys/private-notes-age-identity.txt <file>.md.age
+```
+
 ## Backup and recovery
 
 The quick-start Compose file stores persistent data in two Docker volumes:
 
 ```text
 nexus-data   NexusDock accounts, devices, settings, secrets, and Workflow data
-recall       Recall content and private-note data
+recall       Recall content
 ```
 
 Back up both volumes before upgrades or migration. If you changed the deployment to use host directories instead, back up both mounted directories in full.
