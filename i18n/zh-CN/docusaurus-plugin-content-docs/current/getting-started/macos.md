@@ -8,7 +8,7 @@
 
 - 使用 macOS 13 或更高版本。
 - 只从官方 [AgentDock 下载入口](https://download.nexusdock.co/latest/macos)下载 AgentDock。
-- 固定公网地址需要已经接入 Cloudflare 的域名和对应的 Tunnel Token。没有这些条件时，先选择临时公网地址。
+- 需要远程访问时，推荐配对 **NexusDock**（`https://mcp.nexusdock.co` 或自托管实例），无需配置 Cloudflare；如希望单机直连公网，可在安装后于设置中按需安装 `cloudflared` 可选组件。
 - 需要浏览器自动化时，请先安装 Google Chrome、Chromium 或 Microsoft Edge。
 
 ## 1. 下载并安装应用
@@ -30,21 +30,19 @@ AgentDock 启动后会出现在菜单栏。点击图标并选择“安装 AgentD
 
 ## 3. 选择连接方式
 
+首次引导会配置本机 AgentDock 服务并允许其在后台运行。等待状态显示“运行正常”后，在应用中按需选择连接方式：
+
+### NexusDock（推荐远程方式）
+
+打开 **连接** 页面，填写 NexusDock 地址（如 `https://mcp.nexusdock.co` 或自托管 NexusDock 地址）与一次性配对码即可完成配对，无需配置 Cloudflare Tunnel 或域名。详见 [连接 AgentDock](../operations/nexusdock-connect.md)。
+
 ### 仅本机
 
-MCP 客户端也在这台 Mac 上时选择。该模式不需要域名或 Cloudflare 账号。
+MCP 客户端也在这台 Mac 上时，直接使用本地 MCP 地址和 Bearer Token 即可，不需要域名或 Cloudflare 账号。
 
-### 临时公网地址
+### 自建公网访问（可选 Cloudflare Tunnel）
 
-需要从 ChatGPT、手机或其他设备连接，但还没有域名时选择。AgentDock 会自动生成一个 HTTPS 公网地址。
-
-这个地址可能在 Mac 或 Tunnel 重启后变化。地址变化时，从控制面板复制新地址，并替换客户端中的旧地址。
-
-### 固定域名
-
-需要长期使用稳定地址时，先按 [公网访问](../operations/public-access.md) 完成 Cloudflare 侧设置。然后在 AgentDock 中选择“固定域名”，填写该教程得到的 HTTPS 公网地址和 Tunnel Token。公网地址不要添加 `/mcp`。
-
-点击“安装并启动”，保持窗口打开，直到状态显示“运行正常”。安装完成后，可以直接在控制面板切换公网访问方式，不需要重新运行安装器。
+如果希望不经过 NexusDock、直接为这台 Mac 暴露公网 HTTPS MCP 地址，可在 **设置 / 高级连接** 中先按需安装 `cloudflared` 可选组件，再选择 **临时公网地址** 或 **固定域名**（见 [公网访问](../operations/public-access.md)）。固定公网地址不要添加 `/mcp`。
 
 ## 4. 连接 MCP 客户端
 

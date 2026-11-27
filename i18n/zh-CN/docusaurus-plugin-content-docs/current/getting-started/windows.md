@@ -13,7 +13,7 @@ AgentDock 支持 Windows 11 x64 和 ARM64。
 
 不确定时，通常选择 `amd64`。
 
-安装包已经包含 AgentDock 核心、控制面板、核心 Skill 和 Cloudflare 组件。安装和升级时不会再从 GitHub 下载这些组件。
+安装包已包含 AgentDock 核心、控制面板和官方核心 Skill。`cloudflared` 已改为按需安装的可选组件，仅当你启用自建 Cloudflare Tunnel 公网直连时才需要在控制面板中安装。
 
 ## 2. 运行安装程序
 
@@ -32,21 +32,19 @@ AgentDock 支持 Windows 11 x64 和 ARM64。
 
 ## 4. 选择连接方式
 
+交互式安装程序默认只完成 AgentDock 安装并启用本机访问，不再在安装向导中要求配置 Cloudflare Tunnel。安装完成并打开 AgentDock 控制面板后，可在 **连接** 页面按需选择方式：
+
+### NexusDock（推荐远程方式）
+
+填写 NexusDock 地址（如 `https://mcp.nexusdock.co` 或自托管 NexusDock 地址）与一次性配对码即可完成配对，无需安装 `cloudflared` 或配置域名。详见 [连接 AgentDock](../operations/nexusdock-connect.md)。
+
 ### 仅本机使用
 
-MCP 客户端也在这台电脑上时选择。该模式不需要域名或 Cloudflare 账号。
+MCP 客户端也在这台电脑上时，直接使用本地 MCP 地址和 Bearer Token 即可，不需要域名或 Cloudflare 账号。
 
-### 临时公网地址
+### 自建 Cloudflare Tunnel（可选）
 
-适合从 ChatGPT、手机或其他设备连接，但暂时没有域名的情况。AgentDock 会自动生成 `trycloudflare.com` 地址。
-
-临时地址可能在 Windows 或 Tunnel 重启后变化。地址变化时，在控制面板中查看新地址，再替换客户端中的旧地址。
-
-### 使用自己的 Cloudflare 域名
-
-需要长期使用稳定地址时，先按 [公网访问](../operations/public-access.md) 完成 Cloudflare 侧设置。然后在 AgentDock 中选择“固定域名”，填写该教程得到的 HTTPS 公网地址和 Tunnel Token。公网地址不要添加 `/mcp`。
-
-安装完成后，可以直接在 AgentDock 控制面板的 **公网访问** 中切换仅本机、临时地址和固定域名；仅修改公网访问方式时不需要重新运行安装器。
+如果希望不经过 NexusDock、直接为这台电脑暴露公网 HTTPS 地址，请在 **设置 / 高级连接** 中先安装可选 `cloudflared` 组件，再切换为 **临时公网地址** 或 **固定域名**（见 [公网访问](../operations/public-access.md)）。固定公网地址不要添加 `/mcp`。
 
 ## 5. 完成安装
 

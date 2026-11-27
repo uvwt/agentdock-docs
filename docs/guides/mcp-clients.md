@@ -1,12 +1,12 @@
 # Connect from different clients
 
-AgentDock connects to Claude Desktop, ChatGPT, Claude Code, Cursor, VS Code, Codex, TRAE, and WorkBuddy over Streamable HTTP MCP. Every example on this page uses:
+AgentDock (and NexusDock) connects to Claude Desktop, ChatGPT, Claude Code, Cursor, VS Code, Codex, TRAE, and WorkBuddy over Streamable HTTP MCP. Every example on this page uses:
 
 ```text
 https://agentdock.example.com/mcp
 ```
 
-Replace it with your own AgentDock MCP URL.
+Replace it with your **NexusDock Cloud** URL (`https://mcp.nexusdock.co/mcp`), your self-hosted NexusDock `/mcp` URL, or your direct AgentDock MCP URL.
 
 :::note
 Menu names, plan restrictions, and workspace policies may change between client releases. This page uses common current labels. When an entry is not visible, search settings for `MCP`, `Plugins`, or `Connectors`.
@@ -265,5 +265,12 @@ curl -fsS https://agentdock.example.com/.well-known/oauth-protected-resource/mcp
 ```
 
 A `302` from the authorization page usually means AgentDock is redirecting to the client as expected. If the browser does not continue, confirm that the reverse proxy preserves the `Location` header and that the browser or network policy does not block the callback URL.
+
+## Programmatic REST API access
+
+If you are building scripts, services, or non-MCP integrations against NexusDock Cloud rather than connecting an MCP client, use the live REST API documentation and the official Skill instead of MCP configuration:
+
+- Live REST API reference: [https://mcp.nexusdock.co/docs/api](https://mcp.nexusdock.co/docs/api)
+- Official Skill: [`nexusdock-rest`](https://github.com/uvwt/agentdock-skills/tree/main/skills/nexusdock-rest)
 
 See [Configuration](../reference/configuration.md) for complete authentication settings and [Linux and servers](../operations/linux.md) for public deployment.

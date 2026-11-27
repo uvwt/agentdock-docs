@@ -32,6 +32,6 @@ A Workflow is a reusable process, not an automatic script. AgentDock can adjust 
 
 ## Matching
 
-Basic Workflow matching works without an AI or Embedding provider. If Embedding is configured in **Settings → AI & Vectors**, NexusDock can also use semantic matching to find relevant workflows.
+Basic Workflow lexical matching works out of the box without configuring an external AI or Embedding provider. On NexusDock Cloud, semantic matching is managed for eligible plans; on self-hosted NexusDock, you can enable semantic matching in **Settings → AI & Vectors**.
 
 Current task progress is separate from Workflow templates. See [Tasks and progress](./tasks.md) for execution progress, and [Recall memory](./recalldock.md) for long-term knowledge.

@@ -10,7 +10,9 @@ AgentDock 保持本机使用最安全。只有远程 MCP 客户端需要连接�
 
 ## 临时公网地址
 
-macOS 和 Windows 客户端可以直接在 **公网访问** 中启用临时地址。Linux 安装器可以选择临时 Tunnel。Docker 可以启动 Quick Tunnel profile：
+如果只是为了从 ChatGPT、Claude 或其他设备远程访问，优先配对 **NexusDock**（`https://mcp.nexusdock.co` 或自托管实例），通常更简单且不需要安装 `cloudflared`。
+
+如果需要在 macOS 或 Windows 上启用单机直连公网访问，先在 **设置 / 高级连接** 中安装可选组件 `cloudflared`（或运行 `agentdock component install cloudflared`），再启用 **临时公网地址**。Linux 安装器可以选择临时 Tunnel。Docker 可以启动 Quick Tunnel profile：
 
 ```bash
 docker compose --profile cloudflare-quick up -d
@@ -50,7 +52,7 @@ https://agent.example.com
 
 不要追加 `/mcp`。
 
-macOS 或 Windows 打开 **公网访问 → 固定域名**，填写 HTTPS 公网地址和 Tunnel Token。
+macOS 或 Windows 确认已安装可选组件 `cloudflared` 后，打开 **设置 / 高级连接 → 固定域名**，填写 HTTPS 公网地址和 Tunnel Token。
 
 Linux 可以重新运行安装器，选择已有 Cloudflare 域名的选项。
 

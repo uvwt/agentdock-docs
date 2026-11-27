@@ -42,8 +42,8 @@ This command runs the TypeScript check, locale-preference tests, verifies that E
 ```text
 docs/                                            # English source documents
 ├── getting-started/                             # Installation and first connection
-├── concepts/                                    # Skills, tasks, dynamic MCP, and NexusDock Recall
-├── guides/                                      # Browser and desktop automation
+├── concepts/                                    # Skills, Plugins, tasks, dynamic MCP, NexusDock, Recall, and Workflow
+├── guides/                                      # Client connections, ChatGPT, browser, and Coding Agents
 ├── reference/                                   # Configuration and tool reference
 ├── operations/                                  # Advanced deployment, security, and troubleshooting
 └── contributing/                                # Contributor guide

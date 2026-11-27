@@ -39,6 +39,18 @@
     "message": "AgentDock 源码",
     "description": "The label of footer link with label=AgentDock source linking to https://github.com/uvwt/agentdock"
   },
+  "link.item.label.NexusDock Cloud": {
+    "message": "NexusDock Cloud",
+    "description": "The label of footer link with label=NexusDock Cloud linking to https://mcp.nexusdock.co"
+  },
+  "link.item.label.NexusDock REST API": {
+    "message": "NexusDock REST API",
+    "description": "The label of footer link with label=NexusDock REST API linking to https://mcp.nexusdock.co/docs/api"
+  },
+  "link.item.label.Plugins": {
+    "message": "Plugin",
+    "description": "The label of footer link with label=Plugins linking to /docs/concepts/plugins"
+  },
   "link.item.label.Documentation source": {
     "message": "文档源码",
     "description": "The label of footer link with label=Documentation source linking to https://github.com/uvwt/agentdock-docs"

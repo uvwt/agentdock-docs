@@ -78,7 +78,7 @@ The installer asks if you have a Cloudflare-managed domain:
 - No domain: automatically creates a temporary `trycloudflare.com` address for quick testing.
 - Have a domain: complete the [Public access](../operations/public-access.md), then enter the resulting HTTPS public origin and Tunnel Token when the installer asks.
 
-After installation, the terminal displays the public MCP URL and connection credentials. A temporary address may change after a restart. Generate a new one with `sudo /opt/agentdock/bin/agentdock tunnel regenerate --runtime-root /etc/agentdock`, then replace the old MCP URL in the client and authorize OAuth again. Existing Bearer Token and OAuth credentials are preserved.
+After installation, the terminal displays the public MCP URL and connection credentials. A temporary address may change after a restart. Generate a new one with `sudo /opt/agentdock/bin/agentdock tunnel regenerate` (default runtime root `/etc/agentdock` is resolved automatically; add `--runtime-root <dir>` for custom deployments), then replace the old MCP URL in the client and authorize OAuth again. Existing Bearer Token and OAuth credentials are preserved.
 
 Public access requires authentication. For detailed parameters and log locations, see [Public access](../operations/public-access.md).
 

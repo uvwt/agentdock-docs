@@ -51,16 +51,16 @@ sudo rc-service agentdock restart
 
 ## NexusDock
 
-AgentDock 安装完成后再进行 NexusDock 配对。使用默认服务账号时：
+AgentDock 安装完成后再进行 NexusDock 配对。标准系统服务安装下可直接执行：
 
 ```bash
-sudo -u agentdock -H /opt/agentdock/bin/agentdock nexus pair \
-  --endpoint https://nexus.example.com \
+sudo /opt/agentdock/bin/agentdock nexus pair \
+  --endpoint https://mcp.nexusdock.co \
   --code <pairing-code>
-sudo systemctl restart agentdock
+sudo /opt/agentdock/bin/agentdock nexus status
 ```
 
-完整配对流程见 [连接 AgentDock](./nexusdock-connect.md)。
+自托管 NexusDock 请把 `https://mcp.nexusdock.co` 替换为你的 NexusDock 地址。使用 `sudo` 执行会自动从服务运行目录解析 `AGENTDOCK_HOME`、保持服务用户对 `nexus/device.json` 的读取权限，并自动重启 systemd/OpenRC 服务（如需暂不重启可附加 `--no-restart`）。完整配对流程见 [连接 AgentDock](./nexusdock-connect.md)。
 
 ## 更新
 

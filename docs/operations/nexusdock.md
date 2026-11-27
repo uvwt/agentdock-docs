@@ -1,6 +1,8 @@
 # Install and maintain
 
-The simplest way to run NexusDock is Docker Compose.
+This page covers installing and operating the open-source self-hosted **NexusDock** server (`uvwt/nexusdock`). If you prefer a managed control center without self-hosting, use **NexusDock Cloud** (`https://mcp.nexusdock.co`) and go straight to [Connect AgentDock](./nexusdock-connect.md).
+
+The simplest way to self-host NexusDock is Docker Compose.
 
 ## Before you start
 

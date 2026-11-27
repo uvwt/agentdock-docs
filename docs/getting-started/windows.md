@@ -13,7 +13,7 @@ Download the installer for your architecture:
 
 If unsure, choose `amd64`.
 
-The installer already bundles AgentDock Core, the control panel, core Skills, and Cloudflare components. Installation and upgrades do not download these components separately from GitHub.
+The installer bundles AgentDock Core, the control panel, and official core Skills. `cloudflared` is now an optional managed component that is installed on demand from the Control Panel only if you enable self-hosted Cloudflare Tunnel public access.
 
 ## 2. Run installer
 
@@ -32,21 +32,19 @@ Administrator enhancement mode applies only to AgentDock Core; the control panel
 
 ## 4. Choose connection option
 
+The interactive installer sets up AgentDock with local access by default—it does not ask you to configure Cloudflare Tunnels during installation. After opening the AgentDock Control Panel, choose your connection mode in **Connections**:
+
+### NexusDock (recommended for remote access)
+
+Enter your NexusDock address (for example `https://mcp.nexusdock.co` or your self-hosted NexusDock URL) and one-time pairing code, then pair. You do not need `cloudflared` or a custom domain. See [Connect AgentDock](../operations/nexusdock-connect.md).
+
 ### Local only
 
-Select when the MCP client runs on the same computer. No domain or Cloudflare account required.
+When the MCP client runs on the same computer, use the local MCP URL and Bearer Token directly. No domain or Cloudflare account is required.
 
-### Temporary public address
+### Self-hosted Cloudflare Tunnel (optional)
 
-Select when connecting from ChatGPT, a phone, or another remote device without a custom domain. AgentDock generates a `trycloudflare.com` address automatically.
-
-Temporary addresses may change when Windows or the tunnel restarts. When changed, copy the new address from the control panel and update your client.
-
-### Fixed Cloudflare domain
-
-For a permanent address, first complete the [Public access](../operations/public-access.md). Then select **Fixed domain** and enter the HTTPS public origin and Tunnel Token from that setup. Do not append `/mcp` to the public origin.
-
-After installation, you can switch between Local only, Temporary address, and Fixed domain in the **Public Access** section of the control panel without rerunning the installer.
+If you want direct public HTTPS access to this PC without NexusDock, install the optional `cloudflared` component in **Settings / Advanced connections**, then switch to **Temporary public address** or **Fixed domain** (see [Public access](../operations/public-access.md)). Do not append `/mcp` to the public origin.
 
 ## 5. Complete installation
 

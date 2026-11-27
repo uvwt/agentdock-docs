@@ -8,7 +8,7 @@ A single universal installer supports both Apple Silicon and Intel Macs.
 
 - macOS 13 or later.
 - Download AgentDock only from the official [AgentDock download endpoint](https://download.nexusdock.co/latest/macos).
-- A fixed public address requires a Cloudflare-managed domain and Tunnel Token. If you do not have these yet, choose a temporary public address.
+- For remote access, pairing with **NexusDock** (`https://mcp.nexusdock.co` or self-hosted) is recommended and requires no Cloudflare setup. If you prefer direct self-hosted public access via Cloudflare Tunnel, `cloudflared` can be installed on demand from Settings afterwards.
 - For browser automation, install Google Chrome, Chromium, or Microsoft Edge first.
 
 ## 1. Download and install
@@ -30,21 +30,19 @@ If macOS blocks the first launch, see [macOS says developer cannot be verified](
 
 ## 3. Choose connection option
 
+The initial setup configures the local AgentDock service and allows it to run in the background. Wait until the status shows "Healthy", then choose how to connect in the app:
+
+### NexusDock (recommended for remote access)
+
+Open the **Connections** section, enter your NexusDock address (for example `https://mcp.nexusdock.co` or your self-hosted NexusDock URL) and one-time pairing code, then pair. You do not need Cloudflare Tunnel or a custom domain. See [Connect AgentDock](../operations/nexusdock-connect.md).
+
 ### Local only
 
-Select when the MCP client runs on the same Mac. No domain or Cloudflare account required.
+When the MCP client runs on the same Mac, use the local MCP URL and Bearer Token directly. No domain or Cloudflare account is required.
 
-### Temporary public address
+### Self-hosted public access (optional Cloudflare Tunnel)
 
-Select when connecting from ChatGPT, a phone, or another remote device without a custom domain. AgentDock generates an HTTPS public address automatically.
-
-This address may change when the Mac or tunnel restarts. When changed, copy the new address from the control panel and update your client.
-
-### Fixed domain
-
-For a permanent address, first complete the [Public access](../operations/public-access.md). Then select **Fixed domain** and enter the HTTPS public origin and Tunnel Token from that setup. Do not append `/mcp` to the public origin.
-
-Click **Install and Start**, keeping the window open until the status shows "Healthy". You can switch connection modes later directly from the control panel without rerunning the installer.
+If you want this Mac to expose its own public HTTPS MCP endpoint directly without NexusDock, install the optional `cloudflared` component inside **Settings / Advanced connections** first, then choose either a **Temporary public address** or a **Fixed domain** (see [Public access](../operations/public-access.md)). Do not append `/mcp` to the public origin.
 
 ## 4. Connect MCP client
 

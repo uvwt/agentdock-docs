@@ -1,6 +1,8 @@
 # 安装与维护
 
-最简单的安装方式是使用 Docker Compose。
+本页介绍开源自托管版 **NexusDock**（`uvwt/nexusdock`）的部署与维护。如果你希望直接使用云端托管控制中心、无需自行部署服务器，可以直接使用 **NexusDock Cloud**（`https://mcp.nexusdock.co`）并前往 [连接 AgentDock](./nexusdock-connect.md)。
+
+自托管 NexusDock 最简单的安装方式是使用 Docker Compose。
 
 ## 开始前
 

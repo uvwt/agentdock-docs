@@ -14,7 +14,7 @@
 
 ## 客户端已连接但看不到工具
 
-重新连接 MCP，或新建会话清理客户端缓存的旧工具 Schema。确认认证后，再实际完成一次 MCP 连接，不要只根据 `/healthz` 判断。
+刷新或重新连接 MCP，并新开会话清理客户端缓存的旧工具 Schema。确认认证后，再实际完成一次 MCP 连接，不要只根据 `/healthz` 判断。通过 NexusDock 连接时，如果客户端缓存缺少节点最新工具或返回 `TOOL_CONTRACT_MISMATCH`，可使用 `node_tool_search` 和 `node_tool_call` 作为兼容回退。
 
 ## 401 Unauthorized
 

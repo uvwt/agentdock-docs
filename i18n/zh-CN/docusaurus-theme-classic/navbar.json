@@ -15,6 +15,10 @@
     "message": "工具目录",
     "description": "Navbar item with label Tools"
   },
+  "item.label.NexusDock": {
+    "message": "NexusDock",
+    "description": "Navbar item with label NexusDock"
+  },
   "item.label.GitHub": {
     "message": "GitHub",
     "description": "Navbar item with label GitHub"

@@ -70,9 +70,5 @@
   "sidebar.docsSidebar.category.Developers": {
     "message": "开发者",
     "description": "The label for category 'Developers' in sidebar 'docsSidebar'"
-  },
-  "sidebar.docsSidebar.doc.Manual Linux deployment": {
-    "message": "Linux 手动部署（高级）",
-    "description": "The label for the doc item 'Manual Linux deployment' in sidebar 'docsSidebar', linking to the doc getting-started/vps"
   }
 }

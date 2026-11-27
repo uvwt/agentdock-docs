@@ -22,7 +22,7 @@ AgentDock exposes tools to connected AI clients over MCP. The tools visible on a
 | --- | --- | --- |
 | `skill_manage` | Manage installed Skills and their environment | `install`, `remove`, `env_set`, `env_unset`, `env_list` |
 | `plugin_manage` | Review and manage Plugins | `inspect`, `validate`, `install`, `update`, `enable`, `disable`, `remove` |
-| `mcp_manage` | Manage external MCP connections | `list`, `inspect`, `add`, `enable`, `disable`, `refresh`, `authorize`, `remove`, environment actions |
+| `mcp_manage` | Manage external MCP connections | `list`, `inspect`, `add`, `enable`, `disable`, `refresh`, `authorize`, `auth_clear`, `remove`, environment actions |
 | `mcp_tool_search` | Find tools provided by an external MCP server | search |
 | `mcp_tool_inspect` | Read one external tool's schema | inspect |
 | `mcp_tool_call` | Call an inspected external MCP tool | call |
@@ -33,13 +33,13 @@ See [Use Skills](../concepts/skills.md), [Use Plugins](../concepts/plugins.md), 
 
 | Tool | Availability | Purpose |
 | --- | --- | --- |
-| `task_manage` | Always | Track multi-step task state and progress |
+| `task_create` | Always | Create a recoverable task (and mount the live task card when chat cards are enabled) |
+| `task_manage` | Always | List, inspect, checkpoint, block, resume, review, and complete tasks |
 | `workflow_template_manage` | NexusDock paired | Find and manage reusable Workflows |
 | `recall_search` | NexusDock paired | Search Recall memory |
 | `recall_read` | NexusDock paired | Read Recall content |
 | `recall_write` | NexusDock paired | Create or update Recall content |
 | `recall_maintain` | NexusDock paired | Inspect and maintain Recall indexes/content |
-| `evolve` | NexusDock paired | Manage reusable learned knowledge |
 
 See [Tasks and progress](../concepts/tasks.md), [Recall memory](../concepts/recalldock.md), and [Workflow](../concepts/workflow.md).
 
@@ -49,9 +49,11 @@ These tools are available when Coding Agents are enabled:
 
 | Tool | Purpose |
 | --- | --- |
-| `acp_session` | Create, open, inspect, update, and close Coding Agent sessions |
+| `acp_session` | Inspect, create, list, open, update, close, and delete Coding Agent sessions |
 | `acp_prompt` | Start prompts, read events, and cancel runs |
 | `acp_interaction` | Review and respond to pending permission interactions |
+
+When multiple Coding Agent profiles are configured, these tools accept an optional `profile_id` parameter and default to the configured default profile.
 
 See [Use local Coding Agents](../guides/coding-agents.md).
 
@@ -68,3 +70,14 @@ Browser tools are available when browser support is enabled.
 | `file_publish` | Publish a file or directory; create a temporary shareable URL when a reachable address is available |
 
 See [Use the browser](../guides/browser-control.md) and [Configuration reference](./configuration.md) for enablement.
+
+## NexusDock multi-device compatibility tools
+
+When connecting through NexusDock's unified `/mcp` endpoint, device tools take a `node_id` parameter returned by `agentdock_context`. NexusDock also exposes two fallback tools for clients whose cached tool catalog is behind a node's live schema:
+
+| Tool | Purpose |
+| --- | --- |
+| `node_tool_search` | Search a node's current live tool catalog and inspect exact schemas |
+| `node_tool_call` | Call a specific node tool by name using its live schema |
+
+Prefer direct first-level tools whenever your client already lists them. See [What is NexusDock?](../concepts/nexusdock.md).

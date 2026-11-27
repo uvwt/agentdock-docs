@@ -78,7 +78,7 @@ sudo sh /tmp/install-agentdock.sh
 - 没有域名：自动创建临时 `trycloudflare.com` 地址，适合快速使用。
 - 已有域名：先按 [公网访问](../operations/public-access.md) 完成 Cloudflare 侧设置，再在安装器提示时填写得到的 HTTPS 公网地址和 Tunnel Token。
 
-安装完成后，终端会显示公网 MCP 地址和连接凭据。临时地址在重启后可能变化；需要新地址时执行 `sudo /opt/agentdock/bin/agentdock tunnel regenerate --runtime-root /etc/agentdock`，再替换客户端中的旧 MCP URL 并重新完成 OAuth 授权。已有 Bearer Token 和 OAuth 凭据会保留。
+安装完成后，终端会显示公网 MCP 地址和连接凭据。临时地址在重启后可能变化；需要新地址时执行 `sudo /opt/agentdock/bin/agentdock tunnel regenerate`（默认自动解析 `/etc/agentdock`，自定义目录可加 `--runtime-root <dir>`），再替换客户端中的旧 MCP URL 并重新完成 OAuth 授权。已有 Bearer Token 和 OAuth 凭据会保留。
 
 公网访问必须保留认证。详细参数和日志位置见 [公网访问](../operations/public-access.md)。
 

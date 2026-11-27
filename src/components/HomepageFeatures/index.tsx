@@ -176,7 +176,7 @@ export default function HomepageFeatures(): ReactNode {
                   <span aria-hidden="true">→</span>
                 </Link>
                 <Link className={styles.quickSecondary} to="/docs/operations/nexusdock">
-                  <Translate id="homepage.nexus.install">Install NexusDock</Translate>
+                  <Translate id="homepage.nexus.install">Self-host NexusDock</Translate>
                 </Link>
               </div>
             </div>

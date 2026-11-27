@@ -1,12 +1,12 @@
 # 在不同客户端中连接
 
-AgentDock 通过 Streamable HTTP MCP 接入 Claude Desktop、ChatGPT、Claude Code、Cursor、VS Code、Codex、TRAE 和 WorkBuddy。本页示例统一使用：
+AgentDock（以及 NexusDock）通过 Streamable HTTP MCP 接入 Claude Desktop、ChatGPT、Claude Code、Cursor、VS Code、Codex、TRAE 和 WorkBuddy。本页示例统一使用：
 
 ```text
 https://agentdock.example.com/mcp
 ```
 
-请把它替换为你自己的 AgentDock MCP 地址。
+请将其替换为 **NexusDock Cloud** 地址（`https://mcp.nexusdock.co/mcp`）、自托管 NexusDock `/mcp` 地址，或单台 AgentDock 的直连 MCP 地址。
 
 :::note
 不同客户端的菜单名称、套餐限制和管理员策略可能调整。本文使用当前常见界面名称；找不到对应入口时，可在设置中搜索 `MCP`、`插件` 或 `Connectors`。
@@ -265,5 +265,12 @@ curl -fsS https://agentdock.example.com/.well-known/oauth-protected-resource/mcp
 ```
 
 如果授权页面返回 `302`，通常表示 AgentDock 正在跳转回客户端，这是 OAuth 正常流程。页面没有继续跳转时，再检查反向代理是否保留 `Location` Header，以及客户端回调地址是否被浏览器或网络策略拦截。
+
+## 第三方 REST API 接入
+
+如果你需要在非 MCP 客户端的脚本、服务或自动化流程中调用 NexusDock Cloud 设备能力，请使用在线 REST API 文档与官方 Skill：
+
+- 在线 REST API 文档：[https://mcp.nexusdock.co/docs/api](https://mcp.nexusdock.co/docs/api)
+- 官方 Skill：[`nexusdock-rest`](https://github.com/uvwt/agentdock-skills/tree/main/skills/nexusdock-rest)
 
 完整认证配置见 [配置](../reference/configuration.md)，公网部署见 [Linux 与服务器](../operations/linux.md)。

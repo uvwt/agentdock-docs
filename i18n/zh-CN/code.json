@@ -441,7 +441,7 @@
     "message": "了解 NexusDock"
   },
   "homepage.nexus.install": {
-    "message": "安装 NexusDock"
+    "message": "自托管 NexusDock"
   },
   "homepage.nexus.capability.mcp.title": {
     "message": "一个 MCP 地址"

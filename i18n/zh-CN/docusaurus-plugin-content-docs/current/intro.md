@@ -35,7 +35,7 @@ AgentDock 本身不是聊天应用，也不负责模型推理。连接的 AI 客
 
 Agent 会根据任务选择合适的工具。
 
-如果主要想用网页版 ChatGPT 操控自己的电脑，安装时开启公网地址后，按 [使用 ChatGPT 连接](./guides/chatgpt.md) 继续即可。
+如果主要想用网页版 ChatGPT 操控自己的电脑，推荐先配对 [NexusDock](./concepts/nexusdock.md)（或启用自建公网地址），再按 [使用 ChatGPT 连接](./guides/chatgpt.md) 继续即可。
 
 ## 数据保存在哪里
 

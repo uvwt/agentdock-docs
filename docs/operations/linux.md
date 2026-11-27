@@ -51,16 +51,16 @@ See [Public access](./public-access.md) for temporary and fixed Cloudflare addre
 
 ## NexusDock
 
-Pair NexusDock after AgentDock is installed. On the default service account:
+Pair NexusDock after AgentDock is installed. On a standard service installation, run:
 
 ```bash
-sudo -u agentdock -H /opt/agentdock/bin/agentdock nexus pair \
-  --endpoint https://nexus.example.com \
+sudo /opt/agentdock/bin/agentdock nexus pair \
+  --endpoint https://mcp.nexusdock.co \
   --code <pairing-code>
-sudo systemctl restart agentdock
+sudo /opt/agentdock/bin/agentdock nexus status
 ```
 
-See [Connect AgentDock](./nexusdock-connect.md) for the complete pairing flow.
+For self-hosted NexusDock, replace `https://mcp.nexusdock.co` with your NexusDock URL. Running with `sudo` automatically resolves the service's `AGENTDOCK_HOME`, preserves service-user permissions on `nexus/device.json`, and restarts the systemd/OpenRC service (pass `--no-restart` to skip restarting). See [Connect AgentDock](./nexusdock-connect.md) for the complete pairing flow.
 
 ## Update
 

@@ -22,7 +22,7 @@ AgentDock 通过 MCP 向 AI 客户端提供工具。具体连接能看到哪些�
 | --- | --- | --- |
 | `skill_manage` | 管理已安装 Skill 和环境配置 | `install`、`remove`、`env_set`、`env_unset`、`env_list` |
 | `plugin_manage` | 检查和管理 Plugin | `inspect`、`validate`、`install`、`update`、`enable`、`disable`、`remove` |
-| `mcp_manage` | 管理外部 MCP 连接 | `list`、`inspect`、`add`、`enable`、`disable`、`refresh`、`authorize`、`remove`、环境配置 |
+| `mcp_manage` | 管理外部 MCP 连接 | `list`、`inspect`、`add`、`enable`、`disable`、`refresh`、`authorize`、`auth_clear`、`remove`、环境配置 |
 | `mcp_tool_search` | 查找外部 MCP 提供的工具 | 搜索 |
 | `mcp_tool_inspect` | 查看一个外部工具的 Schema | 检查 |
 | `mcp_tool_call` | 调用已经检查过的外部 MCP 工具 | 调用 |
@@ -33,13 +33,13 @@ AgentDock 通过 MCP 向 AI 客户端提供工具。具体连接能看到哪些�
 
 | 工具 | 可用条件 | 用途 |
 | --- | --- | --- |
-| `task_manage` | 始终可用 | 记录多步骤任务状态和进度 |
+| `task_create` | 始终可用 | 创建可恢复任务（开启聊天卡片时挂载实时任务卡片） |
+| `task_manage` | 始终可用 | 列出、查看、推进 checkpoint、阻塞、恢复、终审和完成任务 |
 | `workflow_template_manage` | 已配对 NexusDock | 查找和管理可复用 Workflow |
 | `recall_search` | 已配对 NexusDock | 搜索 Recall 记忆 |
 | `recall_read` | 已配对 NexusDock | 读取 Recall 内容 |
 | `recall_write` | 已配对 NexusDock | 创建或更新 Recall 内容 |
 | `recall_maintain` | 已配对 NexusDock | 检查和维护 Recall 内容与索引 |
-| `evolve` | 已配对 NexusDock | 管理可复用知识 |
 
 使用方式见 [任务与进度](../concepts/tasks.md)、[Recall 记忆](../concepts/recalldock.md) 和 [Workflow 工作流](../concepts/workflow.md)。
 
@@ -49,9 +49,11 @@ AgentDock 通过 MCP 向 AI 客户端提供工具。具体连接能看到哪些�
 
 | 工具 | 用途 |
 | --- | --- |
-| `acp_session` | 创建、打开、查看、更新和关闭 Coding Agent 会话 |
+| `acp_session` | 查看、创建、列出、打开、更新、关闭和删除 Coding Agent 会话 |
 | `acp_prompt` | 发起 prompt、读取事件和取消运行 |
 | `acp_interaction` | 查看并处理等待确认的权限交互 |
+
+配置多个 Coding Agent Profile 时，这些工具支持可选 `profile_id` 参数；省略时使用默认 Profile。
 
 使用方式见 [使用本地 Coding Agent](../guides/coding-agents.md)。
 
@@ -68,3 +70,14 @@ AgentDock 通过 MCP 向 AI 客户端提供工具。具体连接能看到哪些�
 | `file_publish` | 发布文件或目录；有可访问地址时生成临时分享链接 |
 
 浏览器使用见 [使用浏览器](../guides/browser-control.md)，启用方式见 [配置参考](./configuration.md)。
+
+## NexusDock 多设备兼容工具
+
+通过 NexusDock 统一 `/mcp` 入口接入时，设备工具会接收来自 `agentdock_context` 的 `node_id` 参数。如果客户端缓存的工具目录落后于节点当前真实 Schema，NexusDock 还提供两个兼容入口：
+
+| 工具 | 用途 |
+| --- | --- |
+| `node_tool_search` | 查询节点当前实时工具目录与完整 Schema |
+| `node_tool_call` | 按实时 Schema 调用指定节点工具 |
+
+客户端目录已包含目标工具时应优先直接调用一级工具。详见 [什么是 NexusDock](../concepts/nexusdock.md)。
