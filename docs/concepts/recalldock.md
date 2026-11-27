@@ -2,7 +2,7 @@
 
 NexusDock Recall is an optional long-term memory service for AgentDock. It keeps information, preferences, experience, and knowledge that are worth reusing later, so future tasks can continue with useful context.
 
-Without NexusDock, file, command, command-line Git, Skill, dynamic MCP, and local task tools remain fully available; Recall, workflow template, knowledge evolution, and private note tools are unavailable. See [NexusDock](./nexusdock.md) for multi-device management and the unified MCP endpoint.
+Without NexusDock, file, command, command-line Git, Skill, dynamic MCP, and local task tools remain fully available; Recall, workflow template, and knowledge evolution tools are unavailable. See [NexusDock](./nexusdock.md) for multi-device management and the unified MCP endpoint.
 
 ## When to use it
 
@@ -44,17 +44,6 @@ AgentDock can use existing Recall content to carry useful context into later tas
 
 - **Markdown:** long-term notes, learning records, project documentation, and structured knowledge.
 - **Card:** one atomic, reusable experience, preference, fact, or decision.
-
-Private Notes are a separate store rather than a Recall content type.
-
-## Private Notes and Recall
-
-Private Notes use a separate NexusDock Private Notes store and are not part of Recall search:
-
-- Recall stores reusable project knowledge and must not contain tokens, passwords, cookies, or private keys.
-- Private Notes store sensitive information only when you explicitly ask, with age-encrypted backups.
-- Private-note search returns safe metadata only; reading the body requires an explicit action.
-- `recall_*` cannot read, modify, or list private notes. Use `private_note_manage` instead.
 
 ## Task progress and Recall
 
