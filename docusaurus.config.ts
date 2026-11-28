@@ -19,7 +19,7 @@ const algolia =
 const config: Config = {
   title: 'NexusDock Docs',
   tagline: 'Unified documentation for NexusDock Cloud and AgentDock',
-  favicon: 'img/favicon.svg',
+  favicon: 'img/favicon.png',
   url: 'https://docs.nexusdock.co',
   baseUrl: '/',
   organizationName: 'uvwt',
@@ -77,6 +77,12 @@ const config: Config = {
     },
     navbar: {
       title: 'NexusDock Docs',
+      logo: {
+        alt: 'NexusDock',
+        src: 'img/nexusdock-icon.png',
+        width: 28,
+        height: 28,
+      },
       hideOnScroll: false,
       items: [
         {
@@ -157,7 +163,7 @@ const config: Config = {
     },
     prism: {
       theme: prismThemes.github,
-      darkTheme: prismThemes.dracula,
+      darkTheme: prismThemes.vsDark,
       additionalLanguages: ['bash', 'powershell'],
     },
     ...(algolia ? {algolia} : {}),
