@@ -30,9 +30,11 @@ NexusDock 是面向 AgentDock 设备的统一控制中心与远程连接枢纽�
 
 - 在线 REST API 文档：[https://mcp.nexusdock.co/docs/api](https://mcp.nexusdock.co/docs/api)
 - 官方 REST 集成 Skill：[`nexusdock-rest`](https://github.com/uvwt/agentdock-skills/tree/main/skills/nexusdock-rest)
+- API 概览与机器可读入口：[NexusDock REST API](../reference/api.md)
 
 ## 下一步
 
+- [日常使用 NexusDock](../guides/using-nexusdock.md)
 - [连接 AgentDock](../operations/nexusdock-connect.md)
 - [自托管安装与维护](../operations/nexusdock.md)
 - [Recall 记忆](./recalldock.md)

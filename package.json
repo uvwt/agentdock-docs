@@ -2,7 +2,7 @@
   "name": "agentdock-docs",
   "version": "0.1.0",
   "private": true,
-  "description": "AgentDock 官方文档站",
+  "description": "NexusDock 与 AgentDock 官方统一文档中心",
   "license": "MIT",
   "packageManager": "pnpm@11.12.0",
   "scripts": {

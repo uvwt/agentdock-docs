@@ -68,9 +68,13 @@ jobs:
       - name: Prepare Pages artifact
         run: |
           rm -rf pages-dist
-          mkdir -p pages-dist/agentdock
-          cp -R build/. pages-dist/agentdock/
-          printf '/ /agentdock/ 302\n' > pages-dist/_redirects
+          mkdir -p pages-dist
+          cp -R build/. pages-dist/
+          cat > pages-dist/_redirects <<'EOF'
+          /agentdock / 301
+          /agentdock/ / 301
+          /agentdock/* /:splat 301
+          EOF
 
       - name: Deploy to Cloudflare Pages
         env:
@@ -99,14 +103,14 @@ jobs:
             <head>
               <meta charset="utf-8">
               <meta name="robots" content="noindex">
-              <title>AgentDock Docs moved</title>
+              <title>NexusDock Docs moved</title>
               <script>
                 const legacyBase = '/agentdock-docs';
                 const suffix = location.pathname.startsWith(legacyBase)
                   ? location.pathname.slice(legacyBase.length)
                   : location.pathname;
                 location.replace(
-                  'https://docs.nexusdock.co/agentdock' +
+                  'https://docs.nexusdock.co' +
                   (suffix || '/') +
                   location.search +
                   location.hash
@@ -114,7 +118,7 @@ jobs:
               </script>
             </head>
             <body>
-              <p>AgentDock documentation has moved to <a href="https://docs.nexusdock.co/agentdock/">docs.nexusdock.co</a>.</p>
+              <p>NexusDock documentation has moved to <a href="https://docs.nexusdock.co/">docs.nexusdock.co</a>.</p>
             </body>
           </html>
           EOF

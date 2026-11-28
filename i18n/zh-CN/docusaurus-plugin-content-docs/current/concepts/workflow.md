@@ -35,3 +35,5 @@ Workflow 是可复用流程，不是自动执行的脚本。AgentDock 会根据�
 基础 Workflow 词法匹配开箱即用，不需要额外配置外部 AI 或 Embedding。在 NexusDock Cloud 中，语义匹配由云端按方案托管提供；在自托管 NexusDock 中，可在 **设置 → AI 与向量** 中配置启用。
 
 当前任务进度和 Workflow 是两回事。执行进度见 [任务与进度](./tasks.md)，长期知识见 [Recall 记忆](./recalldock.md)。
+
+想了解如何在日常工作中把设备、记忆与工作流结合使用，见 [日常使用 NexusDock](../guides/using-nexusdock.md)。

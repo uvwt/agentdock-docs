@@ -16,6 +16,15 @@
 
 刷新或重新连接 MCP，并新开会话清理客户端缓存的旧工具 Schema。确认认证后，再实际完成一次 MCP 连接，不要只根据 `/healthz` 判断。通过 NexusDock 连接时，如果客户端缓存缺少节点最新工具或返回 `TOOL_CONTRACT_MISMATCH`，可使用 `node_tool_search` 和 `node_tool_call` 作为兼容回退。
 
+## NexusDock 配对与远程连接问题
+
+- **配对码无法使用**：配对码为 6 位数字，有效期 5 分钟且仅可使用一次。如果已过期或已提交，请在 NexusDock 中重新生成配对码再配对。
+- **设备未出现或显示离线**：确认目标电脑上的 AgentDock 正在运行、设备未休眠，且 NexusDock 服务地址填写为 `https://mcp.nexusdock.co/`（或你的自托管 NexusDock HTTPS 地址），重连后刷新 **设备** 页面。
+- **OAuth 授权失败或被取消**：回到 AI 客户端重新发起连接，并确认登录的是正确的 NexusDock 账号；如该客户端曾授权过，可先在 NexusDock 设置中撤销授权再重新连接。
+- **MCP 访问令牌失效**：重置 MCP 访问令牌后旧令牌会立即失效，请将新令牌（仅显示一次）更新到所有使用旧令牌的客户端。
+
+如果 NexusDock 在报错中展示了请求 ID，反馈问题时请附上该请求 ID，但严禁发送访问令牌、OAuth 凭据、Cookie、配对码、设备 Token、私钥或敏感 Recall 内容。
+
 ## 401 Unauthorized
 
 确认客户端发送的是当前 Bearer Token，或重新完成 OAuth。如果经过反向代理，确认代理没有丢掉 `Authorization` header。

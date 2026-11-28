@@ -12,7 +12,7 @@ function RuntimePreview(): ReactNode {
       className={styles.previewShell}
       aria-label={translate({
         id: 'homepage.runtimePreview.ariaLabel',
-        message: 'AgentDock task execution preview',
+        message: 'NexusDock and AgentDock task execution preview',
       })}>
       <div className={styles.previewGlow} />
       <div className={styles.previewCard}>
@@ -22,7 +22,7 @@ function RuntimePreview(): ReactNode {
             <span />
             <span />
           </div>
-          <span className={styles.previewTitle}>AgentDock Runtime</span>
+          <span className={styles.previewTitle}>NexusDock · AgentDock</span>
           <span className={styles.statusBadge}>
             <span className={styles.statusDot} /> connected
           </span>
@@ -106,52 +106,53 @@ function HomepageHeader(): ReactNode {
         <div className={styles.heroCopy}>
           <div className={styles.eyebrow}>
             <span className={styles.eyebrowDot} />
-            LOCAL & REMOTE AGENT TOOLS
+            NEXUSDOCK CLOUD & AGENTDOCK DOCS
           </div>
           <Heading as="h1" className={styles.heroTitle}>
-            <Translate id="homepage.hero.titleLine1">Let agents</Translate>
+            <Translate id="homepage.hero.titleLine1">Connect your AI</Translate>
             <span>
-              <Translate id="homepage.hero.titleLine2">finish real work</Translate>
+              <Translate id="homepage.hero.titleLine2">to your real devices</Translate>
             </span>
           </Heading>
           <p className={styles.heroSubtitle}>
             <Translate id="homepage.hero.subtitle">
-              Connect an MCP-compatible AI client to your computers and servers so it can work
-              with files, run commands, use Git and browsers, and connect other services.
+              Unified documentation for NexusDock Cloud and AgentDock: install on Mac, Windows,
+              Linux, or Docker, connect ChatGPT, Claude, or Cursor over Remote MCP, and share
+              long-term memory and reusable workflows.
             </Translate>
           </p>
           <div className={styles.actions}>
             <Link className={styles.primaryAction} to="/docs/getting-started/install">
-              <Translate id="homepage.hero.chooseInstall">Choose an installation</Translate>
+              <Translate id="homepage.hero.chooseInstall">Get started</Translate>
               <span aria-hidden="true">→</span>
             </Link>
-            <Link className={styles.secondaryAction} to="/docs/intro">
-              <Translate id="homepage.hero.exploreFeatures">Explore the features</Translate>
+            <Link className={styles.secondaryAction} to="/docs/guides/ai-connect">
+              <Translate id="homepage.hero.exploreFeatures">Let AI connect for you</Translate>
             </Link>
           </div>
           <div className={styles.proofRow}>
             <div>
               <strong>
-                <Translate id="homepage.hero.builtIn">Built-in</Translate>
+                <Translate id="homepage.hero.builtIn">NexusDock</Translate>
               </strong>
               <span>
-                <Translate id="homepage.hero.builtInTools">tools for real work</Translate>
+                <Translate id="homepage.hero.builtInTools">one Remote MCP hub</Translate>
               </span>
             </div>
             <div>
               <strong>
-                <Translate id="homepage.hero.recoverable">Recoverable</Translate>
+                <Translate id="homepage.hero.recoverable">AgentDock</Translate>
               </strong>
               <span>
-                <Translate id="homepage.hero.taskState">task state</Translate>
+                <Translate id="homepage.hero.taskState">multi-platform runtime</Translate>
               </span>
             </div>
             <div>
               <strong>
-                <Translate id="homepage.hero.crossPlatform">Cross-platform</Translate>
+                <Translate id="homepage.hero.crossPlatform">Recall & Flow</Translate>
               </strong>
               <span>
-                <Translate id="homepage.hero.localAndRemote">local and remote</Translate>
+                <Translate id="homepage.hero.localAndRemote">shared memory & routines</Translate>
               </span>
             </div>
           </div>
@@ -165,11 +166,11 @@ function HomepageHeader(): ReactNode {
 export default function Home(): ReactNode {
   return (
     <Layout
-      title={translate({id: 'homepage.meta.title', message: 'AgentDock documentation'})}
+      title={translate({id: 'homepage.meta.title', message: 'NexusDock Docs'})}
       description={translate({
         id: 'homepage.meta.description',
         message:
-          'Official AgentDock documentation for installation, client connections, Skills, Plugins, browser automation, and external MCP services.',
+          'Official unified documentation for NexusDock Cloud and AgentDock: device installation, AI client connections, Recall memory, Workflows, built-in tools, and REST API.',
       })}>
       <HomepageHeader />
       <main>

@@ -1,14 +1,14 @@
-# AgentDock Docs
+# NexusDock Docs
 
 [English](./README.md) | 简体中文
 
-AgentDock 官方公开文档，使用 Docusaurus、TypeScript 和 pnpm 构建。
+NexusDock 与 AgentDock 官方公开文档，使用 Docusaurus、TypeScript 和 pnpm 构建。
 
-- 线上站点：<https://docs.nexusdock.co/agentdock/>
-- 简体中文站点：<https://docs.nexusdock.co/agentdock/zh-CN/>
+- 线上站点：<https://docs.nexusdock.co/>
+- 简体中文站点：<https://docs.nexusdock.co/zh-CN/>
 - AgentDock 源码：<https://github.com/uvwt/agentdock>
 
-安装、配置、概念、运维和排障以本仓库为准；AgentDock 源码仓库 README 只保留项目概览和最短使用入口。
+安装、客户端接入、NexusDock 日常使用、配置、概念、运维、API 入口和排障以本仓库为准；AgentDock 源码仓库 README 只保留项目概览和最短使用入口。
 
 ## 本地开发
 
@@ -26,7 +26,7 @@ pnpm start -- --locale zh-CN
 本地开发服务器默认运行在：
 
 ```text
-http://localhost:3000/agentdock/
+http://localhost:3000/
 ```
 
 ## 质量检查

@@ -3,15 +3,20 @@ sidebar_position: 1
 slug: /intro
 ---
 
-# AgentDock
+# NexusDock & AgentDock
 
-AgentDock connects MCP-compatible AI clients to your computers and servers so they can work with files, run commands, use Git and browsers, and connect other services.
+NexusDock and AgentDock connect MCP-compatible AI clients—such as ChatGPT, Claude, Cursor, and VS Code—to your real computers and servers so they can work with files, run commands, use Git and browsers, share long-term memory, and reuse workflows.
 
-AgentDock itself is not a chat app or AI model. The connected AI client decides what to do; AgentDock performs the allowed work on the machine where it runs. Access is limited by the operating-system user, Docker mounts, and the capabilities you enable.
+- **AgentDock** runs on each computer or server you want AI to operate and performs the allowed work within your OS user permissions, Docker mounts, and enabled capabilities.
+- **NexusDock** (`https://mcp.nexusdock.co` or self-hosted) brings one or more AgentDock devices into a single control center with one Remote MCP endpoint, shared Recall memory, and reusable Workflows—without exposing each machine directly to the internet.
+
+Neither NexusDock nor AgentDock is a chat app or AI model. Your connected AI client decides what to do; AgentDock executes allowed actions on the target device.
 
 ## First use
 
-Choose the installation guide for your current environment:
+Start with one device, connect your AI, and get work done:
+
+1. Choose the installation guide for your current environment:
 
 | Current environment | Recommended guide |
 | --- | --- |
@@ -20,7 +25,8 @@ Choose the installation guide for your current environment:
 | Linux server or desktop | [Linux installation](./getting-started/linux.md) |
 | Docker already installed | [Docker installation](./getting-started/docker.md) |
 
-After installation, add the MCP URL and token shown in the guide to your client using **Streamable HTTP**.
+2. Pair the device with [NexusDock](./concepts/nexusdock.md) (`https://mcp.nexusdock.co` or self-hosted) for remote and multi-device access, or connect directly over local/public **Streamable HTTP** MCP.
+3. Connect your AI client manually with [Connect from different clients](./guides/mcp-clients.md), or hand setup to your assistant with [Let your AI connect NexusDock](./guides/ai-connect.md).
 
 ## What can it do?
 
@@ -50,8 +56,10 @@ Docker stores both categories in Docker volumes by default. Removing the program
 
 ## Common entry points
 
+- [Let your AI connect NexusDock](./guides/ai-connect.md)
 - [Connect from different clients](./guides/mcp-clients.md)
 - [Connect with ChatGPT](./guides/chatgpt.md)
+- [Everyday use with NexusDock](./guides/using-nexusdock.md)
 - [Use Skills](./concepts/skills.md)
 - [Use Plugins](./concepts/plugins.md)
 - [Tasks and progress](./concepts/tasks.md)
@@ -59,5 +67,6 @@ Docker stores both categories in Docker volumes by default. Removing the program
 - [Use a local Coding Agent](./guides/coding-agents.md)
 - [Connect external MCP servers](./concepts/dynamic-mcp.md)
 - [Use NexusDock for multiple AgentDock devices](./concepts/nexusdock.md)
+- [NexusDock REST API](./reference/api.md)
 - [Complete configuration reference](./reference/configuration.md)
 - [Troubleshooting](./operations/troubleshooting.md)

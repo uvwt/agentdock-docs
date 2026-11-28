@@ -8,6 +8,10 @@ https://agentdock.example.com/mcp
 
 Replace it with your **NexusDock Cloud** URL (`https://mcp.nexusdock.co/mcp`), your self-hosted NexusDock `/mcp` URL, or your direct AgentDock MCP URL.
 
+:::tip[Want your AI assistant to configure this for you?]
+If you are connecting to **NexusDock Cloud** and your AI client supports managing native MCP connections, see [Let your AI connect NexusDock](./ai-connect.md).
+:::
+
 :::note
 Menu names, plan restrictions, and workspace policies may change between client releases. This page uses common current labels. When an entry is not visible, search settings for `MCP`, `Plugins`, or `Connectors`.
 :::

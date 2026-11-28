@@ -16,6 +16,15 @@ When reporting a problem, include the installation method, operating system, Age
 
 Reconnect or refresh the MCP client and start a new session to clear cached tool schemas. Confirm authentication, then verify one real MCP connection instead of relying only on `/healthz`. When connecting through NexusDock, if a node's live tool is missing from the cached catalog or returns `TOOL_CONTRACT_MISMATCH`, you can use `node_tool_search` and `node_tool_call` as a compatibility fallback.
 
+## NexusDock pairing and remote access
+
+- **Pairing code does not work:** Pairing codes are 6 digits, valid for 5 minutes, and single-use. If a code has expired or was already submitted, generate a new one in NexusDock and pair again.
+- **Device never appears or shows offline:** Confirm AgentDock is running on the target computer, the computer is awake, and the NexusDock service address is `https://mcp.nexusdock.co/` (or your self-hosted NexusDock HTTPS origin). Refresh the **Devices** page after reconnecting.
+- **OAuth authorization failed or cancelled:** Restart the connection from the AI client and confirm you are signed in to the intended NexusDock account. If the client was previously authorized, revoke it in NexusDock settings and connect again.
+- **MCP access token stopped working:** Resetting the MCP access token immediately invalidates the old token. Update every client that used the old token with the new value (shown once).
+
+If NexusDock displays a request ID alongside an error, include that request ID when asking for help—never share access tokens, OAuth credentials, cookies, pairing codes, device tokens, private keys, or sensitive Recall content.
+
 ## 401 Unauthorized
 
 Check that the client sends the current Bearer Token or completes OAuth. If a reverse proxy is used, make sure it preserves the `Authorization` header.

@@ -29,7 +29,7 @@
 
 ## 安装完成后
 
-如果使用 **NexusDock**（远程客户端和网页版 ChatGPT 推荐），在控制面板（或通过 `agentdock nexus pair`）完成设备配对后，直接将客户端连接到 `https://mcp.nexusdock.co/mcp`（或你的自托管 NexusDock 地址）。详见 [连接 AgentDock](../operations/nexusdock-connect.md)。
+如果使用 **NexusDock**（远程客户端和网页版 ChatGPT 推荐），先登录 `https://mcp.nexusdock.co`（或你的自托管 NexusDock），在 **设备** 中创建 6 位一次性配对码（有效期 5 分钟），在 AgentDock 控制面板（或通过 `agentdock nexus pair`）填入完成配对，确认设备显示为 **在线** 后，再把客户端连接到 `https://mcp.nexusdock.co/mcp`（或你的自托管 NexusDock 地址）。详见 [连接 AgentDock](../operations/nexusdock-connect.md)。
 
 如果直连本机或自建公网 MCP 地址，从控制面板或终端取得：
 
@@ -48,4 +48,9 @@ Bearer Token 或 OAuth 登录信息
 第一次使用只需要完成对应系统页面中的编号步骤。自定义端口、自动化参数和手动服务管理都可以以后再看。
 :::
 
-想用网页版 ChatGPT 操控本机（通过 NexusDock 或直连公网地址均可），请继续阅读 [使用 ChatGPT 连接](../guides/chatgpt.md)。
+设备上线后的下一步：
+
+- [让 AI 帮你连接 NexusDock](../guides/ai-connect.md)（兼容 AI 助手推荐）
+- [在不同客户端中连接](../guides/mcp-clients.md)
+- [使用 ChatGPT 连接](../guides/chatgpt.md)
+- [日常使用 NexusDock](../guides/using-nexusdock.md)
