@@ -1,6 +1,7 @@
 import type {ReactNode} from 'react';
 import Link from '@docusaurus/Link';
 import Translate, {translate} from '@docusaurus/Translate';
+import useBaseUrl from '@docusaurus/useBaseUrl';
 import Heading from '@theme/Heading';
 import styles from './styles.module.css';
 
@@ -93,6 +94,8 @@ function Feature({label, title, description, to}: FeatureItem): ReactNode {
 
 
 function NexusDockPreview(): ReactNode {
+  const brandIconUrl = useBaseUrl('/img/nexusdock-icon.png');
+
   return (
     <div className={styles.nexusPreview} aria-hidden="true">
       <div className={styles.nexusPreviewHeader}>
@@ -101,7 +104,9 @@ function NexusDockPreview(): ReactNode {
       </div>
       <div className={styles.nexusHub}>
         <div className={styles.nexusHubCore}>
-          <span className={styles.nexusHubMark}>N</span>
+          <span className={styles.nexusHubMark}>
+            <img src={brandIconUrl} alt="" width={28} height={28} />
+          </span>
           <div>
             <strong>NexusDock</strong>
             <span>ONE MCP ENDPOINT</span>

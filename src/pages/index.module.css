@@ -13,8 +13,9 @@
   background:
     linear-gradient(var(--site-grid) 1px, transparent 1px),
     linear-gradient(90deg, var(--site-grid) 1px, transparent 1px),
-    radial-gradient(circle at 78% 20%, rgba(99, 91, 255, 0.14), transparent 34%);
-  background-size: 56px 56px, 56px 56px, auto;
+    radial-gradient(circle at 78% 20%, var(--site-accent-glow), transparent 38%),
+    radial-gradient(circle at 12% 84%, var(--site-accent-ring), transparent 32%);
+  background-size: 56px 56px, 56px 56px, auto, auto;
   mask-image: linear-gradient(to bottom, black 0%, transparent 82%);
 }
 
@@ -47,7 +48,7 @@
   height: 7px;
   border-radius: 999px;
   background: var(--ifm-color-primary);
-  box-shadow: 0 0 0 5px rgba(99, 91, 255, 0.1);
+  box-shadow: 0 0 0 5px var(--site-accent-ring);
 }
 
 .heroTitle {
@@ -63,7 +64,7 @@
 .heroTitle span {
   display: block;
   color: transparent;
-  background: linear-gradient(105deg, var(--ifm-color-primary) 0%, #8b7cff 48%, #5f8cff 100%);
+  background: var(--site-hero-gradient);
   background-clip: text;
   -webkit-background-clip: text;
 }
@@ -91,7 +92,7 @@
   justify-content: center;
   gap: 0.65rem;
   padding: 0.72rem 1.1rem;
-  border-radius: 9px;
+  border-radius: var(--ifm-global-radius);
   font-size: 0.92rem;
   font-weight: 650;
   text-decoration: none;
@@ -99,17 +100,18 @@
 }
 
 .primaryAction {
-  color: white;
+  color: var(--site-accent-fg);
   border: 1px solid var(--ifm-color-primary);
   background: var(--ifm-color-primary);
-  box-shadow: 0 10px 28px rgba(99, 91, 255, 0.2);
+  box-shadow: 0 8px 22px var(--site-accent-shadow);
 }
 
 .primaryAction:hover {
-  color: white;
+  color: var(--site-accent-fg);
   text-decoration: none;
   transform: translateY(-1px);
-  background: var(--ifm-color-primary-dark);
+  border-color: var(--site-accent-hover);
+  background: var(--site-accent-hover);
 }
 
 .secondaryAction {
@@ -120,7 +122,8 @@
 
 .secondaryAction:hover {
   color: var(--site-heading);
-  border-color: var(--site-muted-strong);
+  border-color: var(--site-accent-border);
+  background: var(--site-surface-hover);
   text-decoration: none;
   transform: translateY(-1px);
 }
@@ -162,7 +165,7 @@
   position: absolute;
   inset: 8% 5% -8% 5%;
   border-radius: 40px;
-  background: rgba(99, 91, 255, 0.18);
+  background: var(--site-accent-glow-strong);
   filter: blur(54px);
 }
 
@@ -170,7 +173,7 @@
   position: relative;
   overflow: hidden;
   border: 1px solid var(--site-border-strong);
-  border-radius: 16px;
+  border-radius: 14px;
   background: color-mix(in srgb, var(--site-surface) 92%, transparent);
   box-shadow: var(--site-shadow-lg);
   backdrop-filter: blur(18px);
@@ -219,8 +222,8 @@
   width: 6px;
   height: 6px;
   border-radius: 999px;
-  background: #22c55e;
-  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.1);
+  background: var(--site-success);
+  box-shadow: 0 0 0 4px var(--site-success-soft);
 }
 
 .previewBody {
@@ -278,15 +281,16 @@
   min-height: 46px;
   padding: 0.58rem 0.72rem;
   border: 1px solid var(--site-border);
-  border-radius: 9px;
+  border-radius: var(--ifm-global-radius);
   color: var(--site-muted-strong);
   background: var(--site-surface-muted);
   font-size: 0.8rem;
 }
 
 .stepCurrent {
-  border-color: color-mix(in srgb, var(--ifm-color-primary) 30%, var(--site-border));
-  background: color-mix(in srgb, var(--ifm-color-primary) 5%, var(--site-surface));
+  border-color: var(--site-accent-border);
+  background: var(--site-accent-soft);
+  color: var(--site-heading);
 }
 
 .stepIcon,
@@ -299,8 +303,8 @@
 }
 
 .stepIcon {
-  color: #16a34a;
-  background: rgba(34, 197, 94, 0.1);
+  color: var(--site-success);
+  background: var(--site-success-soft);
   font-size: 0.7rem;
   font-weight: 800;
 }
@@ -311,7 +315,7 @@
   height: 8px;
   justify-self: center;
   background: var(--ifm-color-primary);
-  box-shadow: 0 0 0 5px rgba(99, 91, 255, 0.1);
+  box-shadow: 0 0 0 5px var(--site-accent-ring);
 }
 
 .stepDone code,
@@ -375,7 +379,7 @@
   }
 
   .heroBackdrop {
-    background-size: 36px 36px, 36px 36px, auto;
+    background-size: 36px 36px, 36px 36px, auto, auto;
   }
 
   .heroTitle {
