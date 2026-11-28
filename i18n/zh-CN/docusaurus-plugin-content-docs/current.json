@@ -7,64 +7,64 @@
     "message": "安装",
     "description": "The label for category 'Installation' in sidebar 'docsSidebar'"
   },
-  "sidebar.docsSidebar.category.Connect clients": {
-    "message": "连接客户端",
-    "description": "The label for category 'Connect clients' in sidebar 'docsSidebar'"
+  "sidebar.docsSidebar.category.Connect AI": {
+    "message": "连接 AI 客户端",
+    "description": "The label for category 'Connect AI' in sidebar 'docsSidebar'"
   },
-  "sidebar.docsSidebar.category.Connect clients.link.generated-index.title": {
-    "message": "连接客户端",
-    "description": "The generated-index page title for category 'Connect clients' in sidebar 'docsSidebar'"
+  "sidebar.docsSidebar.category.Connect AI.link.generated-index.title": {
+    "message": "连接 AI 客户端",
+    "description": "The generated-index page title for category 'Connect AI' in sidebar 'docsSidebar'"
   },
-  "sidebar.docsSidebar.category.Connect clients.link.generated-index.description": {
-    "message": "把 AgentDock 连接到 ChatGPT、Claude、Cursor、VS Code 等 MCP 客户端。",
-    "description": "The generated-index page description for category 'Connect clients' in sidebar 'docsSidebar'"
+  "sidebar.docsSidebar.category.Connect AI.link.generated-index.description": {
+    "message": "让 AI 助手自动完成 NexusDock 接入，或手动连接 ChatGPT、Claude、Cursor、VS Code 等 MCP 客户端。",
+    "description": "The generated-index page description for category 'Connect AI' in sidebar 'docsSidebar'"
   },
-  "sidebar.docsSidebar.category.Capabilities": {
-    "message": "核心能力",
-    "description": "The label for category 'Capabilities' in sidebar 'docsSidebar'"
+  "sidebar.docsSidebar.category.Everyday Use & Capabilities": {
+    "message": "日常使用与核心能力",
+    "description": "The label for category 'Everyday Use & Capabilities' in sidebar 'docsSidebar'"
   },
-  "sidebar.docsSidebar.category.Capabilities.link.generated-index.title": {
-    "message": "核心能力",
-    "description": "The generated-index page title for category 'Capabilities' in sidebar 'docsSidebar'"
+  "sidebar.docsSidebar.category.Everyday Use & Capabilities.link.generated-index.title": {
+    "message": "日常使用与核心能力",
+    "description": "The generated-index page title for category 'Everyday Use & Capabilities' in sidebar 'docsSidebar'"
   },
-  "sidebar.docsSidebar.category.Capabilities.link.generated-index.description": {
-    "message": "使用 Skill 与 Plugin 扩展 AgentDock，跟踪任务、操作浏览器并连接外部工具。",
-    "description": "The generated-index page description for category 'Capabilities' in sidebar 'docsSidebar'"
+  "sidebar.docsSidebar.category.Everyday Use & Capabilities.link.generated-index.description": {
+    "message": "在日常工作中管理 NexusDock 设备、Recall 记忆与 Workflow，并用 Skill、Plugin、浏览器自动化、Coding Agent 和任务扩展能力。",
+    "description": "The generated-index page description for category 'Everyday Use & Capabilities' in sidebar 'docsSidebar'"
   },
-  "sidebar.docsSidebar.category.NexusDock": {
-    "message": "NexusDock",
-    "description": "The label for category 'NexusDock' in sidebar 'docsSidebar'"
+  "sidebar.docsSidebar.category.NexusDock Platform": {
+    "message": "NexusDock 平台",
+    "description": "The label for category 'NexusDock Platform' in sidebar 'docsSidebar'"
   },
-  "sidebar.docsSidebar.category.NexusDock.link.generated-index.title": {
-    "message": "NexusDock",
-    "description": "The generated-index page title for category 'NexusDock' in sidebar 'docsSidebar'"
+  "sidebar.docsSidebar.category.NexusDock Platform.link.generated-index.title": {
+    "message": "NexusDock 平台",
+    "description": "The generated-index page title for category 'NexusDock Platform' in sidebar 'docsSidebar'"
   },
-  "sidebar.docsSidebar.category.NexusDock.link.generated-index.description": {
-    "message": "连接多台 AgentDock 设备，并共享 Recall 记忆和 Workflow 工作流数据。",
-    "description": "The generated-index page description for category 'NexusDock' in sidebar 'docsSidebar'"
+  "sidebar.docsSidebar.category.NexusDock Platform.link.generated-index.description": {
+    "message": "通过 NexusDock Cloud 或自托管 NexusDock 统一管理多台 AgentDock 设备，并共享 Recall 记忆和 Workflow 工作流。",
+    "description": "The generated-index page description for category 'NexusDock Platform' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.Operations": {
-    "message": "运维",
+    "message": "运维与排障",
     "description": "The label for category 'Operations' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.Operations.link.generated-index.title": {
-    "message": "运维",
+    "message": "运维与排障",
     "description": "The generated-index page title for category 'Operations' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.Operations.link.generated-index.description": {
-    "message": "配置各平台、公网访问、手动部署、安全边界和故障排查。",
+    "message": "管理桌面端、Linux、Docker、公网访问与常见故障排查。",
     "description": "The generated-index page description for category 'Operations' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.Reference": {
-    "message": "参考",
+    "message": "参考与 API",
     "description": "The label for category 'Reference' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.Reference.link.generated-index.title": {
-    "message": "参考",
+    "message": "参考与 API",
     "description": "The generated-index page title for category 'Reference' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.Reference.link.generated-index.description": {
-    "message": "查看运行配置和内置工具目录。",
+    "message": "查看运行配置、内置工具目录以及 NexusDock Cloud REST API 入口。",
     "description": "The generated-index page description for category 'Reference' in sidebar 'docsSidebar'"
   },
   "sidebar.docsSidebar.category.Developers": {

@@ -1,14 +1,14 @@
-# AgentDock Docs
+# NexusDock Docs
 
 English | [简体中文](./README.zh-CN.md)
 
-Official public documentation for AgentDock, built with Docusaurus, TypeScript, and pnpm.
+Official public documentation for NexusDock and AgentDock, built with Docusaurus, TypeScript, and pnpm.
 
-- Documentation: <https://docs.nexusdock.co/agentdock/>
-- Simplified Chinese documentation: <https://docs.nexusdock.co/agentdock/zh-CN/>
+- Documentation: <https://docs.nexusdock.co/>
+- Simplified Chinese documentation: <https://docs.nexusdock.co/zh-CN/>
 - AgentDock source: <https://github.com/uvwt/agentdock>
 
-This repository is the source of truth for installation, configuration, concepts, operations, and troubleshooting. The AgentDock source repository README keeps only the project overview and shortest onboarding path.
+This repository is the source of truth for installation, client connections, everyday NexusDock usage, configuration, concepts, operations, API entry points, and troubleshooting. The AgentDock source repository README keeps only the project overview and shortest onboarding path.
 
 ## Local development
 
@@ -26,7 +26,7 @@ pnpm start -- --locale zh-CN
 The local development server runs at:
 
 ```text
-http://localhost:3000/agentdock/
+http://localhost:3000/
 ```
 
 ## Quality checks

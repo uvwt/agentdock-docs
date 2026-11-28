@@ -30,9 +30,11 @@ For scripts, services, and automation workflows that call devices outside an MCP
 
 - Live REST API reference: [https://mcp.nexusdock.co/docs/api](https://mcp.nexusdock.co/docs/api)
 - Official REST integration Skill: [`nexusdock-rest`](https://github.com/uvwt/agentdock-skills/tree/main/skills/nexusdock-rest)
+- API overview and machine-readable entry points: [NexusDock REST API](../reference/api.md)
 
 ## Next steps
 
+- [Everyday use with NexusDock](../guides/using-nexusdock.md)
 - [Connect AgentDock](../operations/nexusdock-connect.md)
 - [Install and maintain self-hosted NexusDock](../operations/nexusdock.md)
 - [Recall memory](./recalldock.md)

@@ -48,3 +48,5 @@ AgentDock can use existing Recall content to carry useful context into later tas
 ## Task progress and Recall
 
 NexusDock Recall stores long-term knowledge. The task system stores current execution progress. Connecting NexusDock does not automatically make a task resumable on another device.
+
+For everyday device, memory, and workflow habits in NexusDock, see [Everyday use with NexusDock](../guides/using-nexusdock.md).

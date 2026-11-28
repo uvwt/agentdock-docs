@@ -19,23 +19,28 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
-      label: 'Connect clients',
+      label: 'Connect AI',
       link: {
         type: 'generated-index',
-        title: 'Connect clients',
-        description: 'Connect AgentDock to ChatGPT, Claude, Cursor, VS Code, and other MCP clients.',
+        title: 'Connect AI',
+        slug: '/category/connect-ai',
+        description:
+          'Let your AI assistant configure NexusDock automatically, or connect ChatGPT, Claude, Cursor, VS Code, and other MCP clients manually.',
       },
-      items: ['guides/mcp-clients', 'guides/chatgpt'],
+      items: ['guides/ai-connect', 'guides/mcp-clients', 'guides/chatgpt'],
     },
     {
       type: 'category',
-      label: 'Capabilities',
+      label: 'Everyday Use & Capabilities',
       link: {
         type: 'generated-index',
-        title: 'Capabilities',
-        description: 'Extend AgentDock with Skills and Plugins, track tasks, use browsers, and connect external tools.',
+        title: 'Everyday Use & Capabilities',
+        slug: '/category/capabilities',
+        description:
+          'Use NexusDock devices, Recall memory, and Workflows every day, and extend AgentDock with Skills, Plugins, browser automation, Coding Agents, and tasks.',
       },
       items: [
+        'guides/using-nexusdock',
         'concepts/skills',
         'concepts/dynamic-mcp',
         'concepts/plugins',
@@ -46,16 +51,18 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
-      label: 'NexusDock',
+      label: 'NexusDock Platform',
       link: {
         type: 'generated-index',
-        title: 'NexusDock',
-        description: 'Connect multiple AgentDock devices and share Recall memory and Workflow data.',
+        title: 'NexusDock Platform',
+        slug: '/category/nexusdock',
+        description:
+          'Connect multiple AgentDock devices via NexusDock Cloud or self-hosted NexusDock, and share Recall memory and Workflow data.',
       },
       items: [
         'concepts/nexusdock',
-        'operations/nexusdock',
         'operations/nexusdock-connect',
+        'operations/nexusdock',
         'concepts/recalldock',
         'concepts/workflow',
       ],
@@ -66,6 +73,7 @@ const sidebars: SidebarsConfig = {
       link: {
         type: 'generated-index',
         title: 'Operations',
+        slug: '/category/operations',
         description:
           'Manage desktop, Linux, Docker, public access, and troubleshooting.',
       },
@@ -83,9 +91,11 @@ const sidebars: SidebarsConfig = {
       link: {
         type: 'generated-index',
         title: 'Reference',
-        description: 'Review runtime configuration and the built-in tool catalog.',
+        slug: '/category/reference',
+        description:
+          'Review runtime configuration, the built-in tool catalog, and NexusDock Cloud REST API entry points.',
       },
-      items: ['reference/configuration', 'reference/tools'],
+      items: ['reference/configuration', 'reference/tools', 'reference/api'],
     },
     {
       type: 'category',

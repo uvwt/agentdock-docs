@@ -15,63 +15,63 @@ function getFeatures(): FeatureItem[] {
   return [
     {
       label: 'START',
-      title: translate({id: 'homepage.features.install.title', message: 'Install and connect'}),
+      title: translate({id: 'homepage.features.install.title', message: 'Install and pair a device'}),
       description: translate({
         id: 'homepage.features.install.description',
         message:
-          'Follow the macOS, Windows, Linux, or Docker guide, then add the MCP URL to your client.',
+          'Install AgentDock on macOS, Windows, Linux, or Docker, then pair with NexusDock Cloud or connect directly.',
       }),
       to: '/docs/getting-started/install',
     },
     {
-      label: 'WORK',
-      title: translate({id: 'homepage.features.files.title', message: 'Work with files and code'}),
+      label: 'AI SETUP',
+      title: translate({id: 'homepage.features.files.title', message: 'Let AI connect NexusDock'}),
       description: translate({
         id: 'homepage.features.files.description',
         message:
-          'Let the agent read projects, run commands, edit files, and operate Git, then verify the real result.',
+          'Copy one prompt to your AI assistant so it can configure native Remote MCP with OAuth and verify tools for you.',
+      }),
+      to: '/docs/guides/ai-connect',
+    },
+    {
+      label: 'CLIENTS',
+      title: translate({id: 'homepage.features.skills.title', message: 'Connect AI clients'}),
+      description: translate({
+        id: 'homepage.features.skills.description',
+        message:
+          'Step-by-step setup for ChatGPT, Claude Desktop, Claude Code, Cursor, VS Code, Codex, and other MCP clients.',
+      }),
+      to: '/docs/guides/mcp-clients',
+    },
+    {
+      label: 'EVERYDAY',
+      title: translate({id: 'homepage.features.browser.title', message: 'Devices, memory & workflows'}),
+      description: translate({
+        id: 'homepage.features.browser.description',
+        message:
+          'Organize online devices, keep long-term context in Recall, and reuse proven Workflows across conversations.',
+      }),
+      to: '/docs/guides/using-nexusdock',
+    },
+    {
+      label: 'CAPABILITIES',
+      title: translate({id: 'homepage.features.mcp.title', message: 'Tools, Skills & Browser'}),
+      description: translate({
+        id: 'homepage.features.mcp.description',
+        message:
+          'Work with files, commands, Git, browser automation, Skills, Plugins, dynamic MCP servers, and recoverable tasks.',
       }),
       to: '/docs/reference/tools',
     },
     {
-      label: 'SKILLS',
-      title: translate({id: 'homepage.features.skills.title', message: 'Use Skills'}),
-      description: translate({
-        id: 'homepage.features.skills.description',
-        message:
-          'Install trusted Skills and Plugins to add reusable workflows and related tools when you need them.',
-      }),
-      to: '/docs/concepts/skills',
-    },
-    {
-      label: 'BROWSER',
-      title: translate({id: 'homepage.features.browser.title', message: 'Operate a browser'}),
-      description: translate({
-        id: 'homepage.features.browser.description',
-        message:
-          'Open pages, click, type, and capture screenshots while checking page, console, and network errors.',
-      }),
-      to: '/docs/guides/browser-control',
-    },
-    {
-      label: 'MCP',
-      title: translate({id: 'homepage.features.mcp.title', message: 'Connect external services'}),
-      description: translate({
-        id: 'homepage.features.mcp.description',
-        message:
-          'Connect other MCP services as needed, with credentials kept in isolated environments.',
-      }),
-      to: '/docs/concepts/dynamic-mcp',
-    },
-    {
-      label: 'TASKS',
-      title: translate({id: 'homepage.features.tasks.title', message: 'Track complex tasks'}),
+      label: 'API',
+      title: translate({id: 'homepage.features.tasks.title', message: 'NexusDock REST API'}),
       description: translate({
         id: 'homepage.features.tasks.description',
         message:
-          'Save goals, steps, progress, and verification so longer work can continue after an interruption.',
+          'Integrate scripts, services, and automation via OAuth Device Flow or Bearer tokens with OpenAPI and live docs.',
       }),
-      to: '/docs/concepts/tasks',
+      to: '/docs/reference/api',
     },
   ];
 }
@@ -133,13 +133,13 @@ export default function HomepageFeatures(): ReactNode {
             <div>
               <span className={styles.kicker}>WHAT YOU CAN DO</span>
               <Heading as="h2">
-                <Translate id="homepage.features.heading">From installation to real work</Translate>
+                <Translate id="homepage.features.heading">Everything in one documentation hub</Translate>
               </Heading>
             </div>
             <p>
               <Translate id="homepage.features.summary">
-                Start with installation, then add Skills, Plugins, browser automation, external
-                MCP services, and recoverable tasks only when you need them.
+                Start by installing AgentDock and connecting your AI client, then explore everyday
+                NexusDock workflows, Skills, browser automation, operations, and REST APIs.
               </Translate>
             </p>
           </div>

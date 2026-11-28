@@ -1,6 +1,6 @@
 {
   "homepage.runtimePreview.ariaLabel": {
-    "message": "AgentDock 任务执行预览"
+    "message": "NexusDock 与 AgentDock 任务执行预览"
   },
   "homepage.runtimePreview.taskTitle": {
     "message": "更新项目并完成验证"
@@ -24,82 +24,82 @@
     "message": "随时可恢复 →"
   },
   "homepage.hero.titleLine1": {
-    "message": "让 Agent"
+    "message": "让你的 AI"
   },
   "homepage.hero.titleLine2": {
-    "message": "真正完成工作"
+    "message": "操作真实设备"
   },
   "homepage.hero.subtitle": {
-    "message": "把支持 MCP 的 AI 客户端连接到你的电脑或服务器，让它可以操作文件、执行命令、使用 Git 和浏览器，并连接其他服务。"
+    "message": "NexusDock Cloud 与 AgentDock 官方统一文档中心：在 Mac、Windows、Linux 或 Docker 上安装，接入 ChatGPT、Claude、Cursor 等远程 MCP 客户端，并共享长期记忆与可复用工作流。"
   },
   "homepage.hero.chooseInstall": {
-    "message": "选择安装方式"
+    "message": "开始使用"
   },
   "homepage.hero.exploreFeatures": {
-    "message": "了解功能"
+    "message": "让 AI 帮我连接"
   },
   "homepage.hero.builtInTools": {
-    "message": "实用工具"
+    "message": "统一远程 MCP"
   },
   "homepage.hero.recoverable": {
-    "message": "可恢复"
+    "message": "AgentDock"
   },
   "homepage.hero.taskState": {
-    "message": "任务状态"
+    "message": "多平台设备端"
   },
   "homepage.hero.crossPlatform": {
-    "message": "跨平台"
+    "message": "记忆与工作流"
   },
   "homepage.hero.localAndRemote": {
-    "message": "本机与服务器"
+    "message": "跨设备共享"
   },
   "homepage.meta.title": {
-    "message": "AgentDock 文档"
+    "message": "NexusDock 文档中心"
   },
   "homepage.meta.description": {
-    "message": "AgentDock 官方文档：安装、连接客户端、使用 Skill、Plugin、浏览器和外部 MCP 服务。"
+    "message": "NexusDock Cloud 与 AgentDock 官方统一文档中心：设备安装、AI 客户端接入、Recall 长期记忆、Workflow 工作流、内置工具与 REST API。"
   },
   "homepage.features.install.title": {
-    "message": "安装并连接"
+    "message": "安装并配对设备"
   },
   "homepage.features.install.description": {
-    "message": "按 macOS、Windows、Linux 或 Docker 指南完成安装，并把 MCP 地址填入客户端。"
+    "message": "在 macOS、Windows、Linux 或 Docker 上安装 AgentDock，随后配对 NexusDock Cloud 或直连使用。"
   },
   "homepage.features.files.title": {
-    "message": "处理文件和代码"
+    "message": "让 AI 帮你连接 NexusDock"
   },
   "homepage.features.files.description": {
-    "message": "让 Agent 读取项目、执行命令、修改文件并操作 Git，完成后提供真实验证。"
+    "message": "复制一段提示词发给 AI 助手，由它自动配置原生远程 MCP、发起 OAuth 授权并验证工具。"
   },
   "homepage.features.skills.title": {
-    "message": "使用 Skill"
+    "message": "连接 AI 客户端"
   },
   "homepage.features.skills.description": {
-    "message": "按需安装可信 Skill 和 Plugin，为 Agent 增加可复用的工作方法与相关工具。"
+    "message": "覆盖 ChatGPT、Claude Desktop、Claude Code、Cursor、VS Code、Codex 等客户端的完整接入指引。"
   },
   "homepage.features.browser.title": {
-    "message": "操作浏览器"
+    "message": "设备、记忆与工作流"
   },
   "homepage.features.browser.description": {
-    "message": "打开网页、点击、输入、截图，并同时检查页面、控制台和网络错误。"
+    "message": "管理在线设备、在 Recall 中沉淀跨对话长期记忆，并在日常工作中复用已验证的工作流。"
   },
   "homepage.features.mcp.title": {
-    "message": "连接外部服务"
+    "message": "工具、Skill 与浏览器"
   },
   "homepage.features.mcp.description": {
-    "message": "按需连接其他 MCP 服务，凭据保存在独立环境中。"
+    "message": "操作文件、命令、Git、浏览器自动化、Skill、Plugin、动态 MCP 服务以及可恢复的长任务。"
   },
   "homepage.features.tasks.title": {
-    "message": "跟踪复杂任务"
+    "message": "NexusDock REST API"
   },
   "homepage.features.tasks.description": {
-    "message": "保存目标、步骤、进度和验证结果，让较长任务在中断后继续。"
+    "message": "通过 OAuth Device Flow 或 Bearer Token 对接脚本与后端自动化，并提供 OpenAPI 与在线交互文档。"
   },
   "homepage.features.heading": {
-    "message": "从安装到完成真实任务"
+    "message": "一个文档中心，覆盖完整链路"
   },
   "homepage.features.summary": {
-    "message": "先完成安装，再按需要启用 Skill、Plugin、浏览器自动化、外部 MCP 和可恢复任务。"
+    "message": "从安装 AgentDock、连接 AI 客户端开始，到日常使用 NexusDock、扩展能力、运维排障与开发者 API。"
   },
   "theme.ErrorPageContent.title": {
     "message": "页面已崩溃。",
@@ -429,7 +429,7 @@
     "description": "The title of the tag list page"
   },
   "homepage.hero.builtIn": {
-    "message": "内置"
+    "message": "NexusDock"
   },
   "homepage.nexus.heading": {
     "message": "一个 MCP，连接多台设备"

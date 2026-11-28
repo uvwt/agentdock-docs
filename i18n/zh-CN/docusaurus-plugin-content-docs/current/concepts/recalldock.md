@@ -48,3 +48,5 @@ AgentDock 会利用已有 Recall 内容帮助后续任务继续使用这些信�
 ## 与任务进度的区别
 
 NexusDock Recall 保存长期知识；任务系统保存当前执行进度。任务状态不会因为接入 NexusDock 就自动跨设备继续。
+
+关于在 NexusDock 中结合设备、记忆与工作流的日常实践，见 [日常使用 NexusDock](../guides/using-nexusdock.md)。

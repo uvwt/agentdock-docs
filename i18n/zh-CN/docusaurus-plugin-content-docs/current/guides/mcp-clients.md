@@ -8,6 +8,10 @@ https://agentdock.example.com/mcp
 
 请将其替换为 **NexusDock Cloud** 地址（`https://mcp.nexusdock.co/mcp`）、自托管 NexusDock `/mcp` 地址，或单台 AgentDock 的直连 MCP 地址。
 
+:::tip[想让 AI 助手帮你自动配置？]
+如果你要连接 **NexusDock Cloud** 且当前 AI 客户端支持管理原生 MCP 连接，请查看 [让 AI 帮你连接 NexusDock](./ai-connect.md)。
+:::
+
 :::note
 不同客户端的菜单名称、套餐限制和管理员策略可能调整。本文使用当前常见界面名称；找不到对应入口时，可在设置中搜索 `MCP`、`插件` 或 `Connectors`。
 :::

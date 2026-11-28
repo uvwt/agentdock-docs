@@ -64,7 +64,10 @@ function getBrowserLanguages() {
 }
 
 function getLocaleTarget(locale) {
-  const localeLink = document.querySelector(`a.dropdown__link[lang="${locale}"]`);
+  // 同时兼容桌面端下拉菜单与移动端侧栏菜单中的语言切换链接。
+  const localeLink = document.querySelector(
+    `a.dropdown__link[lang="${locale}"], a.menu__link[lang="${locale}"]`,
+  );
   if (!(localeLink instanceof HTMLAnchorElement)) {
     return null;
   }
@@ -95,7 +98,7 @@ function installLocaleClickListener() {
         return;
       }
 
-      const localeLink = event.target.closest('a.dropdown__link[lang]');
+      const localeLink = event.target.closest('a.dropdown__link[lang], a.menu__link[lang]');
       if (!localeLink) {
         return;
       }

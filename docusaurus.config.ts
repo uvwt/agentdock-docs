@@ -17,11 +17,11 @@ const algolia =
     : undefined;
 
 const config: Config = {
-  title: 'AgentDock',
-  tagline: 'Connect AI agents to tools on your computers and servers',
+  title: 'NexusDock Docs',
+  tagline: 'Unified documentation for NexusDock Cloud and AgentDock',
   favicon: 'img/favicon.svg',
   url: 'https://docs.nexusdock.co',
-  baseUrl: '/agentdock/',
+  baseUrl: '/',
   organizationName: 'uvwt',
   projectName: 'agentdock-docs',
   trailingSlash: false,
@@ -69,36 +69,46 @@ const config: Config = {
       {
         name: 'keywords',
         content:
-          'AgentDock, AI agent runtime, MCP server, Model Context Protocol, self-hosted, remote execution, automation, documentation',
+          'NexusDock, NexusDock Cloud, AgentDock, AI agent runtime, Remote MCP, Model Context Protocol, Recall memory, Workflow, REST API, self-hosted, documentation',
       },
     ],
     colorMode: {
       respectPrefersColorScheme: true,
     },
     navbar: {
-      title: 'AgentDock',
+      title: 'NexusDock Docs',
       hideOnScroll: false,
       items: [
         {
           type: 'docSidebar',
           sidebarId: 'docsSidebar',
           position: 'left',
-          label: 'Documentation',
+          label: 'Docs',
         },
         {
-          to: '/docs/reference/configuration',
-          label: 'Configuration',
+          to: '/docs/guides/mcp-clients',
+          label: 'Connect AI',
           position: 'left',
         },
         {
-          to: '/docs/reference/tools',
-          label: 'Tools',
+          to: '/docs/category/reference',
+          label: 'Reference',
           position: 'left',
         },
         {
-          to: '/docs/concepts/nexusdock',
-          label: 'NexusDock',
+          href: 'https://mcp.nexusdock.co/docs/api',
+          label: 'REST API',
           position: 'left',
+        },
+        {
+          href: 'https://www.nexusdock.co',
+          label: 'Website',
+          position: 'right',
+        },
+        {
+          href: 'https://mcp.nexusdock.co',
+          label: 'Cloud',
+          position: 'right',
         },
         {
           type: 'localeDropdown',
@@ -117,23 +127,25 @@ const config: Config = {
         {
           title: 'Documentation',
           items: [
+            {label: 'Introduction', to: '/docs/intro'},
             {label: 'Install AgentDock', to: '/docs/getting-started/install'},
+            {label: 'Let AI connect NexusDock', to: '/docs/guides/ai-connect'},
+            {label: 'Everyday use', to: '/docs/guides/using-nexusdock'},
+          ],
+        },
+        {
+          title: 'Reference',
+          items: [
+            {label: 'Connect clients', to: '/docs/guides/mcp-clients'},
             {label: 'Configuration', to: '/docs/reference/configuration'},
             {label: 'Tools', to: '/docs/reference/tools'},
+            {label: 'REST API overview', to: '/docs/reference/api'},
           ],
         },
         {
-          title: 'Capabilities',
+          title: 'NexusDock',
           items: [
-            {label: 'Skills', to: '/docs/concepts/skills'},
-            {label: 'Plugins', to: '/docs/concepts/plugins'},
-            {label: 'Dynamic MCP', to: '/docs/concepts/dynamic-mcp'},
-            {label: 'Recoverable tasks', to: '/docs/concepts/tasks'},
-          ],
-        },
-        {
-          title: 'Project',
-          items: [
+            {label: 'Website', href: 'https://www.nexusdock.co'},
             {label: 'NexusDock Cloud', href: 'https://mcp.nexusdock.co'},
             {label: 'NexusDock REST API', href: 'https://mcp.nexusdock.co/docs/api'},
             {label: 'AgentDock source', href: 'https://github.com/uvwt/agentdock'},
@@ -141,7 +153,7 @@ const config: Config = {
           ],
         },
       ],
-      copyright: `© ${new Date().getFullYear()} AgentDock. Built with Docusaurus.`,
+      copyright: `© ${new Date().getFullYear()} NexusDock. Built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,
