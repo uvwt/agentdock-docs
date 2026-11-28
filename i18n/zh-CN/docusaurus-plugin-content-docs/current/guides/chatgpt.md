@@ -2,32 +2,41 @@
 
 通过网页版 ChatGPT 操作电脑上的文件、执行命令、管理 Git、使用浏览器自动化，或调用本机编码工具。
 
-网页版 ChatGPT 连接 AgentDock 需要：
+网页版 ChatGPT 可以通过两种方式接入 AgentDock：
 
-1. AgentDock 拥有 ChatGPT 可访问的公网 HTTPS 地址。
-2. AgentDock 开启 OAuth 认证。
-3. 在 ChatGPT 中使用公网 MCP 地址与 OAuth 密码完成连接。
-
-Windows 和 macOS 图形安装程序已自动集成 Cloudflare Tunnel 与 OAuth 配置。
+- **通过 NexusDock 接入（推荐）**：将一台或多台 AgentDock 配对到 **NexusDock Cloud**（`https://mcp.nexusdock.co`）或自托管 NexusDock，然后在 ChatGPT 中一次性接入 `https://mcp.nexusdock.co/mcp`（或你的自托管 NexusDock `/mcp` 地址）并完成 OAuth 授权，无需配置 Cloudflare Tunnel 或域名。
+- **直连单台 AgentDock 公网地址（自建）**：在设置中按需安装可选 `cloudflared` 组件（或自行配置 HTTPS 反向代理），开启 OAuth 后由 ChatGPT 直接访问该设备的公网 HTTPS 地址。
 
 :::note
 本页中的“**插件**”指 ChatGPT 界面里的连接入口，不是 [AgentDock Plugin 扩展包](../concepts/plugins.md)。
 :::
 
-## 快速上手（Windows / macOS 图形应用）
+## 推荐方式：通过 NexusDock Cloud 连接
 
-请先根据 [Windows 安装](../getting-started/windows.md) 或 [macOS 安装](../getting-started/macos.md) 指引完成 AgentDock 安装。
+1. 在目标设备上安装 AgentDock（[Windows](../getting-started/windows.md)、[macOS](../getting-started/macos.md)、[Linux](../getting-started/linux.md) 或 [Docker](../getting-started/docker.md)）。
+2. 登录 `https://mcp.nexusdock.co`，生成 6 位一次性配对码，并在 AgentDock 桌面端（或通过 `sudo agentdock nexus pair`）完成配对。详见 [连接 AgentDock](../operations/nexusdock-connect.md)。
+3. 在 ChatGPT 中开启 **开发人员模式** 并创建自定义 MCP 插件，MCP Server URL 填写：
 
-### 1. 选择公网连接方式
+   ```text
+   https://mcp.nexusdock.co/mcp
+   ```
 
-在安装或配置 AgentDock 时选择连接方式：
+4. 按浏览器跳转完成 NexusDock OAuth 授权，然后新开对话调用 `agentdock_context` 确认已配对设备在线。
+
+## 直连单台 AgentDock（Windows / macOS 图形应用）
+
+如果你希望不经过 NexusDock、让 ChatGPT 直接连接单台 AgentDock，请先根据 [Windows 安装](../getting-started/windows.md) 或 [macOS 安装](../getting-started/macos.md) 指引完成安装。
+
+### 1. 启用自建公网访问
+
+打开 AgentDock 控制面板，进入 **设置 / 高级连接**（或 **公网访问**），如尚未安装可选组件 `cloudflared` 则先点击安装，然后选择公网连接方式：
 
 - 还没有域名、想先连通测试时，选择 **临时公网地址**。
 - 有自己的域名、希望长期稳定使用时，建议选择 **使用自己的 Cloudflare 域名**。
 
 <div className="chatgpt-guide-image">
 
-![安装时选择临时公网地址或固定 Cloudflare 域名](/img/guides/chatgpt/01-install-connection-option.png)
+![在公网访问设置中选择临时公网地址或固定 Cloudflare 域名](/img/guides/chatgpt/01-install-connection-option.png)
 
 </div>
 
@@ -118,6 +127,10 @@ ChatGPT 会自动发现 AgentDock 的 OAuth 元数据、注册客户端，并通
 连接成功不能只看 OAuth 页面是否跳回，还应确认 ChatGPT 能列出 AgentDock 工具并完成一次真实调用。
 
 连通之后，你就可以让 ChatGPT 安装 Skill、接入外部 MCP、控制浏览器，或通过 AgentDock 驱动本机上的编码工具。
+
+:::tip
+**ChatGPT 工具 Schema 缓存说明**：启用新能力（如浏览器或 Coding Agent 工具）或升级 AgentDock 后，旧对话可能继续使用缓存的工具 Schema。请在 ChatGPT 的插件页面点击 **刷新**，然后 **新开对话**。通过 NexusDock 接入时，如果缓存目录暂时缺少目标工具，也可以使用 `node_tool_search` 和 `node_tool_call` 作为兼容回退。
+:::
 
 ## 服务器与手动部署
 

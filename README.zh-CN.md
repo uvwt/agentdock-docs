@@ -42,8 +42,8 @@ pnpm check
 ```text
 docs/                                            # 英文源文档
 ├── getting-started/                             # 安装与首次连接
-├── concepts/                                    # Skill、任务、动态 MCP、NexusDock Recall
-├── guides/                                      # 浏览器和桌面自动化
+├── concepts/                                    # Skill、Plugin、任务、动态 MCP、NexusDock、Recall 与 Workflow
+├── guides/                                      # 客户端接入、ChatGPT、浏览器和 Coding Agent
 ├── reference/                                   # 完整配置与工具参考
 ├── operations/                                  # 高级部署、安全与排障
 └── contributing/                                # 开发者指南

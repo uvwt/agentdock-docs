@@ -31,9 +31,10 @@ Default paths are:
 | stdio transport | `AGENTDOCK_STDIO` | `--stdio` | `false` |
 | State directory | `AGENTDOCK_HOME` | — | `~/.agentdock` |
 | Working directory | `AGENTDOCK_DEFAULT_DIR` | — | `~/AgentDock` |
+| Command environment map | `AGENTDOCK_COMMAND_ENV_FROM_ENV_JSON` | — | empty |
 | Trusted proxy CIDRs | `AGENTDOCK_TRUSTED_PROXY_CIDRS` | — | empty |
 
-Chat-card mode accepts `full`, `compact`, or `off`.
+Chat-card mode accepts `full`, `compact`, or `off`. `AGENTDOCK_COMMAND_ENV_FROM_ENV_JSON` explicitly maps child-process variable names to host environment variable names for `exec_command`; AgentDock does not inherit an interactive login shell environment automatically.
 
 ## Authentication
 
@@ -79,6 +80,17 @@ See [Use the browser](../guides/browser-control.md) for normal setup and usage.
 Desktop users should configure Coding Agents in the AgentDock UI. Headless deployments can use these variables. See [Use local Coding Agents](../guides/coding-agents.md).
 
 ## Other settings
+
+Common CLI subcommands for installed deployments:
+
+- `agentdock version [--json]` — print version information.
+- `agentdock update [--check]` — check for or install updates.
+- `agentdock service <status|start|stop|restart|autostart>` — manage the background service.
+- `agentdock tunnel <status|start|stop|restart|regenerate|configure|autostart>` — manage Cloudflare Tunnel state.
+- `agentdock component <status|install|update|uninstall> cloudflared` — manage the optional `cloudflared` component.
+- `agentdock nexus pair` / `agentdock nexus status` — pair with NexusDock or check pairing status.
+
+For standard installations, `service`, `tunnel`, `component`, and `nexus` resolve the platform default runtime root automatically; override with `AGENTDOCK_RUNTIME_ROOT` or `--runtime-root <dir>` when needed.
 
 NexusDock pairing is stored as a paired device identity rather than a normal runtime environment variable. See [Connect AgentDock](../operations/nexusdock-connect.md).
 

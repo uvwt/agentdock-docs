@@ -35,7 +35,7 @@ Describe the goal directly, for example:
 
 The agent selects the appropriate tools based on your request.
 
-If you want web ChatGPT to operate your computer, follow [Connect with ChatGPT](./guides/chatgpt.md) after installing with a public address.
+If you want web ChatGPT to operate your computer, pair with [NexusDock](./concepts/nexusdock.md) (recommended) or enable self-hosted public access, then follow [Connect with ChatGPT](./guides/chatgpt.md).
 
 ## Where data is stored
 

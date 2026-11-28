@@ -88,7 +88,7 @@ function parseMarkdown(source) {
 
   const technicalTokenPatterns = [
     /\bAGENTDOCK_[A-Z0-9_*]+\b/gu,
-    /\b(?:agentdock_context|browser_[a-z0-9_*]+|exec_command|file_edit|file_publish|list_dir|list_files|mcp_manage|mcp_tool_call|mcp_tool_inspect|mcp_tool_search|read_file|recall_[a-z0-9_*]+|search_text|server_info|session_act|session_observe|skill_manage|task_manage|view_image|workspace_context|workflow_template_manage|acp_[a-z0-9_*]+)\b/gu,
+    /\b(?:agentdock_context|browser_[a-z0-9_*]+|exec_command|file_edit|file_publish|list_dir|list_files|mcp_manage|mcp_tool_call|mcp_tool_inspect|mcp_tool_search|node_tool_call|node_tool_search|plugin_manage|read_file|recall_[a-z0-9_*]+|search_text|server_info|session_act|session_observe|skill_manage|task_create|task_manage|view_image|workspace_context|workflow_template_manage|acp_[a-z0-9_*]+)\b/gu,
   ];
   const technicalTokens = technicalTokenPatterns
     .flatMap((pattern) => [...source.matchAll(pattern)].map(([token]) => token))

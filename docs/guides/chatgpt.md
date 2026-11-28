@@ -2,32 +2,41 @@
 
 Use web ChatGPT to operate files, run commands, manage Git, use browser automation, or drive coding tools on your computer.
 
-Connecting web ChatGPT requires:
+You can connect web ChatGPT in two ways:
 
-1. AgentDock accessible via a public HTTPS address.
-2. OAuth enabled on AgentDock.
-3. Connecting from ChatGPT using the public MCP URL and OAuth password.
-
-The graphical installer for Windows and macOS automatically configures Cloudflare tunnels and OAuth.
+- **Via NexusDock (recommended):** pair your AgentDock device(s) with **NexusDock Cloud** (`https://mcp.nexusdock.co`) or a self-hosted NexusDock instance, then connect ChatGPT once to `https://mcp.nexusdock.co/mcp` (or your self-hosted NexusDock `/mcp` URL) using OAuth. No Cloudflare Tunnel or custom domain is needed.
+- **Direct AgentDock public URL (self-hosted):** expose a single AgentDock instance through a public HTTPS address (for example by installing the optional `cloudflared` component in Settings or using your own HTTPS reverse proxy) with OAuth enabled.
 
 :::note
 In this guide, **plugin** means the connection entry shown in the ChatGPT interface. It is different from an [AgentDock Plugin package](../concepts/plugins.md).
 :::
 
-## Quick setup (Windows / macOS graphical app)
+## Recommended: Connect through NexusDock Cloud
 
-First, install AgentDock following the [Windows installation](../getting-started/windows.md) or [macOS installation](../getting-started/macos.md) guide.
+1. Install AgentDock on your computer ([Windows](../getting-started/windows.md), [macOS](../getting-started/macos.md), [Linux](../getting-started/linux.md), or [Docker](../getting-started/docker.md)).
+2. Sign in to `https://mcp.nexusdock.co`, create a 6-digit one-time pairing code, and pair AgentDock from the desktop app (or `sudo agentdock nexus pair`). See [Connect AgentDock](../operations/nexusdock-connect.md).
+3. In ChatGPT, enable **Developer mode** and create a custom MCP plugin pointing to:
 
-### 1. Choose a public connection mode
+   ```text
+   https://mcp.nexusdock.co/mcp
+   ```
 
-When choosing connection options during setup or configuration:
+4. Complete NexusDock OAuth authorization in the browser, then start a new conversation and call `agentdock_context` to verify your paired devices are online.
+
+## Direct AgentDock setup (Windows / macOS graphical app)
+
+If you want ChatGPT to connect directly to a single AgentDock instance without NexusDock, install AgentDock first following the [Windows installation](../getting-started/windows.md) or [macOS installation](../getting-started/macos.md) guide.
+
+### 1. Enable self-hosted public access
+
+In the AgentDock Control Panel, open **Settings / Advanced connections** (or **Public Access**), install the optional `cloudflared` component if it is not installed yet, and choose a public mode:
 
 - If you do not have a domain yet, select **Temporary public address**.
 - If you have a custom domain managed by Cloudflare, select **Fixed domain**.
 
 <div className="chatgpt-guide-image">
 
-![Choose temporary public address or fixed Cloudflare domain during setup](/img/guides/chatgpt/01-install-connection-option.png)
+![Choose temporary public address or fixed Cloudflare domain in public access settings](/img/guides/chatgpt/01-install-connection-option.png)
 
 </div>
 
@@ -118,6 +127,10 @@ Call AgentDock's agentdock_context and tell me the AgentDock version, OS, path m
 Ensure ChatGPT lists AgentDock tools and completes an actual tool call.
 
 Once connected, ChatGPT can install Skills, connect external MCP servers, control browsers, or drive local coding agents.
+
+:::tip
+**Cached tool schemas in ChatGPT:** after enabling new capabilities (such as browser or Coding Agent tools) or upgrading AgentDock, existing ChatGPT conversations may keep an older tool schema. Click **Refresh** on the plugin in ChatGPT and start a **new conversation**. When connecting through NexusDock, clients can also use `node_tool_search` and `node_tool_call` as a fallback if a tool is missing from the cached catalog.
+:::
 
 ## Server and manual deployment
 

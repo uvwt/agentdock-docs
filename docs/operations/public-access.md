@@ -10,7 +10,9 @@ AgentDock is safest when it stays local. Enable public access only when a remote
 
 ## Temporary public address
 
-The macOS and Windows apps can enable a temporary public address from **Public Access**. Linux installers can choose the temporary Tunnel option. Docker can start the Quick Tunnel profile:
+If you only need remote access from ChatGPT, Claude, or another device, pairing with **NexusDock** (`https://mcp.nexusdock.co` or self-hosted) is usually simpler and does not require `cloudflared`.
+
+For direct self-hosted public access on macOS and Windows, install the optional `cloudflared` component first in **Settings / Advanced connections** (or run `agentdock component install cloudflared`), then enable **Temporary public address**. Linux installers can choose the temporary Tunnel option. Docker can start the Quick Tunnel profile:
 
 ```bash
 docker compose --profile cloudflare-quick up -d
@@ -50,7 +52,7 @@ https://agent.example.com
 
 Do not append `/mcp`.
 
-On macOS or Windows, open **Public Access → Fixed domain**, then enter the HTTPS public address and Tunnel Token.
+On macOS or Windows, make sure the optional `cloudflared` component is installed, open **Settings / Advanced connections → Fixed domain**, then enter the HTTPS public address and Tunnel Token.
 
 On Linux, rerun the installer and choose the existing Cloudflare-domain option.
 

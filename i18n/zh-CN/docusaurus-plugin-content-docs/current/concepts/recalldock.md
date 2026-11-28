@@ -2,7 +2,7 @@
 
 NexusDock Recall 是 AgentDock 的可选长期记忆服务。它可以保存值得长期保留的信息、偏好、经验和知识，让以后处理类似事情时能够继续使用这些上下文。
 
-没有 NexusDock 时，文件、命令、命令行 Git、Skill、动态 MCP 和本地任务仍可正常使用；Recall、Workflow 模板和知识 Evolution 工具不可用。多设备管理和统一 MCP 入口见 [NexusDock](./nexusdock.md)。
+没有 NexusDock 时，文件、命令、命令行 Git、Skill、动态 MCP 和本地任务仍可正常使用；Recall 和 Workflow 模板工具不可用。多设备管理和统一 MCP 入口见 [NexusDock](./nexusdock.md)。
 
 ## 什么时候适合使用
 
@@ -23,7 +23,7 @@ NexusDock Recall 是 AgentDock 的可选长期记忆服务。它可以保存值�
 
 ## 接入
 
-先把 AgentDock 设备与 NexusDock 配对。在 NexusDock 打开 **设置 → System & Nodes**，生成一次性配对码，然后在目标设备执行页面生成的 `agentdock nexus pair ...` 命令并重启 AgentDock。
+先把 AgentDock 设备与 NexusDock Cloud（`https://mcp.nexusdock.co`）或自托管 NexusDock 配对。在 NexusDock 控制台创建一次性配对码后，可在 AgentDock 桌面端直接配对，或在目标设备上执行 `agentdock nexus pair ...`。
 
 完成配对后，Recall 不需要再给 AgentDock 单独配置 URL 或 Token。完整步骤见 [连接 AgentDock](../operations/nexusdock-connect.md)。
 

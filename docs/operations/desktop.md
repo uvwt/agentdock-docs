@@ -7,7 +7,7 @@ For normal installation, use the [macOS](../getting-started/macos.md) or [Window
 The desktop apps already manage most configuration for you. Use **Public Access** and **Advanced Settings** to change:
 
 - local port and log level;
-- temporary or fixed public access;
+- optional `cloudflared` component and temporary or fixed public access;
 - NexusDock pairing;
 - browser connection mode;
 - local Coding Agent profiles;

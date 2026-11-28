@@ -134,6 +134,8 @@ const config: Config = {
         {
           title: 'Project',
           items: [
+            {label: 'NexusDock Cloud', href: 'https://mcp.nexusdock.co'},
+            {label: 'NexusDock REST API', href: 'https://mcp.nexusdock.co/docs/api'},
             {label: 'AgentDock source', href: 'https://github.com/uvwt/agentdock'},
             {label: 'Documentation source', href: 'https://github.com/uvwt/agentdock-docs'},
           ],

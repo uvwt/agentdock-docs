@@ -2,7 +2,7 @@
 
 NexusDock Recall is an optional long-term memory service for AgentDock. It keeps information, preferences, experience, and knowledge that are worth reusing later, so future tasks can continue with useful context.
 
-Without NexusDock, file, command, command-line Git, Skill, dynamic MCP, and local task tools remain fully available; Recall, workflow template, and knowledge evolution tools are unavailable. See [NexusDock](./nexusdock.md) for multi-device management and the unified MCP endpoint.
+Without NexusDock, file, command, command-line Git, Skill, dynamic MCP, and local task tools remain fully available; Recall and workflow template tools are unavailable. See [NexusDock](./nexusdock.md) for multi-device management and the unified MCP endpoint.
 
 ## When to use it
 
@@ -23,7 +23,7 @@ Do not store:
 
 ## Setup
 
-Pair the AgentDock device with NexusDock first. In NexusDock, open **Settings → System & Nodes**, create a one-time pairing code, then run the generated `agentdock nexus pair ...` command on the AgentDock device and restart AgentDock.
+Pair the AgentDock device with NexusDock Cloud (`https://mcp.nexusdock.co`) or a self-hosted NexusDock instance first. Create a one-time pairing code in the NexusDock console, then pair from the AgentDock desktop app or run `agentdock nexus pair ...` on the device.
 
 Recall does not need a separate AgentDock-side URL or token after pairing. See [Connect AgentDock](../operations/nexusdock-connect.md) for the full setup.
 

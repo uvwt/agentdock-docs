@@ -13,23 +13,25 @@
 
 ## 安装时要做的选择
 
-Windows 和 macOS 安装界面提供以下连接选项：
+安装完成后，按你的使用场景选择 AI 客户端的连接方式：
 
 | 连接方式 | 适合场景 | 需要准备 |
 | --- | --- | --- |
+| **NexusDock（推荐远程方式）** | ChatGPT、Claude、手机或多设备远程连接，无需折腾隧道或域名 | NexusDock Cloud（`https://mcp.nexusdock.co`）或自托管 NexusDock 一次性配对码 |
 | 仅本机 | MCP 客户端和 AgentDock 在同一台电脑上 | 无 |
-| 临时公网地址 | 从 ChatGPT、手机或其他设备连接，暂时没有域名 | 可访问互联网 |
-| 固定域名 | 长期使用稳定公网地址 | 已接入 Cloudflare 的域名和 Tunnel Token |
+| 自建 Cloudflare Tunnel（可选） | 需要让单台 AgentDock 直接暴露公网 HTTPS 地址 | 在设置中按需安装可选 `cloudflared` 组件（支持临时地址或固定 Cloudflare 域名） |
 
-根据 MCP 客户端所在位置、是否需要公网访问，以及是否已有固定域名选择连接方式。安装后仍可以在控制面板中切换。
+桌面端首次安装只安装 AgentDock 本身并默认启用本机服务。远程连接（配对 NexusDock，或按需安装 `cloudflared` 组件启用直连公网地址）均在安装完成后的控制面板中配置。
 
 :::warning
-公网地址必须配合 Bearer Token 或 OAuth 使用。不要把连接凭据放进截图、Issue 或公开聊天。
+公网地址必须配合 Bearer Token 或 OAuth 使用。不要把连接凭据或配对码放进截图、Issue 或公开聊天。
 :::
 
 ## 安装完成后
 
-安装完成后，从控制面板或终端取得：
+如果使用 **NexusDock**（远程客户端和网页版 ChatGPT 推荐），在控制面板（或通过 `agentdock nexus pair`）完成设备配对后，直接将客户端连接到 `https://mcp.nexusdock.co/mcp`（或你的自托管 NexusDock 地址）。详见 [连接 AgentDock](../operations/nexusdock-connect.md)。
+
+如果直连本机或自建公网 MCP 地址，从控制面板或终端取得：
 
 ```text
 MCP 地址
@@ -39,11 +41,11 @@ Bearer Token 或 OAuth 登录信息
 把这些信息填入客户端的 MCP、Tools 或 Connectors 设置，并选择 **Streamable HTTP**。
 
 - 客户端和 AgentDock 在同一台设备上：使用本地 MCP 地址。
-- 客户端在其他设备或云端：使用公网 MCP 地址。
+- 客户端在其他设备或云端：推荐使用 NexusDock，或启用 Cloudflare Tunnel 后使用公网 MCP 地址。
 - 临时公网地址变化后：在客户端中替换旧地址，并按提示重新授权 OAuth。
 
 :::tip
 第一次使用只需要完成对应系统页面中的编号步骤。自定义端口、自动化参数和手动服务管理都可以以后再看。
 :::
 
-如果安装时开启了公网地址，想用网页版 ChatGPT 操控本机，请继续阅读 [使用 ChatGPT 连接](../guides/chatgpt.md)。
+想用网页版 ChatGPT 操控本机（通过 NexusDock 或直连公网地址均可），请继续阅读 [使用 ChatGPT 连接](../guides/chatgpt.md)。

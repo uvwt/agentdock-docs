@@ -31,9 +31,10 @@ CLI 参数会覆盖它对应的环境变量。
 | stdio 传输 | `AGENTDOCK_STDIO` | `--stdio` | `false` |
 | 状态目录 | `AGENTDOCK_HOME` | — | `~/.agentdock` |
 | 工作目录 | `AGENTDOCK_DEFAULT_DIR` | — | `~/AgentDock` |
+| 命令环境变量映射 | `AGENTDOCK_COMMAND_ENV_FROM_ENV_JSON` | — | 空 |
 | 可信代理 CIDR | `AGENTDOCK_TRUSTED_PROXY_CIDRS` | — | 空 |
 
-聊天卡片支持 `full`、`compact`、`off`。
+聊天卡片支持 `full`、`compact`、`off`。`AGENTDOCK_COMMAND_ENV_FROM_ENV_JSON` 用于显式声明 `exec_command` 从宿主服务环境映射的变量名；AgentDock 不会自动继承交互式登录 Shell 的全部环境变量。
 
 ## 认证
 
@@ -79,6 +80,17 @@ OAuth：
 桌面端优先在 AgentDock 图形界面配置 Coding Agent；无界面部署可以使用这些变量。使用方式见 [使用本地 Coding Agent](../guides/coding-agents.md)。
 
 ## 其他设置
+
+常见 CLI 子命令：
+
+- `agentdock version [--json]`：查看版本信息。
+- `agentdock update [--check]`：检查或安装更新。
+- `agentdock service <status|start|stop|restart|autostart>`：管理后台服务。
+- `agentdock tunnel <status|start|stop|restart|regenerate|configure|autostart>`：管理 Cloudflare Tunnel 状态。
+- `agentdock component <status|install|update|uninstall> cloudflared`：管理可选的 `cloudflared` 组件。
+- `agentdock nexus pair` / `agentdock nexus status`：执行 NexusDock 配对或查看配对状态。
+
+标准安装下，`service`、`tunnel`、`component` 和 `nexus` 会自动解析平台默认运行目录；自定义目录或多实例部署可通过 `AGENTDOCK_RUNTIME_ROOT` 或 `--runtime-root <dir>` 指定。
 
 NexusDock 配对保存为设备身份，不属于普通运行环境变量。见 [连接 AgentDock](../operations/nexusdock-connect.md)。
 

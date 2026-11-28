@@ -15,6 +15,8 @@ A task is appropriate when:
 
 A simple query, one file read, or one explicit command usually does not need a task.
 
+When chat cards are enabled, `task_create` creates the recoverable task and mounts the live task card once, while subsequent `task_manage` checkpoints, reviews, and completion updates update the same task in place.
+
 ## What a task contains
 
 A task normally records:
